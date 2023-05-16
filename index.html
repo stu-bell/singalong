@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Song Lyrics App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .current-line {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 40vh;
+        }
+        
+        .next-lines {
+            font-size: 16px;
+            opacity: 0.6;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <p id="currentLine" class="current-line"></p>
+    <p id="nextLines" class="next-lines"></p>
+
+    <input type="file" id="fileInput" accept=".txt">
+    
+    <script>
+        let currentLineIndex = 0;
+        let lines = [];
+        const fileInput = document.getElementById('fileInput');
+
+        function loadLyricsFromFile(file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const fileContents = event.target.result;
+                lines = fileContents.split('\n');
+                updateLyrics();
+                fileInput.classList.add('hidden');
+            };
+            reader.onerror = function(event) {
+                console.error('Error reading file:', event.target.error);
+            };
+            reader.readAsText(file);
+        }
+
+        function updateLyrics() {
+            const currentLineElement = document.getElementById('currentLine');
+            const nextLinesElement = document.getElementById('nextLines');
+
+            currentLineElement.innerText = lines[currentLineIndex];
+            nextLinesElement.innerText = lines.slice(currentLineIndex + 1).join('\n');
+        }
+
+        function scrollNextLine() {
+            currentLineIndex++;
+            updateLyrics();
+        }
+
+        function handleFileInputChange(event) {
+            const file = event.target.files[0];
+            if (file) {
+                loadLyricsFromFile(file);
+            }
+        }
+
+        document.getElementById('fileInput').addEventListener('change', handleFileInputChange);
+
+        document.addEventListener('keydown', function(event) {
+            if (event.code === 'Space') {
+                scrollNextLine();
+            }
+        });
+
+        document.addEventListener('touchstart', function() {
+            scrollNextLine();
+        });
+
+        // Check compatibility with required APIs
+        if (!window.FileReader || !window.FileList || !window.File || !window.Blob) {
+            alert('Your browser does not support the required APIs. Please use a modern browser.');
+        }
+    </script>
+</body>
+</html>
