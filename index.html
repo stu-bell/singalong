@@ -10,6 +10,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            overflow: hidden;
         }
         
         .previous-line,
@@ -30,9 +31,11 @@
     </style>
 </head>
 <body>
-    <p id="previousLine" class="previous-line"></p>
-    <p id="currentLine" class="current-line"></p>
-    <p id="nextLines" class="next-lines"></p>
+    <div id="lyricsContainer">
+        <p id="previousLine" class="previous-line"></p>
+        <p id="currentLine" class="current-line"></p>
+        <p id="nextLines" class="next-lines"></p>
+    </div>
 
     <input type="file" id="fileInput" accept=".txt">
     
@@ -43,6 +46,7 @@
         const currentLineElement = document.getElementById('currentLine');
         const nextLinesElement = document.getElementById('nextLines');
         const fileInput = document.getElementById('fileInput');
+        const lyricsContainer = document.getElementById('lyricsContainer');
 
         function loadLyricsFromFile(file) {
             const reader = new FileReader();
@@ -70,6 +74,11 @@
             updateLyrics();
         }
 
+        function scrollPreviousLine() {
+            currentLineIndex--;
+            updateLyrics();
+        }
+
         function handleFileInputChange(event) {
             const file = event.target.files[0];
             if (file) {
@@ -81,6 +90,10 @@
 
         document.addEventListener('keydown', function(event) {
             if (event.code === 'Space') {
+                scrollNextLine();
+            } else if (event.code === 'ArrowUp') {
+                scrollPreviousLine();
+            } else if (event.code === 'ArrowDown') {
                 scrollNextLine();
             }
         });
