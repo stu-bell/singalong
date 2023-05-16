@@ -43,6 +43,7 @@
         let currentLineIndex = 0;
         let lines = [];
         const previousLineElement = document.getElementById('previousLine');
+        const filesList = [];
         const currentLineElement = document.getElementById('currentLine');
         const nextLinesElement = document.getElementById('nextLines');
         const fileInput = document.getElementById('fileInput');
@@ -80,10 +81,12 @@
         }
 
         function handleFileInputChange(event) {
+            const filesList = Array.from(event.target.files).map((x) => x.webkitRelativePath)
             const file = event.target.files[0];
             if (file) {
                 loadLyricsFromFile(file);
             }
+            alert(filesList.join('\n'))
         }
 
         document.getElementById('fileInput').addEventListener('change', handleFileInputChange);
