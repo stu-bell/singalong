@@ -83,11 +83,22 @@
         }
       }
 
+      function parseLRC(fileContents) {
+            const lines = fileContents.split("\n");
+            const removeTags = lines.filter(l => !(l.startsWith('[') && l.endsWith(']')));
+            const removeLeadingTimestamps = removeTags.map(s => s.replace(/^\[\d\d?:\d\d?\.\d\d?\]\s*/, ""));
+            return removeLeadingTimestamps;
+      }
+
       function loadLyricsFromFile(fileBlob) {
         const reader = new FileReader();
         reader.onload = function (event) {
           const fileContents = event.target.result;
-          lines = fileContents.split("\n");
+          if (fileBlob.name.toLowerCase().endsWith('.lrc')){
+            lines = parseLRC(fileContents);
+          } else if (fileBlob.name.toLowerCase().endsWith('.txt')) {
+            lines = fileContents.split("\n");
+          }
           currentLineIndex = 0;
           songTitle.textContent = removeFileExtension(fileBlob.name);
           renderLyrics();
@@ -126,6 +137,7 @@
       function handleFileInputChange(event) {
         filesList = Array.from(event.target.files).filter((x) =>
           x.webkitRelativePath.toLowerCase().endsWith(".txt")
+          || x.webkitRelativePath.toLowerCase().endsWith(".lrc")
         );
         fileInput.classList.add("hidden");
         currentFileIndex = -1;
