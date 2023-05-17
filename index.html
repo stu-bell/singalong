@@ -1,260 +1,279 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Song Lyrics App</title>
-    <meta charset="UTF-8" />
-    <script src="./ramdajs.min.js">
+
+<head>
+  <title>Song Lyrics App</title>
+  <meta charset="UTF-8" />
+  <script src="./ramdajs.min.js">
       // ramdajs.com minified
       // TODO: only select functions needed!!
-    </script>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        overflow: hidden;
+  </script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .previous-line,
+    .current-line,
+    .next-lines {
+      font-size: 48px;
+      opacity: 0.6;
+    }
+
+    .current-line {
+      font-size: 96px;
+      font-weight: bold;
+    }
+
+    #songTitleContainer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    song-title {
+      font-size: 2px;
+      margin: 0;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="lyricsContainer">
+    <p id="previousLine" class="previous-line hidden"></p>
+    <p id="currentLine" class="current-line"></p>
+    <p id="nextLines" class="next-lines"></p>
+  </div>
+  <div id="songTitleContainer">
+    <p id="songTitle" class="song-title"></p>
+  </div>
+
+  <input type="file" id="fileInput" webkitdirectory directory multiple />
+
+  <script>
+    let fileType = "txt";
+    let currentLineIndex = 0;
+    let currentFileIndex = 0;
+    let filesList = [];
+    let lines = [];
+    const previousLineElement = document.getElementById("previousLine");
+    const currentLineElement = document.getElementById("currentLine");
+    const nextLinesElement = document.getElementById("nextLines");
+    const songTitle = document.getElementById("songTitle");
+    const fileInput = document.getElementById("fileInput");
+
+    function removeFileExtension(filename) {
+      var lastDotIndex = filename.lastIndexOf(".");
+      if (lastDotIndex === -1) {
+        // No file extension found
+        return filename;
+      } else {
+        return filename.substring(0, lastDotIndex);
       }
+    }
 
-      .previous-line,
-      .current-line,
-      .next-lines {
-        font-size: 48px;
-        opacity: 0.6;
-      }
+    function renderLyrics() {
+      previousLineElement.innerText = R.propOr(
+        "",
+        "text",
+        lines[currentLineIndex - 1]
+      );
+      currentLineElement.innerText = R.propOr(
+        "",
+        "text",
+        lines[currentLineIndex]
+      );
+      nextLinesElement.innerText = lines
+        .slice(currentLineIndex + 1, currentLineIndex + 6)
+        .map(R.propOr("", "text"))
+        .join("\n");
+    }
 
-      .current-line {
-        font-size: 96px;
-        font-weight: bold;
-      }
+    function parseLrcLines(fileContents) {
+      const lines = fileContents.split("\n");
+      const removeTags = lines.filter(
+        (l) => !(l.startsWith("[") && l.endsWith("]"))
+      );
+      const splitLeadingTimeStamps = removeTags.map((s) => {
+        const tup = s.split(/^\[\d\d?:\d\d?\.\d\d?\]\s*/);
+        return {
+          timestamp: tup[0],
+          text: tup[1],
+        };
+      });
+      return splitLeadingTimeStamps;
+    }
 
-      #songTitleContainer {
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        box-sizing: border-box;
-      }
+    function parseTxtLines(fileContents) {
+      const lines = fileContents.split("\n");
+      const mapped = lines.map((l) => ({ text: l }));
+      return mapped;
+    }
 
-      song-title {
-        font-size: 2px;
-        margin: 0;
-      }
+    function loadFile(fileBlob) {
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const fileContents = event.target.result;
+        currentLineIndex = 0;
+        songTitle.textContent = removeFileExtension(fileBlob.name);
+        renderLyrics();
+      };
+      reader.onerror = function (event) {
+        console.error("Error reading file:", event.target.error);
+      };
+      reader.readAsText(fileBlob);
+    }
 
-      .hidden {
-        display: none;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="lyricsContainer">
-      <p id="previousLine" class="previous-line hidden"></p>
-      <p id="currentLine" class="current-line"></p>
-      <p id="nextLines" class="next-lines"></p>
-    </div>
-    <div id="songTitleContainer">
-      <p id="songTitle" class="song-title"></p>
-    </div>
-
-    <input type="file" id="fileInput" webkitdirectory directory multiple />
-
-    <script>
-      let fileType = "txt";
-      let currentLineIndex = 0;
-      let currentFileIndex = 0;
-      let filesList = [];
-      let lines = [];
-      const previousLineElement = document.getElementById("previousLine");
-      const currentLineElement = document.getElementById("currentLine");
-      const nextLinesElement = document.getElementById("nextLines");
-      const songTitle = document.getElementById("songTitle");
-      const fileInput = document.getElementById("fileInput");
-
-      function removeFileExtension(filename) {
-        var lastDotIndex = filename.lastIndexOf(".");
-        if (lastDotIndex === -1) {
-          // No file extension found
-          return filename;
-        } else {
-          return filename.substring(0, lastDotIndex);
+    function loadLyricsFromFile(fileBlob) {
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const fileContents = event.target.result;
+        if (fileBlob.name.toLowerCase().endsWith(".lrc")) {
+          fileType = "lrc";
+          lines = parseLrcLines(fileContents);
+        } else if (fileBlob.name.toLowerCase().endsWith(".txt")) {
+          fileType = "txt";
+          lines = parseTxtLines(fileContents);
         }
-      }
+        currentLineIndex = 0;
+        songTitle.textContent = removeFileExtension(fileBlob.name);
+        renderLyrics();
+      };
+      reader.onerror = function (event) {
+        console.error("Error reading file:", event.target.error);
+      };
+      reader.readAsText(fileBlob);
+    }
 
-      function renderLyrics() {
-        previousLineElement.innerText = R.propOr(
-          "",
-          "text",
-          lines[currentLineIndex - 1]
-        );
-        currentLineElement.innerText = R.propOr(
-          "",
-          "text",
-          lines[currentLineIndex]
-        );
-        nextLinesElement.innerText = lines
-          .slice(currentLineIndex + 1, currentLineIndex + 6)
-          .map(R.propOr("", "text"))
-          .join("\n");
+    function nextSong() {
+      if (currentFileIndex < filesList.length) {
+        currentFileIndex++;
       }
-
-      function parseLrcLines(fileContents) {
-        const lines = fileContents.split("\n");
-        const removeTags = lines.filter(
-          (l) => !(l.startsWith("[") && l.endsWith("]"))
-        );
-        const splitLeadingTimeStamps = removeTags.map((s) => {
-          const tup = s.split(/^\[\d\d?:\d\d?\.\d\d?\]\s*/);
-          return {
-            timestamp: tup[0],
-            text: tup[1],
-          };
-        });
-        return splitLeadingTimeStamps;
+      const file = filesList[currentFileIndex];
+      if (file) {
+        loadLyricsFromFile(file);
       }
+    }
 
-      function parseTxtLines(fileContents) {
-        const lines = fileContents.split("\n");
-        const mapped = lines.map((l) => ({ text: l }));
-        return mapped;
-      }
-
-      function loadFile(fileBlob) {
-        const reader = new FileReader();
-        reader.onload = function (event) {
-          const fileContents = event.target.result;
-          currentLineIndex = 0;
-          songTitle.textContent = removeFileExtension(fileBlob.name);
-          renderLyrics();
-        };
-        reader.onerror = function (event) {
-          console.error("Error reading file:", event.target.error);
-        };
-        reader.readAsText(fileBlob);
-      }
-
-      function loadLyricsFromFile(fileBlob) {
-        const reader = new FileReader();
-        reader.onload = function (event) {
-          const fileContents = event.target.result;
-          if (fileBlob.name.toLowerCase().endsWith(".lrc")) {
-            fileType = "lrc";
-            lines = parseLrcLines(fileContents);
-          } else if (fileBlob.name.toLowerCase().endsWith(".txt")) {
-            fileType = "txt";
-            lines = parseTxtLines(fileContents);
-          }
-          currentLineIndex = 0;
-          songTitle.textContent = removeFileExtension(fileBlob.name);
-          renderLyrics();
-        };
-        reader.onerror = function (event) {
-          console.error("Error reading file:", event.target.error);
-        };
-        reader.readAsText(fileBlob);
-      }
-
-      function nextSong() {
-        if (currentFileIndex < filesList.length) {
-          currentFileIndex++;
-        }
+    function prevSong() {
+      if (currentLineIndex > 2) {
+        // go back to start of current song
+        currentLineIndex = 0;
+        renderLyrics();
+      } else {
+        // go back to previous song
+        currentFileIndex--;
         const file = filesList[currentFileIndex];
         if (file) {
           loadLyricsFromFile(file);
         }
       }
+    }
 
-      function prevSong() {
-        if (currentLineIndex > 5) {
-        currentLineIndex++;
-          renderLyrics();
-        } else {
-          if (currentFileIndex > 0) {
-            currentFileIndex--;
-          }
-          const file = filesList[currentFileIndex];
-          if (file) {
-            loadLyricsFromFile(file);
-          }
-        }
-      }
 
-      function reOrderPlaylist(playlist) {}
-
-      function handleFileInputChange(event) {
-        filesList = Array.from(event.target.files).filter(
-          (x) =>
-            x.webkitRelativePath.toLowerCase().endsWith(".txt") ||
-            x.webkitRelativePath.toLowerCase().endsWith(".lrc")
+    function handleFileInputChange(event) {
+      const folderFiles = Array.from(event.target.files);
+        filesList = folderFiles.filter(file =>
+          file.webkitRelativePath.toLowerCase().endsWith('.txt') ||
+          file.webkitRelativePath.toLowerCase().endsWith('.lrc')
         );
 
-        const playlist = Array.from(event.target.files).find(
-          (x) => x.name === "lyrics.playlist"
-        );
-        if (playlist) {
-          reOrderPlaylist(playlist);
-        }
+      const playlistFile = folderFiles.find(file => file.name.toLowerCase() === 'lyrics.playlist');
+      if (playlistFile) {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          const fileContents = event.target.result;
+          const playlistOrder = fileContents.split('\n').map(line => line.trim()).filter(line => line !== '');
+          filesListOrdered = filesList.sort((fileA, fileB) => {
+            const indexA = playlistOrder.indexOf(fileA.name);
+            const indexB = playlistOrder.indexOf(fileB.name);
+            return indexA - indexB;
+          });
+          filesList = filesListOrdered;
+          currentFileIndex = -1;
+          nextSong();
+        };
+        reader.onerror = function (event) {
+          console.error('Error reading file:', event.target.error);
+        };
+        reader.readAsText(playlistFile);
 
-        fileInput.classList.add("hidden");
+      } else {
+        // don't order the folder, just play in what ever order they come
         currentFileIndex = -1;
         nextSong();
       }
 
-      function scrollNextLine() {
-        currentLineIndex++;
-        if (currentLineIndex >= lines.length) {
-          nextSong();
-        }
-        renderLyrics();
+      fileInput.classList.add('hidden');
+    }
+
+    function scrollNextLine() {
+      currentLineIndex++;
+      if (currentLineIndex >= lines.length) {
+        nextSong();
       }
+      renderLyrics();
+    }
 
-      function scrollPreviousLine() {
-        currentLineIndex--;
-        renderLyrics();
-      }
+    function scrollPreviousLine() {
+      currentLineIndex--;
+      renderLyrics();
+    }
 
-      // select folder event
-      document
-        .getElementById("fileInput")
-        .addEventListener("change", handleFileInputChange);
+    // select folder event
+    document
+      .getElementById("fileInput")
+      .addEventListener("change", handleFileInputChange);
 
-      // scroll events
-      document.addEventListener("keydown", function (event) {
-        if (event.code === "Enter") {
-          scrollNextLine();
-        } else if (event.code === "Space") {
-          scrollNextLine();
-        } else if (event.code === "ArrowDown") {
-          scrollNextLine();
-        } else if (event.code === "ArrowUp") {
-          scrollPreviousLine();
-        }
-      });
-
-      document.addEventListener("touchstart", function () {
+    // scroll events
+    document.addEventListener("keydown", function (event) {
+      if (event.code === "Enter") {
         scrollNextLine();
-      });
-
-      // next prev events
-      document.addEventListener("keydown", function (event) {
-        if (event.ctrlKey && event.key === "ArrowRight") {
-          nextSong();
-        } else if (event.ctrlKey && event.key === "ArrowLeft") {
-          prevSong();
-        }
-      });
-
-      // Check compatibility with required APIs
-      if (
-        !window.FileReader ||
-        !window.FileList ||
-        !window.File ||
-        !window.Blob
-      ) {
-        alert(
-          "Your browser does not support the required APIs. Please use a modern browser."
-        );
+      } else if (event.code === "Space") {
+        scrollNextLine();
+      } else if (event.code === "ArrowDown") {
+        scrollNextLine();
+      } else if (event.code === "ArrowUp") {
+        scrollPreviousLine();
       }
-    </script>
-  </body>
+    });
+
+    document.addEventListener("touchstart", function () {
+      scrollNextLine();
+    });
+
+    // next prev events
+    document.addEventListener("keydown", function (event) {
+      if (event.ctrlKey && event.key === "ArrowRight") {
+        nextSong();
+      } else if (event.ctrlKey && event.key === "ArrowLeft") {
+        prevSong();
+      }
+    });
+
+    // Check compatibility with required APIs
+    if (
+      !window.FileReader ||
+      !window.FileList ||
+      !window.File ||
+      !window.Blob
+    ) {
+      alert(
+        "Your browser does not support the required APIs. Please use a modern browser."
+      );
+    }
+  </script>
+</body>
+
 </html>
