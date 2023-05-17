@@ -52,9 +52,9 @@
       function renderLyrics() {
         previousLineElement.innerText = lines[currentLineIndex - 1] || "";
         currentLineElement.innerText = lines[currentLineIndex] || "";
-        nextLinesElement.innerText = lines
-          .slice(currentLineIndex + 1, currentLineIndex + 6)
-          .join("\n") || "";
+        nextLinesElement.innerText =
+          lines.slice(currentLineIndex + 1, currentLineIndex + 6).join("\n") ||
+          "";
       }
 
       function loadLyricsFromFile(filePath) {
@@ -79,9 +79,23 @@
         }
       }
 
+      function prevSong() {
+        if (currentLineIndex > 5) {
+            currentLineIndex = 0;
+            renderLyrics();
+        } else {
+            currentFileIndex--;
+            const file = filesList[currentFileIndex];        
+            if (file) {
+              loadLyricsFromFile(file);
+            }
+        }
+      }
+
       function handleFileInputChange(event) {
-        filesList = Array.from(event.target.files)
-            .filter(x=> x.webkitRelativePath.toLowerCase().endsWith('.txt'));
+        filesList = Array.from(event.target.files).filter((x) =>
+          x.webkitRelativePath.toLowerCase().endsWith(".txt")
+        );
         fileInput.classList.add("hidden");
         currentFileIndex = -1;
         nextSong();
@@ -90,7 +104,7 @@
       function scrollNextLine() {
         currentLineIndex++;
         if (currentLineIndex >= lines.length) {
-            nextSong();
+          nextSong();
         }
         renderLyrics();
       }
@@ -120,6 +134,15 @@
 
       document.addEventListener("touchstart", function () {
         scrollNextLine();
+      });
+
+      // next prev events
+      document.addEventListener("keydown", function (event) {
+        if (event.ctrlKey && event.key === "ArrowRight") {
+            nextSong();
+        } else if (event.ctrlKey && event.key === "ArrowLeft") {
+            prevSong();
+        }
       });
 
       // Check compatibility with required APIs
