@@ -2,10 +2,10 @@
 <html>
   <head>
     <title>Song Lyrics App</title>
-    <meta charset="UTF-8">
-    <script src="//cdnjs.cloudflare.com/ajax/libs/ramda/0.14.0/ramda.min.js">
-        // ramdajs.com minified 
-        // TODO: only select functions needed!!
+    <meta charset="UTF-8" />
+    <script src="./ramdajs.min.js">
+      // ramdajs.com minified
+      // TODO: only select functions needed!!
     </script>
     <style>
       body {
@@ -49,7 +49,7 @@
   </head>
   <body>
     <div id="lyricsContainer">
-      <p id="previousLine" class="previous-line"></p>
+      <p id="previousLine" class="previous-line hidden"></p>
       <p id="currentLine" class="current-line"></p>
       <p id="nextLines" class="next-lines"></p>
     </div>
@@ -60,7 +60,7 @@
     <input type="file" id="fileInput" webkitdirectory directory multiple />
 
     <script>
-      let fileType = 'txt';
+      let fileType = "txt";
       let currentLineIndex = 0;
       let currentFileIndex = 0;
       let filesList = [];
@@ -82,28 +82,41 @@
       }
 
       function renderLyrics() {
-        previousLineElement.innerText = R.propOr("", 'text', lines[currentLineIndex - 1]);
-        currentLineElement.innerText = R.propOr("", 'text', lines[currentLineIndex]);
-        nextLinesElement.innerText = lines.slice(currentLineIndex + 1, currentLineIndex + 6).map(R.propOr('', 'text')).join("\n");
+        previousLineElement.innerText = R.propOr(
+          "",
+          "text",
+          lines[currentLineIndex - 1]
+        );
+        currentLineElement.innerText = R.propOr(
+          "",
+          "text",
+          lines[currentLineIndex]
+        );
+        nextLinesElement.innerText = lines
+          .slice(currentLineIndex + 1, currentLineIndex + 6)
+          .map(R.propOr("", "text"))
+          .join("\n");
       }
 
       function parseLrcLines(fileContents) {
-            const lines = fileContents.split("\n");
-            const removeTags = lines.filter(l => !(l.startsWith('[') && l.endsWith(']')));
-            const splitLeadingTimeStamps = removeTags.map(s => {
-                const tup = s.split(/^\[\d\d?:\d\d?\.\d\d?\]\s*/);
-                return {
-                    timestamp: tup[0],
-                    text: tup[1]
-                }
-            });
-            return splitLeadingTimeStamps;
+        const lines = fileContents.split("\n");
+        const removeTags = lines.filter(
+          (l) => !(l.startsWith("[") && l.endsWith("]"))
+        );
+        const splitLeadingTimeStamps = removeTags.map((s) => {
+          const tup = s.split(/^\[\d\d?:\d\d?\.\d\d?\]\s*/);
+          return {
+            timestamp: tup[0],
+            text: tup[1],
+          };
+        });
+        return splitLeadingTimeStamps;
       }
 
       function parseTxtLines(fileContents) {
-            const lines = fileContents.split("\n");
-            const mapped =  lines.map((l) => ({text: l}));
-            return mapped;
+        const lines = fileContents.split("\n");
+        const mapped = lines.map((l) => ({ text: l }));
+        return mapped;
       }
 
       function loadFile(fileBlob) {
@@ -124,11 +137,11 @@
         const reader = new FileReader();
         reader.onload = function (event) {
           const fileContents = event.target.result;
-          if (fileBlob.name.toLowerCase().endsWith('.lrc')){
-            fileType = 'lrc';
+          if (fileBlob.name.toLowerCase().endsWith(".lrc")) {
+            fileType = "lrc";
             lines = parseLrcLines(fileContents);
-          } else if (fileBlob.name.toLowerCase().endsWith('.txt')) {
-            fileType = 'txt';
+          } else if (fileBlob.name.toLowerCase().endsWith(".txt")) {
+            fileType = "txt";
             lines = parseTxtLines(fileContents);
           }
           currentLineIndex = 0;
@@ -153,7 +166,7 @@
 
       function prevSong() {
         if (currentLineIndex > 5) {
-          currentLineIndex = 0;
+        currentLineIndex++;
           renderLyrics();
         } else {
           if (currentFileIndex > 0) {
@@ -166,19 +179,20 @@
         }
       }
 
-      function reOrderPlaylist(playlist) p{
-        
-      }
+      function reOrderPlaylist(playlist) {}
 
       function handleFileInputChange(event) {
-        filesList = Array.from(event.target.files).filter((x) =>
-          x.webkitRelativePath.toLowerCase().endsWith(".txt")
-          || x.webkitRelativePath.toLowerCase().endsWith(".lrc")
+        filesList = Array.from(event.target.files).filter(
+          (x) =>
+            x.webkitRelativePath.toLowerCase().endsWith(".txt") ||
+            x.webkitRelativePath.toLowerCase().endsWith(".lrc")
         );
 
-        const playlist = Array.from(event.target.files).find( x => x.name === 'lyrics.playlist');
+        const playlist = Array.from(event.target.files).find(
+          (x) => x.name === "lyrics.playlist"
+        );
         if (playlist) {
-            reOrderPlaylist(playlist)
+          reOrderPlaylist(playlist);
         }
 
         fileInput.classList.add("hidden");
