@@ -73,15 +73,15 @@
           "";
       }
 
-        function removeFileExtension(filename) {
-          var lastDotIndex = filename.lastIndexOf(".");
-          if (lastDotIndex === -1) {
-            // No file extension found
-            return filename;
-          } else {
-            return filename.substring(0, lastDotIndex);
-          }
+      function removeFileExtension(filename) {
+        var lastDotIndex = filename.lastIndexOf(".");
+        if (lastDotIndex === -1) {
+          // No file extension found
+          return filename;
+        } else {
+          return filename.substring(0, lastDotIndex);
         }
+      }
 
       function loadLyricsFromFile(fileBlob) {
         const reader = new FileReader();
@@ -99,7 +99,9 @@
       }
 
       function nextSong() {
-        currentFileIndex++;
+        if (currentFileIndex < filesList.length) {
+          currentFileIndex++;
+        }
         const file = filesList[currentFileIndex];
         if (file) {
           loadLyricsFromFile(file);
@@ -111,7 +113,9 @@
           currentLineIndex = 0;
           renderLyrics();
         } else {
-          currentFileIndex--;
+          if (currentFileIndex > 0) {
+            currentFileIndex--;
+          }
           const file = filesList[currentFileIndex];
           if (file) {
             loadLyricsFromFile(file);
