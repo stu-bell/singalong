@@ -41,7 +41,7 @@
 
     <script>
       let currentLineIndex = 0;
-      let currentFileIndex = -1;
+      let currentFileIndex = 0;
       let filesList = [];
       let lines = [];
       const previousLineElement = document.getElementById("previousLine");
@@ -51,10 +51,10 @@
 
       function renderLyrics() {
         previousLineElement.innerText = lines[currentLineIndex - 1] || "";
-        currentLineElement.innerText = lines[currentLineIndex];
+        currentLineElement.innerText = lines[currentLineIndex] || "";
         nextLinesElement.innerText = lines
           .slice(currentLineIndex + 1, currentLineIndex + 6)
-          .join("\n");
+          .join("\n") || "";
       }
 
       function loadLyricsFromFile(filePath) {
@@ -83,13 +83,14 @@
         filesList = Array.from(event.target.files)
             .filter(x=> x.webkitRelativePath.toLowerCase().endsWith('.txt'));
         fileInput.classList.add("hidden");
+        currentFileIndex = -1;
         nextSong();
       }
 
       function scrollNextLine() {
         currentLineIndex++;
         if (currentLineIndex >= lines.length) {
-            // todo next file
+            nextSong();
         }
         renderLyrics();
       }
