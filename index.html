@@ -106,6 +106,20 @@
             return mapped;
       }
 
+      function loadFile(fileBlob) {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          const fileContents = event.target.result;
+          currentLineIndex = 0;
+          songTitle.textContent = removeFileExtension(fileBlob.name);
+          renderLyrics();
+        };
+        reader.onerror = function (event) {
+          console.error("Error reading file:", event.target.error);
+        };
+        reader.readAsText(fileBlob);
+      }
+
       function loadLyricsFromFile(fileBlob) {
         const reader = new FileReader();
         reader.onload = function (event) {
@@ -117,7 +131,6 @@
             fileType = 'txt';
             lines = parseTxtLines(fileContents);
           }
-          console.log(lines)
           currentLineIndex = 0;
           songTitle.textContent = removeFileExtension(fileBlob.name);
           renderLyrics();
@@ -153,11 +166,21 @@
         }
       }
 
+      function reOrderPlaylist(playlist) p{
+        
+      }
+
       function handleFileInputChange(event) {
         filesList = Array.from(event.target.files).filter((x) =>
           x.webkitRelativePath.toLowerCase().endsWith(".txt")
           || x.webkitRelativePath.toLowerCase().endsWith(".lrc")
         );
+
+        const playlist = Array.from(event.target.files).find( x => x.name === 'lyrics.playlist');
+        if (playlist) {
+            reOrderPlaylist(playlist)
+        }
+
         fileInput.classList.add("hidden");
         currentFileIndex = -1;
         nextSong();
