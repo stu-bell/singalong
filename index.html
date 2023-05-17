@@ -1,114 +1,137 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Song Lyrics App</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            overflow: hidden;
-        }
-        
-        .previous-line,
-        .current-line,
-        .next-lines {
-            font-size: 16px;
-            opacity: 0.6;
-        }
-        
-        .current-line {
-            font-size: 24px;
-            font-weight: bold;
-        }
-        
-        .hidden {
-            display: none;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .previous-line,
+      .current-line,
+      .next-lines {
+        font-size: 16px;
+        opacity: 0.6;
+      }
+
+      .current-line {
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      .hidden {
+        display: none;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div id="lyricsContainer">
-        <p id="previousLine" class="previous-line"></p>
-        <p id="currentLine" class="current-line"></p>
-        <p id="nextLines" class="next-lines"></p>
+      <p id="previousLine" class="previous-line"></p>
+      <p id="currentLine" class="current-line"></p>
+      <p id="nextLines" class="next-lines"></p>
     </div>
 
-  <input type="file" id="fileInput" webkitdirectory directory multiple>
-    
+    <input type="file" id="fileInput" webkitdirectory directory multiple />
+
     <script>
-        let currentLineIndex = 0;
-        let lines = [];
-        const previousLineElement = document.getElementById('previousLine');
-        const filesList = [];
-        const currentLineElement = document.getElementById('currentLine');
-        const nextLinesElement = document.getElementById('nextLines');
-        const fileInput = document.getElementById('fileInput');
-        const lyricsContainer = document.getElementById('lyricsContainer');
+      let currentLineIndex = 0;
+      let currentFileIndex = -1;
+      let filesList = [];
+      let lines = [];
+      const previousLineElement = document.getElementById("previousLine");
+      const currentLineElement = document.getElementById("currentLine");
+      const nextLinesElement = document.getElementById("nextLines");
+      const fileInput = document.getElementById("fileInput");
 
-        function loadLyricsFromFile(file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const fileContents = event.target.result;
-                lines = fileContents.split('\n');
-                currentLineIndex = 0;
-                updateLyrics();
-                fileInput.classList.add('hidden');
-            };
-            reader.onerror = function(event) {
-                console.error('Error reading file:', event.target.error);
-            };
-            reader.readAsText(file);
+      function renderLyrics() {
+        previousLineElement.innerText = lines[currentLineIndex - 1] || "";
+        currentLineElement.innerText = lines[currentLineIndex];
+        nextLinesElement.innerText = lines
+          .slice(currentLineIndex + 1, currentLineIndex + 6)
+          .join("\n");
+      }
+
+      function loadLyricsFromFile(filePath) {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          const fileContents = event.target.result;
+          lines = fileContents.split("\n");
+          currentLineIndex = 0;
+          renderLyrics();
+        };
+        reader.onerror = function (event) {
+          console.error("Error reading file:", event.target.error);
+        };
+        reader.readAsText(filePath);
+      }
+
+      function nextSong() {
+        currentFileIndex++;
+        const file = filesList[currentFileIndex];
+        if (file) {
+          loadLyricsFromFile(file);
         }
+      }
 
-        function updateLyrics() {
-            previousLineElement.innerText = lines[currentLineIndex - 1] || '';
-            currentLineElement.innerText = lines[currentLineIndex];
-            nextLinesElement.innerText = lines.slice(currentLineIndex + 1, currentLineIndex + 6).join('\n');
+      function handleFileInputChange(event) {
+        filesList = Array.from(event.target.files)
+            .filter(x=> x.webkitRelativePath.toLowerCase().endsWith('.txt'));
+        fileInput.classList.add("hidden");
+        nextSong();
+      }
+
+      function scrollNextLine() {
+        currentLineIndex++;
+        if (currentLineIndex >= lines.length) {
+            // todo next file
         }
+        renderLyrics();
+      }
 
-        function scrollNextLine() {
-            currentLineIndex++;
-            updateLyrics();
+      function scrollPreviousLine() {
+        currentLineIndex--;
+        renderLyrics();
+      }
+
+      // select folder event
+      document
+        .getElementById("fileInput")
+        .addEventListener("change", handleFileInputChange);
+
+      // scroll events
+      document.addEventListener("keydown", function (event) {
+        if (event.code === "Enter") {
+          scrollNextLine();
+        } else if (event.code === "Space") {
+          scrollNextLine();
+        } else if (event.code === "ArrowDown") {
+          scrollNextLine();
+        } else if (event.code === "ArrowUp") {
+          scrollPreviousLine();
         }
+      });
 
-        function scrollPreviousLine() {
-            currentLineIndex--;
-            updateLyrics();
-        }
+      document.addEventListener("touchstart", function () {
+        scrollNextLine();
+      });
 
-        function handleFileInputChange(event) {
-            const filesList = Array.from(event.target.files).map((x) => x.webkitRelativePath)
-            const file = event.target.files[0];
-            if (file) {
-                loadLyricsFromFile(file);
-            }
-            alert(filesList.join('\n'))
-        }
-
-        document.getElementById('fileInput').addEventListener('change', handleFileInputChange);
-
-        document.addEventListener('keydown', function(event) {
-            if (event.code === 'Space') {
-                scrollNextLine();
-            } else if (event.code === 'ArrowUp') {
-                scrollPreviousLine();
-            } else if (event.code === 'ArrowDown') {
-                scrollNextLine();
-            }
-        });
-
-        document.addEventListener('touchstart', function() {
-            scrollNextLine();
-        });
-
-        // Check compatibility with required APIs
-        if (!window.FileReader || !window.FileList || !window.File || !window.Blob) {
-            alert('Your browser does not support the required APIs. Please use a modern browser.');
-        }
+      // Check compatibility with required APIs
+      if (
+        !window.FileReader ||
+        !window.FileList ||
+        !window.File ||
+        !window.Blob
+      ) {
+        alert(
+          "Your browser does not support the required APIs. Please use a modern browser."
+        );
+      }
     </script>
-</body>
+  </body>
 </html>
