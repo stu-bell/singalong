@@ -51,7 +51,6 @@
 
 <body>
   <div id="lyricsContainer">
-    <p id="previousLine" class="previous-line hidden"></p>
     <p id="currentLine" class="current-line"></p>
     <p id="nextLines" class="next-lines"></p>
   </div>
@@ -67,7 +66,6 @@
     let currentFileIndex = 0;
     let filesList = [];
     let lines = [];
-    const previousLineElement = document.getElementById("previousLine");
     const currentLineElement = document.getElementById("currentLine");
     const nextLinesElement = document.getElementById("nextLines");
     const songTitle = document.getElementById("songTitle");
@@ -75,23 +73,6 @@
 
     // setTimeout allowing us to adjust the timer
     let scrollTimer = null; 
-    function Timer(callback, duration) {
-      this.startTime = Date.now();
-      this.timeoutInstance = setTimeout(callback, duration);
-      this.getRemainingTime = function () {
-        return Date.now() - this.startTime;
-      };
-      this.clear = function () {
-        clearTimeout(this.timeoutInstance);
-      };
-      // method to adjust an inflight timer
-      this.adjustOffset = function (offset) {
-        clearTimeout(this.timoutInstance);
-        const newTime = this.getRemainingTime() + offset;
-        this.startTime = Date.now();
-        this.timoutInstance = setTimeout(callback, newTime);
-      };
-    }
 
     function removeFileExtension(filename) {
       var lastDotIndex = filename.lastIndexOf(".");
@@ -105,14 +86,14 @@
 
     function setTimeoutNextScroll() {
       if (scrollTimer){
-        scrollTimer.clear();
+        clearTimeout(scrollTimer);
       }
       if (fileType === 'lrc' && lines[currentLineIndex] && lines[currentLineIndex + 1]) {
         const currentLineTime = lines[currentLineIndex].timestamp;
         const nextLineTime = lines[currentLineIndex + 1].timestamp;
         const delay = nextLineTime - currentLineTime;
         if (delay > 0) {
-          scrollTimer = new Timer(scrollNextLine, delay * 1000);
+          scrollTimer = setTimeout(scrollNextLine, delay * 1000);
         } else {
           // if the timestamps on current and nextlines are the same, do we just want to skip now?
           scrollNextLine();
@@ -122,7 +103,6 @@
 
     function renderLyrics() {
       setTimeoutNextScroll();
-      previousLineElement.innerText = R.propOr("", "text", lines[currentLineIndex - 1]);
       currentLineElement.innerText = R.propOr("", "text", lines[currentLineIndex]);
       nextLinesElement.innerText = lines.slice(currentLineIndex + 1, currentLineIndex + 6).map(R.propOr("", "text")).join("\n");
     }
@@ -160,20 +140,6 @@
       const lines = fileContents.split("\n");
       const mapped = lines.map((l) => ({ text: l }));
       return mapped;
-    }
-
-    function loadFile(fileBlob) {
-      const reader = new FileReader();
-      reader.onload = function (event) {
-        const fileContents = event.target.result;
-        currentLineIndex = 0;
-        songTitle.textContent = removeFileExtension(fileBlob.name);
-        renderLyrics();
-      };
-      reader.onerror = function (event) {
-        console.error("Error reading file:", event.target.error);
-      };
-      reader.readAsText(fileBlob);
     }
 
     function loadLyricsFromFile(fileBlob) {
@@ -229,6 +195,7 @@
         file.webkitRelativePath.toLowerCase().endsWith('.lrc')
       );
 
+      // check for presence of a file named lyrics.playlist, with lines of file names in the order they should be displayed
       const playlistFile = folderFiles.find(file => file.name.toLowerCase() === 'lyrics.playlist');
       if (playlistFile) {
         const reader = new FileReader();
@@ -248,13 +215,11 @@
           console.error('Error reading file:', event.target.error);
         };
         reader.readAsText(playlistFile);
-
       } else {
         // don't order the folder, just play in what ever order they come
         currentFileIndex = -1;
         nextSong();
       }
-
       fileInput.classList.add('hidden');
     }
 
@@ -284,7 +249,11 @@
         scrollNextLine();
       } else if (event.code === "ArrowDown") {
         scrollNextLine();
+      } else if (event.code === "ArrowRight") {
+        scrollNextLine();
       } else if (event.code === "ArrowUp") {
+        scrollPreviousLine();
+      } else if (event.code === "ArrowLeft") {
         scrollPreviousLine();
       }
     });
@@ -301,20 +270,6 @@
         prevSong();
       }
     });
-
-    // adjust timers
-    document.addEventListener('keydown', function (event) {
-      if (event.code === 'ArrowLeft') {
-        if (scrollTimer) {
-          scrollTimer.adjustOffset(0.25 * 1000);
-        }
-      } else if (event.code === 'ArrowRight') {
-        if (scrollTimer) {
-          scrollTimer.adjustOffset(-0.25 * 1000);
-        }
-      }
-    });
-
 
     // Check compatibility with required APIs
     if (
