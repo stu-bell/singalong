@@ -83,21 +83,36 @@
       }
     }
 
+    function setTimeoutNextScroll() {
+      if (fileType === 'lrc' && lines[currentLineIndex].timestamp) {
+        const currentLine = lines[currentLineIndex];
+        const timestamp = currentLine.timestamp;
+        const nextLine = lines[currentLineIndex + 1];
+        const nextTimestamp = nextLine ? nextLine.timestamp : Infinity;
+        const duration = nextTimestamp - timestamp;
+        if (duration > 0) {
+          setTimeout(() => {
+            scrollNextLine();
+          }, duration * 1000);
+        }
+      }
+    }
+
     function renderLyrics() {
-      previousLineElement.innerText = R.propOr(
-        "",
-        "text",
-        lines[currentLineIndex - 1]
-      );
-      currentLineElement.innerText = R.propOr(
-        "",
-        "text",
-        lines[currentLineIndex]
-      );
-      nextLinesElement.innerText = lines
-        .slice(currentLineIndex + 1, currentLineIndex + 6)
-        .map(R.propOr("", "text"))
-        .join("\n");
+      setTimeoutNextScroll();
+      previousLineElement.innerText = R.propOr("", "text", lines[currentLineIndex - 1]);
+      currentLineElement.innerText = R.propOr("", "text", lines[currentLineIndex]);
+      nextLinesElement.innerText = lines.slice(currentLineIndex + 1, currentLineIndex + 6).map(R.propOr("", "text")).join("\n");
+    }
+
+    function parseTimestamp(timestamp) {
+      if (timestamp) {
+        const clean = timestamp.replace(/[[\]]/g, '');
+        const parts = clean.split(':');
+        const minutes = parseInt(parts[0]);
+        const seconds = parseFloat(parts[1]);
+        return minutes * 60 + seconds;
+      }
     }
 
     function parseLrcLines(fileContents) {
@@ -106,10 +121,14 @@
         (l) => !(l.startsWith("[") && l.endsWith("]"))
       );
       const splitLeadingTimeStamps = removeTags.map((s) => {
-        const tup = s.split(/^\[\d\d?:\d\d?\.\d\d?\]\s*/);
+        const matchTimestamp = s.match(/^\[\d\d?:\d\d?\.\d\d?\]/);
+        let splitIndex = 0;
+        if (matchTimestamp) {
+          splitIndex = matchTimestamp[0].length;
+        }
         return {
-          timestamp: tup[0],
-          text: tup[1],
+          timestamp: parseTimestamp(s.substring(0, splitIndex)),
+          text: s.substring(splitIndex)
         };
       });
       return splitLeadingTimeStamps;
@@ -142,6 +161,7 @@
         if (fileBlob.name.toLowerCase().endsWith(".lrc")) {
           fileType = "lrc";
           lines = parseLrcLines(fileContents);
+          console.log(lines.map(R.prop('timestamp')));
         } else if (fileBlob.name.toLowerCase().endsWith(".txt")) {
           fileType = "txt";
           lines = parseTxtLines(fileContents);
@@ -181,13 +201,12 @@
       }
     }
 
-
     function handleFileInputChange(event) {
       const folderFiles = Array.from(event.target.files);
-        filesList = folderFiles.filter(file =>
-          file.webkitRelativePath.toLowerCase().endsWith('.txt') ||
-          file.webkitRelativePath.toLowerCase().endsWith('.lrc')
-        );
+      filesList = folderFiles.filter(file =>
+        file.webkitRelativePath.toLowerCase().endsWith('.txt') ||
+        file.webkitRelativePath.toLowerCase().endsWith('.lrc')
+      );
 
       const playlistFile = folderFiles.find(file => file.name.toLowerCase() === 'lyrics.playlist');
       if (playlistFile) {
