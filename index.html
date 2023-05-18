@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Song Lyrics App</title>
   <meta charset="UTF-8" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#000000">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -35,8 +39,7 @@
 
     song-title {
       font-size: 2px;
-      color: #999
-      margin: 0;
+      color: #999 margin: 0;
     }
 
     .hidden {
@@ -69,7 +72,7 @@
     const lyricsContainer = document.getElementById("lyricsContainer");
 
     // setTimeout allowing us to adjust the timer
-    let scrollTimer = null; 
+    let scrollTimer = null;
 
     function removeFileExtension(filename) {
       var lastDotIndex = filename.lastIndexOf(".");
@@ -82,7 +85,7 @@
     }
 
     function setTimeoutNextScroll() {
-      if (scrollTimer){
+      if (scrollTimer) {
         clearTimeout(scrollTimer);
       }
       if (fileType === 'lrc' && lines[currentLineIndex] && lines[currentLineIndex + 1]) {
@@ -279,6 +282,17 @@
       alert(
         "Your browser does not support the required APIs. Please use a modern browser."
       );
+    }
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('service-worker.js').then(function (registration) {
+          console.log('Service Worker registered with scope:', registration.scope);
+        }, function (err) {
+          console.log('Service Worker registration failed:', err);
+        });
+      });
     }
   </script>
 </body>
