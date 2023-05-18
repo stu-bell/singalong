@@ -182,6 +182,7 @@
         currentLineIndex = 0;
         songTitle.textContent = removeFileExtension(fileBlob.name);
         renderLyrics();
+        reader = null; // file reader no longer needed
       };
       reader.onerror = function (event) {
         console.error("Error reading file:", event.target.error);
