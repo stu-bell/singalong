@@ -73,6 +73,39 @@
     const songTitle = document.getElementById("songTitle");
     const fileInput = document.getElementById("fileInput");
 
+    // setTimeout allowing us to adjust the timer
+    let scrollTimer = null; 
+    function Timer(callback, duration) {
+      this.startTime = Date.now();
+      this.remainingTime = duration;
+      this.timerInstance = setTimeout(callback, duration);
+      this.getRemainingTime = function () {
+        var elapsedTime = Date.now() - this.startTime;
+        return Math.max(this.remainingTime - elapsedTime, 0);
+      };
+      this.clear = function () {
+        clearTimeout(this.timerInstance);
+      };
+      // method to adjust an inflight timer
+      this.adjustOffset = function (offset) {
+        clearTimeout(this.timerInstance);
+        this.remainingTime += offset;
+        this.timerInstance = setTimeout(callback, this.remainingTime);
+      };
+    }
+
+    document.addEventListener('keydown', function (event) {
+      if (event.code === 'ArrowLeft') {
+        if (scrollTimer) {
+          scrollTimer.adjustOffset(0.25);
+        }
+      } else if (event.code === 'ArrowRight') {
+        if (scrollTimer) {
+          scrollTimer.adjustOffset(-0.25);
+        }
+      }
+    });
+
     function removeFileExtension(filename) {
       var lastDotIndex = filename.lastIndexOf(".");
       if (lastDotIndex === -1) {
@@ -84,15 +117,16 @@
     }
 
     function setTimeoutNextScroll() {
+      if (scrollTimer){
+        scrollTimer.clear();
+      }
       if (fileType === 'lrc' && lines[currentLineIndex] && lines[currentLineIndex + 1]) {
         const currentLineTime = lines[currentLineIndex].timestamp;
         const nextLineTime = lines[currentLineIndex + 1].timestamp;
         const delay = nextLineTime - currentLineTime;
         console.log(currentLineTime, nextLineTime, delay)
         if (delay > 0) {
-          setTimeout(() => {
-            scrollNextLine();
-          }, delay * 1000);
+          scrollTimer = new Timer(scrollNextLine, delay * 1000);
         } else {
           // if the timestamps on current and nextlines are the same, do we just want to skip now?
           scrollNextLine();
@@ -133,7 +167,7 @@
           text: s.substring(splitIndex)
         };
       });
-      return [{timestamp: 0, text: ''}].concat(splitLeadingTimeStamps);
+      return [{ timestamp: 0, text: '' }].concat(splitLeadingTimeStamps);
     }
 
     function parseTxtLines(fileContents) {
