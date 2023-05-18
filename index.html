@@ -77,34 +77,21 @@
     let scrollTimer = null; 
     function Timer(callback, duration) {
       this.startTime = Date.now();
-      this.remainingTime = duration;
-      this.timerInstance = setTimeout(callback, duration);
+      this.timeoutInstance = setTimeout(callback, duration);
       this.getRemainingTime = function () {
-        var elapsedTime = Date.now() - this.startTime;
-        return Math.max(this.remainingTime - elapsedTime, 0);
+        return Date.now() - this.startTime;
       };
       this.clear = function () {
-        clearTimeout(this.timerInstance);
+        clearTimeout(this.timeoutInstance);
       };
       // method to adjust an inflight timer
       this.adjustOffset = function (offset) {
-        clearTimeout(this.timerInstance);
-        this.remainingTime += offset;
-        this.timerInstance = setTimeout(callback, this.remainingTime);
+        clearTimeout(this.timoutInstance);
+        const newTime = this.getRemainingTime() + offset;
+        this.startTime = Date.now();
+        this.timoutInstance = setTimeout(callback, newTime);
       };
     }
-
-    document.addEventListener('keydown', function (event) {
-      if (event.code === 'ArrowLeft') {
-        if (scrollTimer) {
-          scrollTimer.adjustOffset(0.25);
-        }
-      } else if (event.code === 'ArrowRight') {
-        if (scrollTimer) {
-          scrollTimer.adjustOffset(-0.25);
-        }
-      }
-    });
 
     function removeFileExtension(filename) {
       var lastDotIndex = filename.lastIndexOf(".");
@@ -124,7 +111,6 @@
         const currentLineTime = lines[currentLineIndex].timestamp;
         const nextLineTime = lines[currentLineIndex + 1].timestamp;
         const delay = nextLineTime - currentLineTime;
-        console.log(currentLineTime, nextLineTime, delay)
         if (delay > 0) {
           scrollTimer = new Timer(scrollNextLine, delay * 1000);
         } else {
@@ -315,6 +301,20 @@
         prevSong();
       }
     });
+
+    // adjust timers
+    document.addEventListener('keydown', function (event) {
+      if (event.code === 'ArrowLeft') {
+        if (scrollTimer) {
+          scrollTimer.adjustOffset(0.25 * 1000);
+        }
+      } else if (event.code === 'ArrowRight') {
+        if (scrollTimer) {
+          scrollTimer.adjustOffset(-0.25 * 1000);
+        }
+      }
+    });
+
 
     // Check compatibility with required APIs
     if (
