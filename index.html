@@ -1,13 +1,8 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <title>Song Lyrics App</title>
   <meta charset="UTF-8" />
-  <script src="./ramdajs.min.js">
-      // ramdajs.com minified
-      // TODO: only select functions needed!!
-  </script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -40,6 +35,7 @@
 
     song-title {
       font-size: 2px;
+      color: #999
       margin: 0;
     }
 
@@ -70,6 +66,7 @@
     const nextLinesElement = document.getElementById("nextLines");
     const songTitle = document.getElementById("songTitle");
     const fileInput = document.getElementById("fileInput");
+    const lyricsContainer = document.getElementById("lyricsContainer");
 
     // setTimeout allowing us to adjust the timer
     let scrollTimer = null; 
@@ -101,10 +98,12 @@
       }
     }
 
+    const propOrDefault = (defVal, propName) => (obj) => obj[propName] ? obj[propName] : defVal
+
     function renderLyrics() {
       setTimeoutNextScroll();
-      currentLineElement.innerText = R.propOr("", "text", lines[currentLineIndex]);
-      nextLinesElement.innerText = lines.slice(currentLineIndex + 1, currentLineIndex + 6).map(R.propOr("", "text")).join("\n");
+      currentLineElement.innerText = propOrDefault("", "text")(lines[currentLineIndex]);
+      nextLinesElement.innerText = lines.slice(currentLineIndex + 1, currentLineIndex + 6).map(propOrDefault("", "text")).join("\n");
     }
 
     function parseTimestamp(timestamp) {
@@ -195,8 +194,8 @@
         file.webkitRelativePath.toLowerCase().endsWith('.lrc')
       );
 
-      // check for presence of a file named lyrics.playlist, with lines of file names in the order they should be displayed
-      const playlistFile = folderFiles.find(file => file.name.toLowerCase() === 'lyrics.playlist');
+      // check for presence of a file named _lyrics.playlist.txt, with lines of file names in the order they should be displayed
+      const playlistFile = folderFiles.find(file => file.name.toLowerCase() === '_lyrics.playlist.txt');
       if (playlistFile) {
         const reader = new FileReader();
         reader.onload = function (event) {
@@ -241,19 +240,18 @@
       .getElementById("fileInput")
       .addEventListener("change", handleFileInputChange);
 
-    // scroll events
+    // show hide 
     document.addEventListener("keydown", function (event) {
       if (event.code === "Enter") {
+        lyricsContainer.classList.toggle('hidden');
+      }
+    });
+
+    // scroll events
+    document.addEventListener("keydown", function (event) {
+      if (event.code === "Space" || event.code === "ArrowDown" || event.code === "ArrowRight") {
         scrollNextLine();
-      } else if (event.code === "Space") {
-        scrollNextLine();
-      } else if (event.code === "ArrowDown") {
-        scrollNextLine();
-      } else if (event.code === "ArrowRight") {
-        scrollNextLine();
-      } else if (event.code === "ArrowUp") {
-        scrollPreviousLine();
-      } else if (event.code === "ArrowLeft") {
+      } else if (event.code === "ArrowUp" || event.code === "ArrowLeft") {
         scrollPreviousLine();
       }
     });
@@ -264,9 +262,9 @@
 
     // next prev events
     document.addEventListener("keydown", function (event) {
-      if (event.ctrlKey && event.key === "ArrowRight") {
+      if (event.code === 'KeyN') {
         nextSong();
-      } else if (event.ctrlKey && event.key === "ArrowLeft") {
+      } else if (event.code === 'KeyP') {
         prevSong();
       }
     });
