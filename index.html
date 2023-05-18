@@ -84,16 +84,18 @@
     }
 
     function setTimeoutNextScroll() {
-      if (fileType === 'lrc' && lines[currentLineIndex].timestamp) {
-        const currentLine = lines[currentLineIndex];
-        const timestamp = currentLine.timestamp;
-        const nextLine = lines[currentLineIndex + 1];
-        const nextTimestamp = nextLine ? nextLine.timestamp : Infinity;
-        const duration = nextTimestamp - timestamp;
-        if (duration > 0) {
+      if (fileType === 'lrc' && lines[currentLineIndex] && lines[currentLineIndex + 1]) {
+        const currentLineTime = lines[currentLineIndex].timestamp;
+        const nextLineTime = lines[currentLineIndex + 1].timestamp;
+        const delay = nextLineTime - currentLineTime;
+        console.log(currentLineTime, nextLineTime, delay)
+        if (delay > 0) {
           setTimeout(() => {
             scrollNextLine();
-          }, duration * 1000);
+          }, delay * 1000);
+        } else {
+          // if the timestamps on current and nextlines are the same, do we just want to skip now?
+          scrollNextLine();
         }
       }
     }
@@ -131,7 +133,7 @@
           text: s.substring(splitIndex)
         };
       });
-      return splitLeadingTimeStamps;
+      return [{timestamp: 0, text: ''}].concat(splitLeadingTimeStamps);
     }
 
     function parseTxtLines(fileContents) {
@@ -161,7 +163,6 @@
         if (fileBlob.name.toLowerCase().endsWith(".lrc")) {
           fileType = "lrc";
           lines = parseLrcLines(fileContents);
-          console.log(lines.map(R.prop('timestamp')));
         } else if (fileBlob.name.toLowerCase().endsWith(".txt")) {
           fileType = "txt";
           lines = parseTxtLines(fileContents);
