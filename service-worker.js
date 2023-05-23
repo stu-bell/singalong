@@ -6,7 +6,7 @@ const cacheName = 'lyrics-player-v1.10';
 const filesToCache = [
         // '/',
         // '/manifest.json',
-        '/index.html',
+        'index.html',
         // '/assets/icon192.png',
         // '/assets/icon512.png',
         // '/favicon.ico',
