@@ -1,5 +1,5 @@
 // cache name with version number
-const cacheName = 'lyrics-player-v1.3';
+const cacheName = 'lyrics-player-v1.4';
 
 // Files to cache
 const filesToCache = [
