@@ -39,18 +39,4 @@ self.addEventListener('fetch', function(event) {
 // Clean up old caches (ie where the version name is different)
 self.addEventListener("activate", (e) => {
   console.log('Service Worker Activate');
-  e.waitUntil(
-    caches.keys().then((keyList) => {
-      return Promise.all(
-        keyList.map((key) => {
-          if (key === cacheName) {
-            return;
-          } else {
-            console.log('Service Worker Deleting Cache', key);
-            return caches.delete(key);
-          }
-        })
-      );
-    })
-  );
 });
