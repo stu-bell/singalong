@@ -169,7 +169,7 @@
     }
 
     function loadLyricsFromFile(fileBlob) {
-      const reader = new FileReader();
+      let reader = new FileReader();
       reader.onload = function (event) {
         const fileContents = event.target.result;
         if (fileBlob.name.toLowerCase().endsWith(".lrc")) {
