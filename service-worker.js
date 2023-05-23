@@ -1,15 +1,15 @@
 // cache name with version number
-const cacheName = 'lyrics-player-v1.9';
+const cacheName = 'lyrics-player-v1.10';
 
 // Files to cache
 // Add other files you want to cache
 const filesToCache = [
-        '/',
-        '/manifest.json',
+        // '/',
+        // '/manifest.json',
         '/index.html',
-        '/assets/icon192.png',
-        '/assets/icon512.png',
-        '/favicon.ico',
+        // '/assets/icon192.png',
+        // '/assets/icon512.png',
+        // '/favicon.ico',
 ];
 
 // Installing Service Worker
