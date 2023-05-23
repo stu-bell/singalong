@@ -3,10 +3,10 @@ const cacheName = 'lyrics-player-v1.4';
 
 // Files to cache
 const filesToCache = [
-        '/',
-        '/index.html',
-        '/assets/icon192.png',
-        '/assets/icon512.png',
+        // '/',
+        'index.html',
+        'assets/icon192.png',
+        'assets/icon512.png',
         // 'styles.css',
         // Add other files you want to cache
 ];
