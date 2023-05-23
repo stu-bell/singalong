@@ -198,17 +198,11 @@
     }
 
     function prevSong() {
-      console.log('debug ===============================');
-      console.log('debug prevSong');
-      console.log('debug currentLineIndex', currentLineIndex);
-      console.log('debug currentFileIndex', currentFileIndex);
       if (currentLineIndex > 2) {
-      console.log('debug start of song');
         // go back to start of current song
         currentLineIndex = 0;
         renderLyrics();
       } else if (currentFileIndex > 0) {
-        console.log('debug go to prev song');
         // go back to previous song
         currentFileIndex--;
         loadLyricsFromFile(filesList[currentFileIndex]);
