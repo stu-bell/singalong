@@ -121,7 +121,8 @@
 
     function sortLrcFile(lrcFile) {
       // some lrc files have repeated lyrics on one line with multiple timetamps. This splits into multiple lines and sorts the result lines
-      const lines = lrcFile.split('\n');
+      // split file by newline and filter out blank lines
+      const lines = lrcFile.split('\n').filter(line => line.trim() !== '');;
       let result = [];
       lines.forEach((line) => {
         const trimmedLine = line.trim();
