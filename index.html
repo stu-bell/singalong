@@ -204,7 +204,7 @@
         // go back to start of current song
         currentLineIndex = 0;
         renderLyrics();
-      } else {
+      } else if (currentFileIndex > 0) {
         // go back to previous song
         currentFileIndex--;
         const file = filesList[currentFileIndex];
