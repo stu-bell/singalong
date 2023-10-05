@@ -1,0 +1,19 @@
+{
+  "name": "singalong",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stu-bell/lyrics-player.git"
+  },
+  "author": "Stuart Bell",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stu-bell/lyrics-player/issues"
+  },
+  "homepage": "https://github.com/stu-bell/lyrics-player"
+}
