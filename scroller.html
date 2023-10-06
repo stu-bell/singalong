@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        li {
+            font-size: 2em;
+            /* this may vary according to your requirements */
+            opacity: 0.5;
+        }
+
+        @keyframes disappear {
+            0% {
+                opacity: 1;
+                font-size: 4em
+            }
+
+            100% {
+                opacity: 0;
+                font-size: 0em
+            }
+        }
+
+        @keyframes scrollup {
+            0% {
+                opacity: 0.5;
+                font-size: 2em
+            }
+
+            100% {
+                opacity: 1;
+                font-size: 4em
+            }
+        }
+
+        .animate-out {
+            animation: disappear 0.2s forwards;
+        }
+
+        .animate {
+            animation: scrollup 0.2s forwards;
+        }
+    </style>
+</head>
+
+<body style="display:flex">
+    <div style="display: inline-block;align-self: flex-end;">
+
+        <ul id="myList">
+            <li>Line 1</li>
+            <li>Line 2</li>
+            <li>Line 3</li>
+            <li>Line 4</li>
+        </ul>
+    </div>
+
+    <script>
+        let i = 4;
+
+        document.body.onkeyup = function (e) {
+            if (e.key == " ") {
+                var list = document.getElementById("myList");
+
+                const first = list.firstElementChild;
+                const second = list.getElementsByTagName("li")[1];
+
+
+                // animate out the first element then remove
+                first.classList.remove('animate')
+                first.classList.add('animate-out'); 
+                setTimeout(() => first.remove(), 200);
+
+                // promote the second element
+                second.classList.add('animate');
+
+                // Append the new line at the end
+                i++
+                const newLi = document.createElement('li');
+                newLi.textContent = 'Line ' + i
+                list.appendChild(newLi)
+
+            }
+        }
+    </script>
+</body>
+
+</html>

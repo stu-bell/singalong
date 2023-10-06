@@ -40,7 +40,15 @@
 
     song-title {
       font-size: 2px;
-      color: #999 margin: 0;
+      color: #999 ; margin: 0;
+    }
+
+.move-up {
+   transform: translateY(-50px); /* Moves the element up by 50 pixels */
+   transition: all 1s; /* Animation will last 1 second */
+}
+    .transition {
+      transition: transform 2s
     }
 
     .hidden {
@@ -52,7 +60,9 @@
 <body>
   <div id="lyricsContainer">
     <p id="currentLine" class="current-line"></p>
-    <p id="nextLines" class="next-lines"></p>
+    <div id="nextLinesWrapper">
+      <p id="nextLines" class="next-lines"></p>
+    </div>
   </div>
   <div id="songTitleContainer">
     <p id="songTitle" class="song-title"></p>
@@ -68,6 +78,10 @@
     let lines = [];
     const currentLineElement = document.getElementById("currentLine");
     const nextLinesElement = document.getElementById("nextLines");
+    const nextLinesWrapperElement = document.getElementById('nextLinesWrapper');
+
+    const nextLineHeight = nextLinesElement.offsetHeight;
+
     const songTitle = document.getElementById("songTitle");
     const fileInput = document.getElementById("fileInput");
     const lyricsContainer = document.getElementById("lyricsContainer");
@@ -106,8 +120,10 @@
 
     function renderLyrics() {
       setTimeoutNextScroll();
+
       currentLineElement.innerText = propOrDefault("", "text")(lines[currentLineIndex]);
       nextLinesElement.innerText = lines.slice(currentLineIndex + 1, currentLineIndex + 6).map(propOrDefault("", "text")).join("\n");
+      currentLineElement.classList.add('move-up')
     }
 
     function parseTimestamp(timestamp) {
@@ -248,6 +264,10 @@
 
     function scrollNextLine() {
       currentLineIndex++;
+      nextLinesElement.style.fontSize = '2em';  // New font size for the upcoming line
+      nextLinesWrapperElement.style.transform = 'translateY(' + (-nextLineHeight) + 'px)';
+      nextLinesElement.classList.add("transition");
+
       if (currentLineIndex >= lines.length) {
         nextSong();
       }
