@@ -9,6 +9,15 @@
             opacity: 0.5;
         }
 
+        li.zero {
+            font-size: 0em;
+        }
+
+        li.large {
+            font-size: 4em;
+            opacity: 1;
+        }
+
         @keyframes disappear {
             0% {
                 opacity: 1;
@@ -31,6 +40,14 @@
                 opacity: 1;
                 font-size: 4em
             }
+        }
+
+        .animate-back {
+            animation: disappear 2s backwards;
+        }
+
+        .animate-demote {
+            animation: scrollup 2s backwards;
         }
 
         .animate-out {
@@ -57,30 +74,61 @@
     <script>
         let i = 4;
 
+        function backwards() {
+            var list = document.getElementById("myList");
+            
+            // prepend line
+            i--
+            const newLi = document.createElement('li')
+            newLi.classList.add('zero')
+            newLi.textContent = 'Line ' + i
+            list.prepend(newLi)
+
+            const first = list.firstElementChild;
+            const second = list.getElementsByTagName('li')[1];
+
+            first.classList.add('animate-back');
+            second.classList.remove('animate');
+            second.classList.add('animate-demote');
+            setTimeout(() => {
+                first.classList.remove('zero')
+                first.classList.add('large')
+                second.classList.remove('large')
+            }, 2000);
+            
+        }
+
+        function forwards() {
+            var list = document.getElementById("myList");
+
+            // remove any nodes on their way out
+            list.querySelectorAll('.animate-out').forEach(x => x.remove())
+
+            const first = list.firstElementChild;
+            const second = list.getElementsByTagName("li")[1];
+
+            // animate out the first element then remove
+            first.classList.remove('animate')
+            first.classList.add('animate-out');
+            // timeout after animation ends
+            setTimeout(() => first.remove(), 200);
+
+            // promote the second element
+            second.classList.add('animate');
+
+            // Append the new line at the end
+            i++
+            const newLi = document.createElement('li');
+            newLi.textContent = 'Line ' + i
+            list.appendChild(newLi)
+        }
+
         document.body.onkeyup = function (e) {
             if (e.key == " ") {
-                var list = document.getElementById("myList");
-
-                // remove any nodes on their way out
-                list.querySelectorAll('.animate-out').forEach(x => x.remove());
-
-                const first = list.firstElementChild;
-                const second = list.getElementsByTagName("li")[1];
-
-                // animate out the first element then remove
-                first.classList.remove('animate')
-                first.classList.add('animate-out'); 
-                setTimeout(() => first.remove(), 200);
-
-                // promote the second element
-                second.classList.add('animate');
-
-                // Append the new line at the end
-                i++
-                const newLi = document.createElement('li');
-                newLi.textContent = 'Line ' + i
-                list.appendChild(newLi)
-
+                forwards()
+            }
+            if (e.key == "k") {
+                backwards()
             }
         }
     </script>
