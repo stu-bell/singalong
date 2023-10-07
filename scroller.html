@@ -61,9 +61,11 @@
             if (e.key == " ") {
                 var list = document.getElementById("myList");
 
+                // remove any nodes on their way out
+                list.querySelectorAll('.animate-out').forEach(x => x.remove());
+
                 const first = list.firstElementChild;
                 const second = list.getElementsByTagName("li")[1];
-
 
                 // animate out the first element then remove
                 first.classList.remove('animate')
