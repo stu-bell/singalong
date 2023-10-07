@@ -43,11 +43,11 @@
         }
 
         .animate-back {
-            animation: disappear 2s backwards;
+            animation: disappear 0.2s reverse;
         }
 
         .animate-demote {
-            animation: scrollup 2s backwards;
+            animation: scrollup 0.2s reverse;
         }
 
         .animate-out {
@@ -94,7 +94,7 @@
                 first.classList.remove('zero')
                 first.classList.add('large')
                 second.classList.remove('large')
-            }, 2000);
+            }, 200);
             
         }
 
@@ -109,6 +109,8 @@
 
             // animate out the first element then remove
             first.classList.remove('animate')
+            first.classList.remove('animate-demote')
+            first.classList.remove('animate-back')
             first.classList.add('animate-out');
             // timeout after animation ends
             setTimeout(() => first.remove(), 200);
