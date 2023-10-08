@@ -3,14 +3,16 @@
 
 <head>
     <style>
+        ul {
+            list-style-type:none;
+        }
         li {
             transition: 1s linear all;
-            font-size: 2em;
-        }
-        li.med {
-            font-size: 2em;
         }
 
+        li {
+            font-size: 2em;
+        }
         li.zero {
             font-size: 0em;
         }
@@ -26,6 +28,7 @@
     <div style="display: inline-block;align-self: flex-end;">
 
         <ul id="myList">
+            <li></li>
             <li>Line 1</li>
             <li>Line 2</li>
             <li>Line 3</li>
@@ -44,15 +47,15 @@
             const newLi = document.createElement('li')
             newLi.textContent = 'Line ' + i
 
+            newLi.classList.add('zero')
             list.prepend(newLi)
             const first = list.firstElementChild;
             const second = list.getElementsByTagName('li')[1];
+            second.classList.remove('large')
 
-            first.classList.add('zero')
             void first.offsetWidth
             first.classList.remove('zero')
             first.classList.add('large')
-            second.classList.remove('large')
             
         }
 
