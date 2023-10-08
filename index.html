@@ -127,14 +127,11 @@
 
       const currentLines = lines.slice(currentLineIndex, currentLineIndex + numberOfLines).map(propOrDefault("", "text"))
 
-      const lineElems = currentLines.map((l) => {
-          const el = document.createElement('li')
-          el.textContent = l
-          return el;
-        })
-      const list = document.getElementById('lyricsContainer').append(
-        lineElems
-      )
+      for (line in currentLines) {
+        const el = document.createElement('li')
+        el.textContent = currentLines[line]
+        document.getElementById('lyricsContainer').appendChild(el);
+      }
     }
 
     function parseTimestamp(timestamp) {
