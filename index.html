@@ -70,9 +70,9 @@
 
   <ul id="lyricsContainer">
     <li></li>
-    <li>one long line of stuff with potentially a line break in it</li>
-    <li>twoone long line of stuff with potentially a line break in it</li>
-    <li>threone long line of stuff with potentially a line break in it</li>
+    <!-- <li>one long line of stuff with potentially a line break in it</li> -->
+    <!-- <li>twoone long line of stuff with potentially a line break in it</li> -->
+    <!-- <li>threone long line of stuff with potentially a line break in it</li> -->
   </ul>
   <!-- <div id="lyricsContainer> -->
   <!--   <p id="currentLine" class="current-line"></p> -->
@@ -352,7 +352,7 @@
 
       // prepend line
       const newLi = document.createElement('li')
-      newLi.textContent = lines[currentLineIndex - 1].text || ""
+      newLi.textContent = lines[currentLineIndex].text || ""
       newLi.classList.add('zero')
       list.prepend(newLi)
       list.lastElementChild.remove();
@@ -384,7 +384,7 @@
 
       // Append the new line at the end
       const newLi = document.createElement('li');
-      newLi.textContent = lines[currentLineIndex + numberOfLines].text || ""
+      newLi.textContent = lines[currentLineIndex + numberOfLines -1].text || ""
       list.appendChild(newLi)
     }
 
