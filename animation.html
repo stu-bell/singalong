@@ -43,19 +43,19 @@
         }
 
         .animate-back {
-            animation: disappear 0.2s reverse;
+            animation: disappear 2.2s reverse;
         }
 
         .animate-demote {
-            animation: scrollup 0.2s reverse;
+            animation: scrollup 2.2s reverse;
         }
 
         .animate-out {
-            animation: disappear 0.2s forwards;
+            animation: disappear 2.2s forwards;
         }
 
         .animate {
-            animation: scrollup 0.2s forwards;
+            animation: scrollup 2.2s forwards;
         }
     </style>
 </head>
@@ -90,11 +90,13 @@
             first.classList.add('animate-back');
             second.classList.remove('animate');
             second.classList.add('animate-demote');
-            setTimeout(() => {
-                first.classList.remove('zero')
-                first.classList.add('large')
-                second.classList.remove('large')
-            }, 200);
+            first.addEventListener('animationend', (e) => {
+                e.target.classList.remove('zero')
+                e.target.classList.add('large')
+            });
+            second.addEventListener('animationend', (e) => {
+                e.target.classList.remove('large')
+            })
             
         }
 
@@ -108,15 +110,17 @@
             const second = list.getElementsByTagName("li")[1];
 
             // animate out the first element then remove
-            first.classList.remove('animate')
-            first.classList.remove('animate-demote')
-            first.classList.remove('animate-back')
+            first.classList.remove('animate', 'animate-demote','animate-back')
+            // first.classList.remove('animate-demote')
+            // first.classList.remove('animate-back')
             first.classList.add('animate-out');
             // timeout after animation ends
-            setTimeout(() => first.remove(), 200);
+            // setTimeout(() => first.remove(), 200);
+            first.addEventListener('animationend', (e) => e.target.remove())
 
             // promote the second element
             second.classList.add('animate');
+            second.addEventListener('animationend', (e) => e.target.classList.remove('animate'))
 
             // Append the new line at the end
             i++

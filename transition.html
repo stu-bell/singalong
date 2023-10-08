@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        li {
+            transition: 2s linear all;
+            font-size: 2em;
+        }
+        li.med {
+            font-size: 2em;
+        }
+
+        li.zero {
+            font-size: 0em;
+        }
+
+        li.large {
+            font-size: 4em;
+        }
+
+    </style>
+</head>
+
+<body style="display:flex">
+    <div style="display: inline-block;align-self: flex-end;">
+
+        <ul id="myList">
+            <li>Line 1</li>
+            <li>Line 2</li>
+            <li>Line 3</li>
+            <li>Line 4</li>
+        </ul>
+    </div>
+
+    <script>
+        let i = 4;
+
+        function backwards() {
+            var list = document.getElementById("myList");
+            
+            // prepend line
+            i--
+            const newLi = document.createElement('li')
+            newLi.classList.add('zero')
+            newLi.textContent = 'Line ' + i
+
+            list.prepend(newLi)
+            const first = list.firstElementChild;
+            const second = list.getElementsByTagName('li')[1];
+
+            first.classList.remove('zero')
+            first.classList.add('large')
+            second.classList.remove('large')
+            
+        }
+
+        function forwards() {
+            var list = document.getElementById("myList");
+
+            // remove any nodes on their way out
+            // list.querySelectorAll('.animate-out').forEach(x => x.remove())
+
+            const first = list.firstElementChild;
+            const second = list.getElementsByTagName("li")[1];
+
+            first.classList.remove('large') 
+            first.classList.add('zero') 
+            second.classList.add('large')
+
+            first.addEventListener('transitionend', (e)=>e.target.remove())
+
+            // Append the new line at the end
+            i++
+            const newLi = document.createElement('li');
+            newLi.textContent = 'Line ' + i
+            list.appendChild(newLi)
+        }
+
+        document.body.onkeyup = function (e) {
+            if (e.key == " ") {
+                forwards()
+            }
+            if (e.key == "k") {
+                backwards()
+            }
+        }
+    </script>
+</body>
+
+</html>
