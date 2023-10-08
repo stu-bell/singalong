@@ -83,8 +83,8 @@
     let currentFileIndex = 0;
     let filesList = [];
     let lines = [];
-    const currentLineElement = document.getElementById("currentLine");
-    const nextLinesElement = document.getElementById("nextLines");
+    // const currentLineElement = document.getElementById("currentLine");
+    // const nextLinesElement = document.getElementById("nextLines");
 
     const songTitle = document.getElementById("songTitle");
     const fileInput = document.getElementById("fileInput");
@@ -124,6 +124,10 @@
 
     function renderLyrics() {
       setTimeoutNextScroll();
+
+      while(lyricsContainer.firstChild) {
+        lyricsContainer.firstChild.remove()
+      }
 
       const currentLines = lines.slice(currentLineIndex, currentLineIndex + numberOfLines).map(propOrDefault("", "text"))
 
@@ -272,7 +276,6 @@
 
     function scrollNextLine() {
       currentLineIndex++;
-      nextLinesElement.style.fontSize = '2em';  // New font size for the upcoming line
 
       if (currentLineIndex >= lines.length) {
         nextSong();
@@ -340,7 +343,6 @@
       var list = document.getElementById("lyricsContainer");
 
       // prepend line
-      i--
       const newLi = document.createElement('li')
       newLi.textContent = lines[currentLineIndex - 1]
       newLi.classList.add('zero')
@@ -373,7 +375,6 @@
       first.addEventListener('transitionend', (e) => e.target.remove())
 
       // Append the new line at the end
-      i++
       const newLi = document.createElement('li');
       newLi.textContent = lines[currentLineIndex + numberOfLines]
       list.appendChild(newLi)
