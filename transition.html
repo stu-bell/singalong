@@ -4,7 +4,7 @@
 <head>
     <style>
         li {
-            transition: 2s linear all;
+            transition: 1s linear all;
             font-size: 2em;
         }
         li.med {
@@ -42,13 +42,14 @@
             // prepend line
             i--
             const newLi = document.createElement('li')
-            newLi.classList.add('zero')
             newLi.textContent = 'Line ' + i
 
             list.prepend(newLi)
             const first = list.firstElementChild;
             const second = list.getElementsByTagName('li')[1];
 
+            first.classList.add('zero')
+            void first.offsetWidth
             first.classList.remove('zero')
             first.classList.add('large')
             second.classList.remove('large')
@@ -59,7 +60,7 @@
             var list = document.getElementById("myList");
 
             // remove any nodes on their way out
-            // list.querySelectorAll('.animate-out').forEach(x => x.remove())
+            list.querySelectorAll('.zero').forEach(x => x.remove())
 
             const first = list.firstElementChild;
             const second = list.getElementsByTagName("li")[1];
