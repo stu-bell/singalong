@@ -120,7 +120,7 @@
       }
     }
 
-    const propOrDefault = (defVal, propName) => (obj) => obj[propName] ? obj[propName] : defVal
+    const propOrDefault = (propName, defVal = null) => (obj) => obj.hasOwnProperty(propName) ? obj[propName] : defVal
 
     function renderLyrics() {
       setTimeoutNextScroll();
@@ -129,7 +129,7 @@
         lyricsContainer.firstChild.remove()
       }
 
-      const currentLines = lines.slice(currentLineIndex, currentLineIndex + numberOfLines).map(propOrDefault("", "text"))
+      const currentLines = lines.slice(currentLineIndex, currentLineIndex + numberOfLines).map(propOrDefault("text", ""))
 
       for (line in currentLines) {
         const el = document.createElement('li')
@@ -344,7 +344,7 @@
 
       // prepend line
       const newLi = document.createElement('li')
-      newLi.textContent = lines[currentLineIndex - 1]
+      newLi.textContent = lines[currentLineIndex - 1].text || ""
       newLi.classList.add('zero')
       list.prepend(newLi)
       list.lastElementChild.remove();
@@ -376,7 +376,7 @@
 
       // Append the new line at the end
       const newLi = document.createElement('li');
-      newLi.textContent = lines[currentLineIndex + numberOfLines]
+      newLi.textContent = lines[currentLineIndex + numberOfLines].text || ""
       list.appendChild(newLi)
     }
 
