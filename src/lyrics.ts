@@ -1,5 +1,5 @@
 import { parseLrcLines, parseTxtLines } from "./lrcFile";
-import { propOrDefault, removeFileExtension } from "./util";
+import { propOrDefault, removeFileExtension, readFileToString } from "./util";
 
 let lyricsListElem: HTMLElement;
 let songTitleElem: HTMLElement;
@@ -20,55 +20,51 @@ let state: {
   currentFileIndex: 0,
 };
 
-// setTimeout allowing us to adjust the timer
-let scrollTimer: number | null = null;
 
-function handleFileInputChange(event: any, listElem: HTMLElement, titleElem: HTMLElement) {
+async function handleFileInputChange(
+  event: Event,
+  listElem: HTMLElement,
+  titleElem: HTMLElement
+) {
   // set global lyrcsListElem
   lyricsListElem = listElem;
   songTitleElem = titleElem;
-  const folderFiles = Array.from(event.target.files);
+  if (!event.target) {
+    console.error("Null input target");
+    return;
+  }
+  const target = event.target as HTMLInputElement & { files: FileList };
+  const files: FileList = target.files;
+  const folderFiles = Array.from(files);
   state.filesList = folderFiles.filter(
     (file: any) =>
       file.webkitRelativePath.toLowerCase().endsWith(".txt") ||
       file.webkitRelativePath.toLowerCase().endsWith(".lrc")
   );
-
   // check for presence of a file named _lyrics.playlist.txt, with lines of file names in the order they should be displayed
   const playlistFile = folderFiles.find(
     (file: any) => file.name.toLowerCase() === "_lyrics.playlist.txt"
   );
   if (playlistFile) {
-    const reader = new FileReader();
-    reader.onload = function (event) {
-      const fileContents = (event.target as FileReader).result as string;
-      if (fileContents) {
-        const playlistOrder = fileContents
-          .split("\n")
-          .map((line: string) => line.trim())
-          .filter((line: string) => line !== "");
-        const filesListOrdered = state.filesList.sort(
-          (fileA: any, fileB: any) => {
-            const indexA = playlistOrder.indexOf(fileA.name);
-            const indexB = playlistOrder.indexOf(fileB.name);
-            return indexA - indexB;
-          }
-        );
-        state.filesList = filesListOrdered;
-        state.currentFileIndex = -1;
-        nextSong();
-      }
-    };
-    reader.onerror = function (event) {
-      console.error("Error reading file:", (event.target as FileReader).error);
-    };
-    reader.readAsText(playlistFile as Blob);
+    const playlistContents = await readFileToString(playlistFile);
+    const playlistOrder = playlistContents
+      .split("\n")
+      .map((line: string) => line.trim())
+      .filter((line: string) => line !== "");
+    const filesListOrdered = state.filesList.sort((fileA: any, fileB: any) => {
+      const indexA = playlistOrder.indexOf(fileA.name);
+      const indexB = playlistOrder.indexOf(fileB.name);
+      return indexA - indexB;
+    });
+    state.filesList = filesListOrdered;
+    state.currentFileIndex = -1;
+    nextSong();
   } else {
     // don't order the folder, just play in what ever order they come
     state.currentFileIndex = -1;
     nextSong();
   }
-  event.target.classList.add("hidden");
+  target.classList.add("hidden");
 }
 
 function backwards(list: HTMLElement, text: string = "") {
@@ -121,6 +117,8 @@ function forwards(list: HTMLElement, text: string = "") {
   list.appendChild(newLi);
 }
 
+// setTimeout allowing us to adjust the timer
+let scrollTimer: number | null = null;
 function setTimeoutNextScroll() {
   // setTimeoutNextScroll sets an auto scroll for the next line, based on timestamps
   // TODO:register timeout so we can detect if we've slow reactions! also need to clear the timout...
@@ -165,25 +163,21 @@ function renderLyrics() {
   }
 }
 
-function loadLyricsFromFile(fileBlob: any) {
-  let reader = new FileReader();
-  reader.onload = function (event) {
-    const fileContents = (event.target as FileReader).result as string;
-    if (fileBlob.name.toLowerCase().endsWith(".lrc")) {
-      state.fileType = "lrc";
-      state.lines = parseLrcLines(fileContents);
-    } else if (fileBlob.name.toLowerCase().endsWith(".txt")) {
-      state.fileType = "txt";
-      state.lines = parseTxtLines(fileContents);
-    }
-    state.currentLineIndex = 0;
-    songTitleElem.textContent = removeFileExtension(fileBlob.name);
-    renderLyrics();
-  };
-  reader.onerror = function (event) {
-    console.error("Error reading file:", (event.target as FileReader).error);
-  };
-  reader.readAsText(fileBlob);
+async function loadLyricsFromFile(fileBlob: File) {
+  const fileContents = await readFileToString(fileBlob);
+
+  if (fileBlob.name.toLowerCase().endsWith(".lrc")) {
+    state.fileType = "lrc";
+    state.lines = parseLrcLines(fileContents);
+  } else if (fileBlob.name.toLowerCase().endsWith(".txt")) {
+    state.fileType = "txt";
+    state.lines = parseTxtLines(fileContents);
+  }
+
+  state.currentLineIndex = 0;
+  songTitleElem.textContent = removeFileExtension(fileBlob.name);
+
+  renderLyrics();
 }
 
 function nextSong() {
@@ -212,8 +206,9 @@ function scrollNextLine() {
   }
 
   setTimeoutNextScroll();
-  const appendLine = state.lines[state.currentLineIndex + state.numberOfLines - 1];
-  const appendText = appendLine ? appendLine.text : '';
+  const appendLine =
+    state.lines[state.currentLineIndex + state.numberOfLines - 1];
+  const appendText = appendLine ? appendLine.text : "";
   forwards(lyricsListElem, appendText);
 }
 
@@ -221,7 +216,7 @@ function scrollPreviousLine() {
   state.currentLineIndex--;
   setTimeoutNextScroll();
   const prependLine = state.lines[state.currentLineIndex];
-    const prependText = prependLine ? prependLine.text : '';
+  const prependText = prependLine ? prependLine.text : "";
   backwards(lyricsListElem, prependText);
 }
 

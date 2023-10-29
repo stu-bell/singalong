@@ -48,6 +48,7 @@ li.large {
 
 li.zero {
   font-size: 0vw;
+  width: 0vw;
 }
 
 .hidden {
