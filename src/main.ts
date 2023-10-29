@@ -1,13 +1,11 @@
 import { assertElementById } from "./util";
 import { scrollNextLine, scrollPreviousLine, prevSong, nextSong,handleFileInputChange } from "./lyrics"
 
-// const songTitle = assertElementById("songTitle"); // FIXME: add songTitle when loading lyrics from a file
-const fileInput = assertElementById("fileInput");
 const lyricsContainer = assertElementById("lyricsContainer");
 const songTitle = assertElementById("songTitle");
 
 // select folder event
-fileInput.addEventListener("change", (e) => handleFileInputChange(e, lyricsContainer, songTitle));
+assertElementById("fileInput").addEventListener("change", (e) => handleFileInputChange(e, lyricsContainer, songTitle));
 
 // show hide lyrics
 document.addEventListener("keydown", function (event) {
