@@ -1,3 +1,7 @@
+Display lyrics for songs so you can sing along. 
+
+Lyrics must be loaded locally.
+
 # Usage
 
 Choose a folder of .txt files or .lrc files.
