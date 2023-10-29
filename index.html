@@ -11,16 +11,57 @@
   <title>Sing along</title>
 </head>
 
-<body>
+<body class="font-arial h-screen flex flex-col overflow-hidden">
 
-  <ul id="lyricsContainer">
+  <ul id="lyricsContainer" class="flex flex-col items-center list-none text-center mt-32">
     <li></li>
   </ul>
-  <div id="songTitleContainer">
-    <p id="songTitle" class="song-title"></p>
+  <div id="songTitleContainer" class="text-left fixed bottom-0 w-full box-border">
+    <p id="songTitle" class="text-2 text-gray-600 m-2"></p>
   </div>
 
-  <input id="fileInput" type="file" webkitdirectory directory multiple />
+  <div id="home" class="text-left p-2">
+    <input id="fileInput" type="file" webkitdirectory directory multiple />
+    <p>
+      Choose a folder of .txt files and .lrc files.<br /><br />.lrc files with timestamps will play automatically,
+      otherwise use arrow keys. <br /><br />Optionally save a file in the same folder named `_lyrics.playlist.txt`. This
+      file should contain the file names of the other files in the folder (one filename per row), in the sequence you
+      want them to be displayed. The playlist will be displayed first. <br /><br />Keyboard commands:</p>
+    <table class="text-left table-auto">
+    <thead class="bg-gray-500 text-white">
+        <tr>
+            <th class="px-4 py-2">Key</th>
+            <th class="px-4 py-2">Command</th>
+        </tr>
+    </thead>
+    <tbody class="text-gray-700">
+        <tr class="bg-gray-100">
+            <td class="px-4 py-2 border">Down | Right | Space</td>
+            <td class="px-4 py-2 border">Next Line</td>
+        </tr>
+        <tr>
+            <td class="px-4 py-2 border">Up | Left</td>
+            <td class="px-4 py-2 border">Previous Line</td>
+        </tr>
+        <tr class="bg-gray-100">
+            <td class="px-4 py-2 border">n</td>
+            <td class="px-4 py-2 border">Next Song</td>
+        </tr>
+        <tr class="px-4 py-2 border">
+            <td class="px-4 py-2 border">p</td>
+            <td class="px-4 py-2 border">Previous Song</td>
+        </tr>
+        <tr class="bg-gray-100">
+            <td class="px-4 py-2 border">s</td>
+            <td class="px-4 py-2 border">Show/hide lyrics</td>
+        </tr>
+        <tr>
+            <td class="px-4 py-2 border"><code>0</code></td>
+            <td class="px-4 py-2 border">Reset the auto scroll timer for the current line back to 0</td>
+        </tr>
+    </tbody>
+</table>
+  </div>
 
   <script type="module" src="/src/main.ts"></script>
   <!-- <script> -->

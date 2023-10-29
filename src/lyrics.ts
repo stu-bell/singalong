@@ -63,7 +63,6 @@ async function handleFileInputChange(
     state.currentFileIndex = -1;
     nextSong();
   }
-  target.classList.add("hidden");
 }
 
 function backwards(list: HTMLElement, text: string = "") {

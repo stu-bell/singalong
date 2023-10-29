@@ -13,13 +13,14 @@ const lyricsContainer = assertElementById("lyricsContainer");
 const songTitle = assertElementById("songTitle");
 
 // select folder event
-assertElementById("fileInput").addEventListener("change", (e) =>
-  handleFileInputChange(e, lyricsContainer, songTitle)
-);
+assertElementById("fileInput").addEventListener("change", (e) =>{
+  handleFileInputChange(e, lyricsContainer, songTitle);
+  assertElementById('home').classList.add('hidden');  
+});
 
 // show hide lyrics
 document.addEventListener("keydown", function (event) {
-  if (event.code === "KeyH") {
+  if (event.key === "s") {
     lyricsContainer.classList.toggle("hidden");
   }
 });
@@ -27,16 +28,16 @@ document.addEventListener("keydown", function (event) {
 // scroll events
 document.addEventListener("keydown", function (event) {
   if (
-    (event.code === "Space" ||
-      event.code === "ArrowDown" ||
-      event.code === "ArrowRight") 
+    (event.key === "Space" ||
+      event.key === "ArrowDown" ||
+      event.key === "ArrowRight") 
     // don't scroll next if we've just followed an auto scroll
     && !weJustAutoScrolled(500)
   ) {
     scrollNextLine();
-  } else if (event.code === "ArrowUp" || event.code === "ArrowLeft") {
+  } else if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
     scrollPreviousLine();
-  } else if (event.code === "Key0") {
+  } else if (event.key === "0") {
     // resset the timeout until the next autoscroll. Useful if the lyrics are going too fast
     console.log('reset')
     setTimeoutNextScroll();
@@ -50,9 +51,9 @@ document.addEventListener("touchstart", function () {
 
 // next prev events
 document.addEventListener("keydown", function (event) {
-  if (event.code === "KeyN") {
+  if (event.key === "n") {
     nextSong();
-  } else if (event.code === "KeyP") {
+  } else if (event.key === "p") {
     prevSong();
   }
 });
