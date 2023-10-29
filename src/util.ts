@@ -13,4 +13,16 @@ const propOrDefault =
   (obj: { [x: string]: any; hasOwnProperty: (arg0: any) => any }) =>
     obj.hasOwnProperty(propName) ? obj[propName] : defVal;
 
-export { assertElementById, propOrDefault };
+function removeFileExtension(filename: string) {
+  var lastDotIndex = filename.lastIndexOf(".");
+  if (lastDotIndex === -1) {
+    // No file extension found
+    return filename;
+  } else {
+    return filename.substring(0, lastDotIndex);
+  }
+}
+
+export { assertElementById, propOrDefault, removeFileExtension};
+
+
