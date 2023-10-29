@@ -1,7 +1,7 @@
 import { parseLrcLines, parseTxtLines } from "./lrcFile";
 import { propOrDefault } from "./util";
 
-let lyricsListElem: HTMLElement; 
+let lyricsListElem: HTMLElement;
 
 let state: {
   fileType: string;
@@ -23,7 +23,7 @@ let state: {
 let scrollTimer: number | null = null;
 
 function handleFileInputChange(event: any, list: HTMLElement) {
-    // set global lyrcsListElem
+  // set global lyrcsListElem
   lyricsListElem = list;
   const folderFiles = Array.from(event.target.files);
   state.filesList = folderFiles.filter(
@@ -203,7 +203,6 @@ function prevSong() {
   }
 }
 
-
 function scrollNextLine() {
   state.currentLineIndex++;
   if (state.currentLineIndex >= state.lines.length) {
@@ -211,16 +210,17 @@ function scrollNextLine() {
   }
 
   setTimeoutNextScroll();
-  forwards(
-    lyricsListElem,
-    state.lines[state.currentLineIndex + state.numberOfLines - 1].text
-  );
+  const appendLine = state.lines[state.currentLineIndex + state.numberOfLines - 1];
+  const appendText = appendLine ? appendLine.text : '';
+  forwards(lyricsListElem, appendText);
 }
 
 function scrollPreviousLine() {
   state.currentLineIndex--;
   setTimeoutNextScroll();
-  backwards(lyricsListElem, state.lines[state.currentLineIndex].text);
+  const prependLine = state.lines[state.currentLineIndex];
+    const prependText = prependLine ? prependLine.text : '';
+  backwards(lyricsListElem, prependText);
 }
 
 export {
