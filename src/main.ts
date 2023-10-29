@@ -10,7 +10,7 @@ fileInput.addEventListener("change", (e) => handleFileInputChange(e, lyricsConta
 
 // show hide
 document.addEventListener("keydown", function (event) {
-  if (event.code === "Enter") {
+  if (event.code === "KeyH") {
     lyricsContainer.classList.toggle("hidden");
   }
 });

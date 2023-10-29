@@ -21,6 +21,7 @@ let state: {
 let scrollTimer: number | null = null;
 
 function backwards(list: HTMLElement, text: string = "") {
+    // backwards prepends to `list` a new element with `text`, and removes the last element
   // prepend line
   const newLi = document.createElement("li");
   newLi.textContent = text;
@@ -43,7 +44,8 @@ function backwards(list: HTMLElement, text: string = "") {
 }
 
 function forwards(list: HTMLElement, text: string = "") {
-  // remove any nodes on their way out
+    // forwards appends to `list` a new element with `text`, and removes the first element
+  // remove any nodes already on their way out
   list.querySelectorAll(".zero").forEach((x) => x.remove());
 
   const first = list.firstElementChild;
@@ -69,6 +71,7 @@ function forwards(list: HTMLElement, text: string = "") {
 }
 
 function setTimeoutNextScroll() {
+    // setTimeoutNextScroll sets an auto scroll for the next line, based on timestamps
   // TODO:register timeout so we can detect if we've slow reactions! also need to clear the timout...
   if (scrollTimer) {
     // cancel inflight timer, since we've skipped
@@ -93,6 +96,7 @@ function setTimeoutNextScroll() {
 }
 
 function renderLyrics(list: HTMLElement) {
+    // renderLyrics replaces the current contents of `list` with state.lines
   setTimeoutNextScroll();
 
   while (list.firstChild) {
