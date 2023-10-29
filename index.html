@@ -1,13 +1,34 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + TS</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="favicon.ico" type="image/png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="src/styles.css">
+  <!-- <link rel="manifest" href="manifest.json" /> -->
+  <meta name="theme-color" content="#000000">
+  <title>Sing along</title>
+</head>
+
+<body>
+
+  <ul id="lyricsContainer">
+    <li></li>
+  </ul>
+  <div id="songTitleContainer">
+    <p id="songTitle" class="song-title"></p>
+  </div>
+
+  <input type="file" id="fileInput" webkitdirectory directory multiple />
+
+  <script type="module" src="/src/main.ts"></script>
+  <!-- <script> -->
+  <!--   // Registering Service Worker -->
+  <!--   if ('serviceWorker' in navigator) { -->
+  <!--     navigator.serviceWorker.register('service-worker.js'); -->
+  <!--   } -->
+  <!-- </script> -->
+</body>
+
 </html>
