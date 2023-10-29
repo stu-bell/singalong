@@ -20,7 +20,6 @@ let state: {
   currentFileIndex: 0,
 };
 
-
 async function handleFileInputChange(
   event: Event,
   listElem: HTMLElement,
@@ -119,11 +118,11 @@ function forwards(list: HTMLElement, text: string = "") {
 
 // setTimeout allowing us to adjust the timer
 let scrollTimer: number | null = null;
+let lastAutoScrollTime: number;
 function setTimeoutNextScroll() {
   // setTimeoutNextScroll sets an auto scroll for the next line, based on timestamps
-  // TODO:register timeout so we can detect if we've slow reactions! also need to clear the timout...
   if (scrollTimer) {
-    // cancel inflight timer, since we've skipped
+    // cancel inflight timer, since we might have skipped
     clearTimeout(scrollTimer);
   }
   if (
@@ -135,7 +134,11 @@ function setTimeoutNextScroll() {
     const nextLineTime = state.lines[state.currentLineIndex + 1].timestamp;
     const delay = nextLineTime - currentLineTime;
     if (delay > 0) {
-      scrollTimer = setTimeout(scrollNextLine, delay * 1000);
+      scrollTimer = setTimeout(() => {
+        // register time we last auto-scrolled
+        lastAutoScrollTime = Date.now();
+        scrollNextLine();
+      }, delay * 1000);
     }
     // else {
     //   // if the timestamps on current and nextlines are the same, do we just want to skip now?
@@ -143,6 +146,9 @@ function setTimeoutNextScroll() {
     // }
   }
 }
+
+// weJustAutoScrolled returns true if there is a short duration between the now and the last auto scroll event
+const weJustAutoScrolled = (milliseconds=500) => ((Date.now() - lastAutoScrollTime) < milliseconds) 
 
 function renderLyrics() {
   // renderLyrics replaces the current contents of `list` with state.lines
@@ -226,4 +232,5 @@ export {
   prevSong,
   nextSong,
   handleFileInputChange,
+  weJustAutoScrolled
 };

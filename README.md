@@ -17,7 +17,6 @@ Choose a folder of .txt files or .lrc files.
 
 # TODO
 
-- Fix slow reaction auto scroll issue
 - load mp3
 
 # Dev
