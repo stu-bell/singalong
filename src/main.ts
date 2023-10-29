@@ -8,7 +8,7 @@ const lyricsContainer = assertElementById("lyricsContainer");
 // select folder event
 fileInput.addEventListener("change", (e) => handleFileInputChange(e, lyricsContainer));
 
-// show hide
+// show hide lyrics
 document.addEventListener("keydown", function (event) {
   if (event.code === "KeyH") {
     lyricsContainer.classList.toggle("hidden");
@@ -22,22 +22,22 @@ document.addEventListener("keydown", function (event) {
     event.code === "ArrowDown" ||
     event.code === "ArrowRight"
   ) {
-    scrollNextLine(lyricsContainer);
+    scrollNextLine();
   } else if (event.code === "ArrowUp" || event.code === "ArrowLeft") {
-    scrollPreviousLine(lyricsContainer);
+    scrollPreviousLine();
   }
 });
 
 document.addEventListener("touchstart", function () {
-  scrollNextLine(lyricsContainer);
+  scrollNextLine();
 });
 
 // next prev events
 document.addEventListener("keydown", function (event) {
   if (event.code === "KeyN") {
-    nextSong(lyricsContainer);
+    nextSong();
   } else if (event.code === "KeyP") {
-    prevSong(lyricsContainer);
+    prevSong();
   }
 });
 
