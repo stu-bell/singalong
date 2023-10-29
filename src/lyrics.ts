@@ -1,7 +1,8 @@
 import { parseLrcLines, parseTxtLines } from "./lrcFile";
-import { propOrDefault } from "./util";
+import { propOrDefault, removeFileExtension } from "./util";
 
 let lyricsListElem: HTMLElement;
+let songTitleElem: HTMLElement;
 
 let state: {
   fileType: string;
@@ -22,9 +23,10 @@ let state: {
 // setTimeout allowing us to adjust the timer
 let scrollTimer: number | null = null;
 
-function handleFileInputChange(event: any, list: HTMLElement) {
+function handleFileInputChange(event: any, listElem: HTMLElement, titleElem: HTMLElement) {
   // set global lyrcsListElem
-  lyricsListElem = list;
+  lyricsListElem = listElem;
+  songTitleElem = titleElem;
   const folderFiles = Array.from(event.target.files);
   state.filesList = folderFiles.filter(
     (file: any) =>
@@ -175,7 +177,7 @@ function loadLyricsFromFile(fileBlob: any) {
       state.lines = parseTxtLines(fileContents);
     }
     state.currentLineIndex = 0;
-    // songTitle.textContent = removeFileExtension(fileBlob.name);
+    songTitleElem.textContent = removeFileExtension(fileBlob.name);
     renderLyrics();
   };
   reader.onerror = function (event) {
