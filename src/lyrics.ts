@@ -140,10 +140,7 @@ function setTimeoutNextScroll() {
         scrollNextLine();
       }, delay * 1000);
     }
-    // else {
-    //   // if the timestamps on current and nextlines are the same, do we just want to skip now?
-    //   scrollNextLine();
-    // }
+    // if the timestamps on current and nextlines are the same, do we just want to skip now?
   }
 }
 
@@ -232,5 +229,6 @@ export {
   prevSong,
   nextSong,
   handleFileInputChange,
-  weJustAutoScrolled
+  weJustAutoScrolled,
+  setTimeoutNextScroll
 };

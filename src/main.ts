@@ -6,6 +6,7 @@ import {
   nextSong,
   weJustAutoScrolled,
   handleFileInputChange,
+  setTimeoutNextScroll,
 } from "./lyrics";
 
 const lyricsContainer = assertElementById("lyricsContainer");
@@ -35,12 +36,17 @@ document.addEventListener("keydown", function (event) {
     scrollNextLine();
   } else if (event.code === "ArrowUp" || event.code === "ArrowLeft") {
     scrollPreviousLine();
+  } else if (event.code === "Key0") {
+    // resset the timeout until the next autoscroll. Useful if the lyrics are going too fast
+    console.log('reset')
+    setTimeoutNextScroll();
   }
 });
 
 document.addEventListener("touchstart", function () {
   scrollNextLine();
 });
+
 
 // next prev events
 document.addEventListener("keydown", function (event) {
