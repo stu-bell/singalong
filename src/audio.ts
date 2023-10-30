@@ -1,80 +1,52 @@
-let context = new AudioContext();
-let gainNode = context.createGain();
-let sourceNode:any;
-let duration = 2; 
-let fadeOutInterval:any;
-let fadeInInterval:any;
+let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let source1: AudioBufferSourceNode | null = null, 
+    source2: AudioBufferSourceNode | null = null;
+let gainNode1: GainNode = audioCtx.createGain();
+let gainNode2: GainNode = audioCtx.createGain();
+let crossfadeControl = document.querySelector<HTMLInputElement>("#crossfadeControl");
+let filesList: FileList; // populate this with your FileList from an input
+let currentFileIndex = 0;
 
-
-audio.addEventListener('ended', function(evt){
-    clearInterval(fadeOutInterval);
-    gainNode.gain.cancelScheduledValues(context.currentTime);
-    gainNode.gain.value = 1.0;
-    currentFile++;
-    if (currentFile &gt;= files.length) {
-        console.log("All audio files have been played.");
+function crossfadeAudioFile(file: File) {
+    if (source1) {
+        // If there's a song already playing, we will crossfade it with the new one
+        [source1, source2] = [source2, source1];
+        [gainNode1, gainNode2] = [gainNode2, gainNode1];
     } else {
-        playAudioFile();
+        // If there's no song playing, just setup the first source node
+        source1 = audioCtx.createBufferSource();
+        source1.connect(gainNode1);
+        gainNode1.connect(audioCtx.destination);
     }
-});
 
-function playAudioFile() {
-    if(sourceNode) {
-        fadeOut();
-        setTimeout(() => {
-            sourceNode.stop();
-            fadeIn();
-            startNewSource();
-        }, duration * 1000);
-    }
-    else {
-        startNewSource();
-    }
-}
+    let reader = new FileReader();
+    reader.onload = function(e) {
+        audioCtx.decodeAudioData(e.target.result as ArrayBuffer, (buffer: AudioBuffer) => {
+            source2 = audioCtx.createBufferSource();
+            source2.buffer = buffer; 
+            source2.connect(gainNode2);
+            gainNode2.connect(audioCtx.destination); 
 
-function startNewSource() {
-    let fileUrl = URL.createObjectURL(files[currentFile]);
-    sourceNode = context.createBufferSource();
-    sourceNode.connect(gainNode);
-    gainNode.connect(context.destination);
-    fetch(fileUrl)
-        .then(response => response.arrayBuffer())
-        .then(buffer => context.decodeAudioData(buffer))
-        .then(decodedData => {
-            sourceNode.buffer = decodedData;
-            sourceNode.start();
-            fadeIn();
+            source1!.start(0);
+            source2.start(0);
+
+            source2.onended = () => playNext();
         });
+    };
+    reader.readAsArrayBuffer(file);
+
+    crossfadeControl!.addEventListener("input", function(evt) {
+        let x = parseFloat(this.value);
+        // Use an equal-power crossfading curve:
+        let gain1 = Math.cos(x * 0.5*Math.PI);
+        let gain2 = Math.cos((1.0 - x) * 0.5*Math.PI);
+
+        gainNode1.gain.value = gain1;
+        gainNode2.gain.value = gain2;
+    });
 }
 
-function fadeOut() {
-    let step = 1.0 / (duration * 60);  
-    let volume = 1.0;
-    fadeOutInterval = setInterval(function() {
-        if(volume > 0.0) {
-            volume -= step;
-            gainNode.gain.value = volume;
-        }
-        else {
-            clearInterval(fadeOutInterval);
-        }
-    }, 1000 / 60);
+function playNext() {
+    currentFileIndex = (currentFileIndex + 1) % filesList.length;
+    crossfadeAudioFile(filesList[currentFileIndex]);
 }
-
-function fadeIn() {
-    gainNode.gain.value = 0.0;
-    let step = 1.0 / (duration * 60);  
-    let volume = 0.0;
-    fadeInInterval = setInterval(function() {
-        if(volume < 1.0) {
-            volume += step;
-            gainNode.gain.value = volume;
-        }
-        else {
-            clearInterval(fadeInInterval);
-        }
-    }, 1000 / 60);
-}
-
-
-export {playAudioFile}

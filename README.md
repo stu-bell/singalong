@@ -4,10 +4,10 @@ Lyrics must be saved in a local folder as plain text files
 
 # TODO
 
-- load mp3
-- playlist.csv file that matches mp3 to play with lyrics (and download sample playlist.csv)
+- load mp3 - look for the same filename as the lyrics file
 - next song quick fades mp3 into next
 - prev song quick fades mp3 to previous
+- playlist.csv file that matches mp3 to play with lyrics (and download sample playlist.csv)
 - playlist file to include times for auto start/end
 
 - offline usage with service worker
