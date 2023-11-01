@@ -1,6 +1,6 @@
 import { parseLrcLines, parseTxtLines } from "./lrcFile";
 import { propOrDefault, removeFileExtension, readFileToString } from "./util";
-import { playAudioFile } from "./audio";
+import { playFiles } from "./audio";
 
 let lyricsListElem: HTMLElement;
 let songTitleElem: HTMLElement;
@@ -43,10 +43,10 @@ async function handleFileInputChange(
   );
 
   // find an mp3 file and start playing it
-  const mp3File = folderFiles.find(
+  const mp3Files = folderFiles.filter(
     (file) => file.name.toLowerCase().endsWith('.mp3')
   );
-  playAudioFile(mp3File);
+  playFiles(mp3Files);
 
   // check for presence of a file named _lyrics.playlist.txt, with lines of file names in the order they should be displayed
   const playlistFile = folderFiles.find(
