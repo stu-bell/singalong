@@ -40,6 +40,7 @@ function crossfadeAudioFile(file: File) {
     reader.readAsArrayBuffer(file);
 
     // crossfadeControl!.addEventListener("input", function(evt) {
+    // TODO: we want a static crossfade duration, doesn't need a user input
     // TODO: what does x do?
         let x = 5 // parseFloat(this.value);
         // Use an equal-power crossfading curve:
@@ -58,11 +59,14 @@ function playNext() {
     crossfadeAudioFile(filesList[currentFileIndex]);
 }
 
-function playFiles(files:File[]) {
+function loadFiles(files:File[]) {
     filesList = files;
-    console.log(filesList)
+}
+
+function playAll(files:File[]){
+    loadFiles(files)
     playNext();
     setTimeout(playNext, 10 * 1000);
 }
 
-export { playFiles }
+export { loadFiles, playAll, playNext }
