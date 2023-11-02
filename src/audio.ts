@@ -127,8 +127,9 @@ function crossfadeAudioFile2(file1: File, file2: File) {
 
 function playOne(file: File) {
   console.log("playone", file.name);
-  let audioCtx = new AudioContext();
   source2 = audioCtx.createBufferSource();
+  source2!.connect(gainNode2);
+  gainNode2!.connect(audioCtx.destination);
   let reader2 = new FileReader();
   reader2.onload = function (e) {
     audioCtx.decodeAudioData(
