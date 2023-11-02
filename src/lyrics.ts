@@ -46,7 +46,8 @@ async function handleFileInputChange(
   const mp3Files = folderFiles.filter(
     (file) => file.name.toLowerCase().endsWith('.mp3')
   );
-  playOne(mp3Files[0]);
+  playOne(mp3Files[1]);
+  setTimeout(()=>playOne(mp3Files[0]), 3 * 1000);
 
   // check for presence of a file named _lyrics.playlist.txt, with lines of file names in the order they should be displayed
   const playlistFile = folderFiles.find(
