@@ -10,19 +10,24 @@ let currentFileIndex = 0;
 let timeoutId: number | null = null;
 
 function crossfadeAudioFile(file: File) {
-  let crossfadeDuration = 5; // Crossfade duration in seconds
+  let crossfadeDuration = 2; // Crossfade duration in seconds
 
-  if (source1) {
-    source1.stop(audioCtx.currentTime + crossfadeDuration);
-    source1 = source2;
-
-    source2 = audioCtx.createBufferSource();
-    source2!.connect(gainNode2);
-    gainNode2!.connect(audioCtx.destination);
-  } else {
+  if (!source1) {
+    // set up source1
     source1 = audioCtx.createBufferSource();
     source1!.connect(gainNode1);
     gainNode1!.connect(audioCtx.destination);
+
+    // WIP should we call crossfadeAudioFile again here?
+  } else {
+    // swap sources
+    source1.stop(audioCtx.currentTime + crossfadeDuration);
+    source1 = source2;
+
+    // reset source2 for new file
+    source2 = audioCtx.createBufferSource();
+    source2!.connect(gainNode2);
+    gainNode2!.connect(audioCtx.destination);
   }
 
   let reader = new FileReader();
