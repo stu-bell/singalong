@@ -10,6 +10,7 @@ Lyrics must be saved in a local folder as plain text files
 - prev song quick fades mp3 to previous
 - playlist file to include times for auto start/end
 
+- zoom in/out events scale width and size of text
 - offline usage with service worker
 
 # Dev
