@@ -46,7 +46,7 @@ async function handleFileInputChange(
   const mp3Files = folderFiles.filter(
     (file) => file.name.toLowerCase().endsWith('.mp3')
   );
-  crossfadeAudioFile2(mp3Files[0], mp3Files[1]);
+  crossfadeAudioFile2(mp3Files[1], mp3Files[0]);
 
   // check for presence of a file named _lyrics.playlist.txt, with lines of file names in the order they should be displayed
   const playlistFile = folderFiles.find(
