@@ -23,21 +23,23 @@ function removeFileExtension(filename: string) {
   }
 }
 
-  const readFileToString = async (file: File) =>
-    new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = function (event) {
-        resolve((event.target as FileReader).result as string);
-      };
-      reader.onerror = (event) => {
-        reject(
-          "Error reading file:" + (event.target as FileReader).error?.message
-        );
-      };
-      reader.readAsText(file);
-    });
+const readFileToString = async (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      resolve((event.target as FileReader).result as string);
+    };
+    reader.onerror = (event) => {
+      reject(
+        "Error reading file:" + (event.target as FileReader).error?.message
+      );
+    };
+    reader.readAsText(file);
+  });
 
-
-export { assertElementById, propOrDefault, removeFileExtension, readFileToString};
-
-
+export {
+  assertElementById,
+  propOrDefault,
+  removeFileExtension,
+  readFileToString,
+};
