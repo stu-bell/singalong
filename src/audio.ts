@@ -1,10 +1,9 @@
-
 let source1: AudioBufferSourceNode, source2: AudioBufferSourceNode;
 let gainNode1: GainNode; //= acx.createGain();
 let gainNode2: GainNode; //= acx.createGain();
 // let crossfadeControl = document.querySelector<HTMLInputElement>("#crossfadeControl");
-let filesList: File[]; // populate this with your FileList from an input
-let currentFileIndex = 0;
+let filesList: graph[]; // populate this with your FileList from an input
+let currentFileIndex: number | null = null;
 
 let timeoutId: number | null = null;
 
@@ -41,7 +40,7 @@ function loadAudioFromFile(file: File) {
   return {
     source: sourceNode,
     gain: connectGain(sourceNode),
-    name: file.name
+    name: file.name,
   } as graph;
 }
 
@@ -61,10 +60,9 @@ function fadeIn(
   duration?: number | undefined
 ) {
   const audioContext = graph.source.context;
-  console.log(graph.name)
   graph.source.start(when, offset, duration);
   graph.gain.gain.setValueAtTime(0, audioContext.currentTime);
-  graph.gain.gain.exponentialRampToValueAtTime(
+  graph.gain.gain.linearRampToValueAtTime(
     1,
     audioContext.currentTime + fadeDuration
   );
@@ -73,192 +71,53 @@ function fadeIn(
 function fadeOut(graph: graph, fadeDuration: number = 0) {
   const audioContext = graph.source.context;
   const endTime = audioContext.currentTime + fadeDuration;
+  graph.gain.gain.setValueAtTime(1, audioContext.currentTime);
   graph.gain.gain.linearRampToValueAtTime(0, endTime);
   graph.source.stop(endTime);
   // TODO: do we need to get rid of the source/buffer?
 }
 
 function crossFade(
-  graph1: graph,
-  graph2: graph,
-  crossfadeDuration: number = 2,
+  graphCurrent: graph,
+  graphNext: graph,
+  crossfadeDuration: number = 1,
   offset?: number,
   duration?: number
 ) {
   // undefined => start fadeIn at current time
-  fadeIn(graph2, crossfadeDuration, undefined, offset, duration);
-  fadeOut(graph1, crossfadeDuration);
-}
-
-function crossfadeAudioFile(file: File) {
-  let crossfadeDuration = 2; // Crossfade duration in seconds
-
-  if (!source1) {
-    // set up source1
-    source1 = acx.createBufferSource();
-    source1!.connect(gainNode1);
-    gainNode1!.connect(acx.destination);
-
-    // WIP should we call crossfadeAudioFile again here?
-  } else {
-    // swap sources
-    source1.stop(acx.currentTime + crossfadeDuration);
-    source1 = source2;
-
-    // reset source2 for new file
-    source2 = acx.createBufferSource();
-    source2!.connect(gainNode2);
-    gainNode2!.connect(acx.destination);
-  }
-
-  let reader = new FileReader();
-  reader.onload = function (e) {
-    if (!e.target) {
-      console.error("No event target!");
-      return;
-    }
-    acx.decodeAudioData(
-      e.target!.result as ArrayBuffer,
-      (buffer: AudioBuffer) => {
-        if (source2) {
-          source2.buffer = buffer;
-          source2!.start(0);
-
-          gainNode1.gain.setValueAtTime(1, acx.currentTime);
-          gainNode1.gain.linearRampToValueAtTime(
-            0,
-            acx.currentTime + crossfadeDuration
-          );
-
-          gainNode2.gain.setValueAtTime(0, acx.currentTime);
-          gainNode2.gain.linearRampToValueAtTime(
-            1,
-            acx.currentTime + crossfadeDuration
-          );
-
-          if (timeoutId !== null) {
-            clearTimeout(timeoutId); // Clear any existing timeout
-          }
-
-          let trackDuration = buffer.duration;
-          timeoutId = setTimeout(
-            playNext,
-            (trackDuration - crossfadeDuration) * 1000
-          );
-        }
-      }
-    );
-  };
-  reader.readAsArrayBuffer(file);
-}
-
-function crossfadeAudioFile2(file1: File, file2: File) {
-  console.log(file1.name);
-  console.log(file2.name);
-  let crossfadeDuration = 2; // Crossfade duration in seconds
-
-  // Creating the first source
-  source1 = acx.createBufferSource();
-  source1!.connect(gainNode1);
-  gainNode1!.connect(acx.destination);
-
-  let reader1 = new FileReader();
-
-  reader1.onload = function (e) {
-    acx.decodeAudioData(
-      e.target!.result as ArrayBuffer,
-      (buffer: AudioBuffer) => {
-        source1!.buffer = buffer;
-        source1!.start(0);
-        // trackDuration = buffer.duration;
-      }
-    );
-  };
-  reader1.readAsArrayBuffer(file1);
-
-  if (timeoutId !== null) {
-    clearTimeout(timeoutId);
-  }
-
-  timeoutId = setTimeout(() => {
-    // Creating the second source to crossfade when the first is near the end
-    source2 = acx.createBufferSource();
-    source2!.connect(gainNode2);
-    gainNode2!.connect(acx.destination);
-
-    let reader2 = new FileReader();
-    reader2.onload = function (e) {
-      acx.decodeAudioData(
-        e.target!.result as ArrayBuffer,
-        (buffer: AudioBuffer) => {
-          source2!.buffer = buffer;
-          source2!.start(acx.currentTime);
-
-          gainNode1.gain.setValueAtTime(1, acx.currentTime);
-          gainNode1.gain.linearRampToValueAtTime(
-            0,
-            acx.currentTime + crossfadeDuration
-          );
-
-          gainNode2.gain.setValueAtTime(0, acx.currentTime);
-          gainNode2.gain.linearRampToValueAtTime(
-            1,
-            acx.currentTime + crossfadeDuration
-          );
-        }
-      );
-    };
-    reader2.readAsArrayBuffer(file2);
-  }, 9 * 1000);
-}
-
-// error on source node: cannot call start more than once
-function playOne(file: File) {
-  console.log("playone", file.name);
-  source2 = acx.createBufferSource();
-  source2.connect(gainNode2);
-  gainNode2.connect(acx.destination);
-  let reader2 = new FileReader();
-  reader2.onload = function (e) {
-    acx.decodeAudioData(
-      e.target!.result as ArrayBuffer,
-      (buffer: AudioBuffer) => {
-        source2!.buffer = buffer;
-        source2!.start(0);
-        // gainNode1.gain.setValueAtTime(1, acx.currentTime);
-        // gainNode1.gain.linearRampToValueAtTime(0, acx.currentTime + crossfadeDuration);
-        //
-        // gainNode2.gain.setValueAtTime(0, acx.currentTime);
-        // gainNode2.gain.linearRampToValueAtTime(1, acx.currentTime + crossfadeDuration);
-      }
-    );
-  };
-  reader2.readAsArrayBuffer(file);
+  fadeIn(graphNext, crossfadeDuration, undefined, offset, duration);
+  fadeOut(graphCurrent, crossfadeDuration);
 }
 
 function playNext() {
-  currentFileIndex = (currentFileIndex + 1) % filesList.length;
-  console.log("current: ", filesList[currentFileIndex].name);
-  crossfadeAudioFile(filesList[currentFileIndex]);
+  // currentFileIndex is null first time round as there is nothing to crossfade from
+  if (currentFileIndex === null) {
+    currentFileIndex = 0;
+    fadeIn(filesList[currentFileIndex], 0);
+  } else {
+    const prevFileIndex = currentFileIndex;
+    currentFileIndex = (currentFileIndex + 1) % filesList.length;
+    crossFade(filesList[prevFileIndex], filesList[currentFileIndex]);
+  }
 }
 
 function loadFiles(files: File[]) {
-  filesList = files;
+  filesList = files.map(loadAudioFromFile);
 }
 
 function playAll(files: File[]) {
   loadFiles(files);
+  console.log(filesList.map(x=>x.name))
   playNext();
-  playNext();
+  setTimeout(playNext, 3000);
 }
 
 export {
-  fadeIn, fadeOut,
+  fadeIn,
+  fadeOut,
   loadAudioFromFile,
   crossFade,
   loadFiles,
   playAll,
-  playOne,
   playNext,
-  crossfadeAudioFile2,
 };

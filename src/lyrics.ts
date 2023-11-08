@@ -1,6 +1,6 @@
 import { parseLrcLines, parseTxtLines } from "./lrcFile";
 import { propOrDefault, removeFileExtension, readFileToString } from "./util";
-import { crossFade, fadeIn, fadeOut, loadAudioFromFile } from "./audio";
+import { playAll } from "./audio";
 
 let lyricsListElem: HTMLElement;
 let songTitleElem: HTMLElement;
@@ -43,15 +43,11 @@ async function handleFileInputChange(
   );
 
   // find an mp3 file and start playing it
-  const mp3Tracks = folderFiles.filter(
-    (file) => file.name.toLowerCase().endsWith('.mp3')
+  const mp3Tracks = folderFiles.filter((file) =>
+    file.name.toLowerCase().endsWith(".mp3")
   );
-  const sources =  [mp3Tracks[1], mp3Tracks[1]].map(loadAudioFromFile);
-  
-    console.log('starting')
-  fadeIn(sources[0]);
-  setTimeout(() => fadeOut(sources[0], 2), 5000)
-  
+  const sources = [mp3Tracks[1], mp3Tracks[0]];
+  playAll(sources);
 
   // check for presence of a file named _lyrics.playlist.txt, with lines of file names in the order they should be displayedkk
   const playlistFile = folderFiles.find(
@@ -157,7 +153,8 @@ function setTimeoutNextScroll() {
 }
 
 // weJustAutoScrolled returns true if there is a short duration between the now and the last auto scroll event
-const weJustAutoScrolled = (milliseconds=500) => ((Date.now() - lastAutoScrollTime) < milliseconds) 
+const weJustAutoScrolled = (milliseconds = 500) =>
+  Date.now() - lastAutoScrollTime < milliseconds;
 
 function renderLyrics() {
   // renderLyrics replaces the current contents of `list` with state.lines
@@ -242,5 +239,5 @@ export {
   nextSong,
   handleFileInputChange,
   weJustAutoScrolled,
-  setTimeoutNextScroll
+  setTimeoutNextScroll,
 };
