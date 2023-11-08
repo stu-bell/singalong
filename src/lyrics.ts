@@ -1,6 +1,6 @@
 import { parseLrcLines, parseTxtLines } from "./lrcFile";
 import { propOrDefault, removeFileExtension, readFileToString } from "./util";
-import { playOne, crossfadeAudioFile2 } from "./audio";
+import { crossFade, fadeIn, fadeOut, loadAudioFromFile } from "./audio";
 
 let lyricsListElem: HTMLElement;
 let songTitleElem: HTMLElement;
@@ -43,12 +43,17 @@ async function handleFileInputChange(
   );
 
   // find an mp3 file and start playing it
-  const mp3Files = folderFiles.filter(
+  const mp3Tracks = folderFiles.filter(
     (file) => file.name.toLowerCase().endsWith('.mp3')
   );
-  crossfadeAudioFile2(mp3Files[0], mp3Files[1]);
+  const sources =  [mp3Tracks[1], mp3Tracks[1]].map(loadAudioFromFile);
+  
+    console.log('starting')
+  fadeIn(sources[0]);
+  setTimeout(() => fadeOut(sources[0], 2), 5000)
+  
 
-  // check for presence of a file named _lyrics.playlist.txt, with lines of file names in the order they should be displayed
+  // check for presence of a file named _lyrics.playlist.txt, with lines of file names in the order they should be displayedkk
   const playlistFile = folderFiles.find(
     (file: any) => file.name.toLowerCase() === "_lyrics.playlist.txt"
   );
