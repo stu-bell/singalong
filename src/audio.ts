@@ -1,11 +1,6 @@
-let source1: AudioBufferSourceNode, source2: AudioBufferSourceNode;
-let gainNode1: GainNode; //= acx.createGain();
-let gainNode2: GainNode; //= acx.createGain();
 // let crossfadeControl = document.querySelector<HTMLInputElement>("#crossfadeControl");
 let filesList: graph[]; // populate this with your FileList from an input
 let currentFileIndex: number | null = null;
-
-let timeoutId: number | null = null;
 
 type graph = {
   source: AudioBufferSourceNode;
