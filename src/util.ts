@@ -23,6 +23,16 @@ function removeFileExtension(filename: string) {
   }
 }
 
+function getFileExtension(filename: string) {
+  var lastDotIndex = filename.lastIndexOf(".");
+  if (lastDotIndex === -1) {
+    // No file extension found
+    return '';
+  } else {
+    return filename.substring(lastDotIndex + 1).toLowerCase();
+  }
+}
+
 const readFileToString = async (file: File) =>
   new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
@@ -41,5 +51,6 @@ export {
   assertElementById,
   propOrDefault,
   removeFileExtension,
+  getFileExtension,
   readFileToString,
 };

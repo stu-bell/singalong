@@ -28,7 +28,7 @@ document.addEventListener("keydown", function (event) {
 // scroll events
 document.addEventListener("keydown", function (event) {
   if (
-    (event.key === "Space" ||
+    (event.key === " " ||
       event.key === "ArrowDown" ||
       event.key === "ArrowRight") 
     // don't scroll next if we've just followed an auto scroll

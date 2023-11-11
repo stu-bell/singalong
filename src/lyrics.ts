@@ -1,6 +1,5 @@
 import { parseLrcLines, parseTxtLines } from "./lrcFile";
-import { propOrDefault, removeFileExtension, readFileToString } from "./util";
-import { playAll } from "./audio";
+import { propOrDefault, removeFileExtension, readFileToString, getFileExtension } from "./util";
 import { loadPlaylist } from "./playlist"
 
 let lyricsListElem: HTMLElement;
@@ -43,12 +42,12 @@ async function handleFileInputChange(
       file.webkitRelativePath.toLowerCase().endsWith(".lrc")
   );
 
-  // find an mp3 file and start playing it
-  const mp3Tracks = folderFiles.filter((file) =>
-    file.name.toLowerCase().endsWith(".mp3")
-  );
-  const sources = [mp3Tracks[1], mp3Tracks[0]];
-  playAll(sources);
+  // // find an mp3 file and start playing it
+  // const mp3Tracks = folderFiles.filter((file) =>
+  //   file.name.toLowerCase().endsWith(".mp3")
+  // );
+  // const sources = [mp3Tracks[1], mp3Tracks[0]];
+  //playAll(sources);
 
   loadPlaylist(folderFiles);
 
@@ -137,9 +136,11 @@ function setTimeoutNextScroll() {
     clearTimeout(scrollTimer);
   }
   if (
-    state.fileType === "lrc" &&
+    // state.fileType === "lrc" &&
     state.lines[state.currentLineIndex] &&
-    state.lines[state.currentLineIndex + 1]
+    state.lines[state.currentLineIndex].timestamp &&
+    state.lines[state.currentLineIndex + 1] &&
+    state.lines[state.currentLineIndex + 1].timestamp
   ) {
     const currentLineTime = state.lines[state.currentLineIndex].timestamp;
     const nextLineTime = state.lines[state.currentLineIndex + 1].timestamp;
@@ -178,27 +179,26 @@ function renderLyrics() {
   }
 }
 
-async function loadLyricsFromFile(fileBlob: File) {
-  const fileContents = await readFileToString(fileBlob);
-
-  if (fileBlob.name.toLowerCase().endsWith(".lrc")) {
-    state.fileType = "lrc";
-    state.lines = parseLrcLines(fileContents);
-  } else if (fileBlob.name.toLowerCase().endsWith(".txt")) {
-    state.fileType = "txt";
-    state.lines = parseTxtLines(fileContents);
-  }
-
+async function loadLyricsFromFileAndRender(file:File) {
+  const lyrics  = await loadLyricsFromFile(file);
+  state.lines = lyrics;
+  state.fileType = getFileExtension(file.name);
   state.currentLineIndex = 0;
-  songTitleElem.textContent = removeFileExtension(fileBlob.name);
-
+  songTitleElem.textContent = removeFileExtension(file.name);
   renderLyrics();
+}
+
+async function loadLyricsFromFile(file: File) {
+  const fileContents = await readFileToString(file);
+  const ext = getFileExtension(file.name);
+  const parser = (ext === 'lrc') ? parseLrcLines : parseTxtLines;
+  return parser(fileContents);
 }
 
 function nextSong() {
   if (state.currentFileIndex < state.filesList.length) {
     state.currentFileIndex++;
-    loadLyricsFromFile(state.filesList[state.currentFileIndex]);
+    loadLyricsFromFileAndRender(state.filesList[state.currentFileIndex]);
   }
 }
 
@@ -210,7 +210,7 @@ function prevSong() {
   } else if (state.currentFileIndex > 0) {
     // go back to previous song
     state.currentFileIndex--;
-    loadLyricsFromFile(state.filesList[state.currentFileIndex]);
+    loadLyricsFromFileAndRender(state.filesList[state.currentFileIndex]);
   }
 }
 

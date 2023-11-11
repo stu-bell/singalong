@@ -1,3 +1,9 @@
+type LyricLines = LyricLine[];
+type LyricLine = {
+  text: string,
+  timestamp: number | null
+}
+
 function sortLrcFile(lrcFile: string) {
   // some lrc files have repeated lyrics on one line with multiple timetamps. This splits into multiple lines and sorts the result lines
   // split file by newline and filter out blank lines
@@ -38,13 +44,13 @@ function parseLrcLines(fileContents: string) {
       text: s.substring(splitIndex),
     };
   });
-  return [{ timestamp: 0, text: "" }, ...splitLeadingTimeStamps];
+  return [{ timestamp: 0, text: "" }, ...splitLeadingTimeStamps] as LyricLines;
 }
 
 function parseTxtLines(fileContents: string) {
   const lines = fileContents.split("\n");
-  const mapped = lines.map((l: any) => ({ text: l }));
-  return mapped;
+  const mapped = lines.map((l: any) => ({ text: l, timestamp: null }));
+  return mapped as LyricLines;
 }
 
 
