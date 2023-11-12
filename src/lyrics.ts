@@ -80,6 +80,7 @@ function setTimeoutNextScroll() {
     clearTimeout(scrollTimer);
   }
   if (
+    // the first line will not have a starting timestamp, so initialise at 0
     state.lines[state.currentLineIndex + 1] &&
     state.lines[state.currentLineIndex + 1].timestamp
   ) {
