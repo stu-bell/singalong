@@ -1,6 +1,6 @@
-import { parseLyricsFile, LyricLines } from "./lrcFile";
+import { LyricLines } from "./lrcFile";
 import { propOrDefault } from "./util";
-import { loadPlaylist, playlistNext, playlistPrev } from "./playlist"
+import { nextSong } from "./player";
 
 let lyricsListElem: HTMLElement;
 
@@ -19,31 +19,6 @@ let state: {
   currentLineIndex: 0,
   currentFileIndex: 0,
 };
-
-async function handleFileInputChange(
-  event: Event,
-  listElem: HTMLElement
-) {
-  // set global lyrcsListElem
-  lyricsListElem = listElem;
-  if (!event.target) {
-    console.error("Null input target");
-    return;
-  }
-  const target = event.target as HTMLInputElement & { files: FileList };
-  const files: FileList = target.files;
-  const folderFiles = Array.from(files);
-
-  // // find an mp3 file and start playing it
-  // const mp3Tracks = folderFiles.filter((file) =>
-  //   file.name.toLowerCase().endsWith(".mp3")
-  // );
-  // const sources = [mp3Tracks[1], mp3Tracks[0]];
-  //playAll(sources);
-
-    await loadPlaylist(folderFiles);
-    nextSong();
-  }
 
 function backwards(list: HTMLElement, text: string = "") {
   // backwards prepends to `list` a new element with `text`, and removes the last element
@@ -129,7 +104,10 @@ function setTimeoutNextScroll() {
 const weJustAutoScrolled = (milliseconds = 500) =>
   Date.now() - lastAutoScrollTime < milliseconds;
 
-function renderLyrics() {
+function renderLyrics(lines: LyricLines, htmlElement: HTMLElement) {
+  lyricsListElem = htmlElement;
+  // set lines for current track
+  state.lines = lines;
   // calling renderLyrics goes back to the start of the song
   state.currentLineIndex = 0;
   // renderLyrics replaces the current contents of `list` with state.lines
@@ -147,39 +125,6 @@ function renderLyrics() {
     const el = document.createElement("li");
     el.textContent = line;
     lyricsListElem.appendChild(el);
-  }
-}
-
-// async function loadLyricsFromFileAndRender(file:File) {
-//   const lyrics  = await loadLyricsFromFile(file);
-//   state.lines = lyrics;
-//   state.fileType = getFileExtension(file.name);
-//   songTitleElem.textContent = removeFileExtension(file.name);
-//   renderLyrics();
-// }
-
-// async function loadLyricsFromFile(file: File) {
-//   const fileContents = await readFileToString(file);
-// }
-
-async function nextSong() {
-  // new current track
-  const track = playlistNext();
-  if (track) {
-    state.lines = parseLyricsFile(await track.lyrics.text, track.lyrics.file)
-    renderLyrics();
-  } else {
-    // TODO handle no track (end of playlist)
-  }
-}
-
-async function prevSong() {
-  const track = playlistPrev();
-  if (track) {
-    state.lines = parseLyricsFile(await track.lyrics.text, track.lyrics.file)
-    renderLyrics();
-  } else {
-    //TODO handle no previous track (start of playlist)
   }
 }
 
@@ -207,10 +152,7 @@ function scrollPreviousLine() {
 export {
   scrollNextLine,
   scrollPreviousLine,
-  prevSong,
-  nextSong,
-  handleFileInputChange,
   weJustAutoScrolled,
   setTimeoutNextScroll,
-  loadLyricsFromFile
+  renderLyrics,
 };

@@ -11,17 +11,22 @@ Lyrics must be saved in a local folder as plain text files
 - playlist.json file that matches mp3 to play with lyrics (and download sample playlist.csv)
 - playlist.forEach(findFile(fileslist)). alert missing files in playlist. Ignore pfiles not there
 - playlist file to include times for auto start/end
+- update home page html instructions
 
 - zoom in/out events scale width and size of text
-- offline usage with service worker
 - playlist.csv instead of json
+- offline usage with service worker
 
 # Dev
 
 1. `npm install`
-1. `npm run dev`
+1. `npm run dev` 
 
 # Deploy to github pages
 
 1. Update base repository url in `vite.config.js`
 1. `npm run deploy`
+
+# Build (for running locally or deploying elsewhere)
+
+1. `npm run build`

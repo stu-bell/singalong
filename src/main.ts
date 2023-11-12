@@ -1,20 +1,21 @@
 import { assertElementById } from "./util";
 import {
-  scrollNextLine,
-  scrollPreviousLine,
   prevSong,
   nextSong,
-  weJustAutoScrolled,
   handleFileInputChange,
+} from "./player";
+import {
+  scrollNextLine,
+  scrollPreviousLine,
+  weJustAutoScrolled,
   setTimeoutNextScroll,
-} from "./lyrics";
+} from "./lyrics"
 
 const lyricsContainer = assertElementById("lyricsContainer");
-const songTitle = assertElementById("songTitle");
 
 // select folder event
 assertElementById("fileInput").addEventListener("change", (e) =>{
-  handleFileInputChange(e, lyricsContainer, songTitle);
+  handleFileInputChange(e, lyricsContainer);
   assertElementById('home').classList.add('hidden');  
 });
 

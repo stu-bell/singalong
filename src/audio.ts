@@ -1,14 +1,10 @@
-// let crossfadeControl = document.querySelector<HTMLInputElement>("#crossfadeControl");
-let filesList: graph[]; // populate this with your FileList from an input
-let currentFileIndex: number | null = null;
-
-type graph = {
-  source: AudioBufferSourceNode;
-  gain: GainNode;
-  name: string;
-};
-
 let acx: AudioContext;
+let currentlyPlaying: Graph;
+
+function getCurrentlyPlaying() {
+  return currentlyPlaying
+}
+
 function getAudioContext() {
   if (!acx) {
     acx = new window.AudioContext(); // || window.webkitAudioContext)();
@@ -16,27 +12,24 @@ function getAudioContext() {
   return acx;
 }
 
-function loadAudioFromFile(file: File) {
+type Graph = {
+  source: AudioBufferSourceNode;
+  gain: GainNode;
+};
+
+async function loadAudioFromFile(file: File): Promise<AudioBuffer> {
+  const audioContext = getAudioContext();
+  const arrayBuffer = await file.arrayBuffer();
+  return new Promise<AudioBuffer>((resolve, reject) => {
+    audioContext.decodeAudioData(arrayBuffer, resolve, reject);
+  });
+}
+
+function connectSource(buffer:AudioBuffer):AudioBufferSourceNode{
   const audioContext = getAudioContext();
   const sourceNode = audioContext.createBufferSource();
-  const reader = new FileReader();
-  reader.onload = function (event) {
-    audioContext.decodeAudioData(
-      event.target!.result as ArrayBuffer,
-      (buffer) => {
-        sourceNode.buffer = buffer as AudioBuffer;
-      }
-    );
-  };
-  reader.onerror = (event) => {
-    "Error reading file: " + event.target!.error?.message;
-  };
-  reader.readAsArrayBuffer(file);
-  return {
-    source: sourceNode,
-    gain: connectGain(sourceNode),
-    name: file.name,
-  } as graph;
+  sourceNode.buffer = buffer;
+  return sourceNode
 }
 
 function connectGain(source: AudioBufferSourceNode) {
@@ -47,8 +40,16 @@ function connectGain(source: AudioBufferSourceNode) {
   return gain;
 }
 
+function connectAudioGraph(buffer:AudioBuffer):Graph {
+  const source = connectSource(buffer);
+  return {
+    source,
+    gain: connectGain(source)
+  }
+}
+
 function fadeIn(
-  graph: graph,
+  graph: Graph,
   fadeDuration: number = 0,
   when?: number | undefined,
   offset?: number | undefined,
@@ -61,9 +62,11 @@ function fadeIn(
     1,
     audioContext.currentTime + fadeDuration
   );
+  // this feels dodge, but we really only want one track playing at a time, other than fades
+  currentlyPlaying = graph;
 }
 
-function fadeOut(graph: graph, fadeDuration: number = 0) {
+function fadeOut(graph: Graph, fadeDuration: number = 0) {
   const audioContext = graph.source.context;
   const endTime = audioContext.currentTime + fadeDuration;
   graph.gain.gain.setValueAtTime(1, audioContext.currentTime);
@@ -73,46 +76,51 @@ function fadeOut(graph: graph, fadeDuration: number = 0) {
 }
 
 function crossFade(
-  graphCurrent: graph,
-  graphNext: graph,
+  graphCurrent: Graph | null,
+  graphNext: Graph | null,
   crossfadeDuration: number = 1,
   offset?: number,
   duration?: number
 ) {
-  // undefined => start fadeIn at current time
-  fadeIn(graphNext, crossfadeDuration, undefined, offset, duration);
-  fadeOut(graphCurrent, crossfadeDuration);
-}
-
-function playNext() {
-  // currentFileIndex is null first time round as there is nothing to crossfade from
-  if (currentFileIndex === null) {
-    currentFileIndex = 0;
-    fadeIn(filesList[currentFileIndex], 0);
+  if (graphNext) { 
+    // undefined => start fadeIn at current time
+    fadeIn(graphNext, crossfadeDuration, undefined, offset, duration);
   } else {
-    const prevFileIndex = currentFileIndex;
-    currentFileIndex = (currentFileIndex + 1) % filesList.length;
-    crossFade(filesList[prevFileIndex], filesList[currentFileIndex]);
+    console.log('crossFade called but graphNext is null');
+  }
+  if (graphCurrent) {
+    fadeOut(graphCurrent, crossfadeDuration);
   }
 }
 
-function loadFiles(files: File[]) {
-  filesList = files.map(loadAudioFromFile);
-}
+// function playNext() {
+//   // currentFileIndex is null first time round as there is nothing to crossfade from
+//   if (currentFileIndex === null) {
+//     currentFileIndex = 0;
+//     fadeIn(filesList[currentFileIndex], 0);
+//   } else {
+//     const prevFileIndex = currentFileIndex;
+//     currentFileIndex = (currentFileIndex + 1) % filesList.length;
+//     crossFade(filesList[prevFileIndex], filesList[currentFileIndex]);
+//   }
+// }
 
-function playAll(files: File[]) {
-  loadFiles(files);
-  console.log(filesList.map(x=>x.name))
-  playNext();
-  setTimeout(playNext, 3000);
-}
-
+// function loadFiles(files: File[]) {
+//   filesList = files.map(loadAudioFromFileAndConnectSourceNode);
+// }
+//
+// function playAll(files: File[]) {
+//   loadFiles(files);
+//   console.log(filesList.map(x=>x.name))
+//   playNext();
+//   setTimeout(playNext, 3000);
+// }
+//
 export {
   fadeIn,
   fadeOut,
   loadAudioFromFile,
   crossFade,
-  loadFiles,
-  playAll,
-  playNext,
+  connectAudioGraph,
+  getCurrentlyPlaying,
 };

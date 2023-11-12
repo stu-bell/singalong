@@ -4,6 +4,7 @@
 // will start loading the buffers for next track on playlistNext 
 
 import { readFileToString, getFileExtension } from "./util";
+import { loadAudioFromFile } from "./audio";
 
 let prev: Track | null;
 let curr: Track | null;
@@ -81,7 +82,7 @@ function loadTrack(item: PlaylistItem): Track {
     },
     audio: {
       file: item.audioFile,
-      buffer: null, // TODO
+      buffer: item.audioFile ? loadAudioFromFile(item.audioFile) : null,
     },
   };
 }
