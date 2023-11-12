@@ -80,9 +80,6 @@ function setTimeoutNextScroll() {
     clearTimeout(scrollTimer);
   }
   if (
-    // state.fileType === "lrc" &&
-    state.lines[state.currentLineIndex] &&
-    state.lines[state.currentLineIndex].timestamp &&
     state.lines[state.currentLineIndex + 1] &&
     state.lines[state.currentLineIndex + 1].timestamp
   ) {
@@ -110,8 +107,6 @@ function renderLyrics(lines: LyricLines, htmlElement: HTMLElement) {
   state.lines = lines;
   // calling renderLyrics goes back to the start of the song
   state.currentLineIndex = 0;
-  // renderLyrics replaces the current contents of `list` with state.lines
-  setTimeoutNextScroll();
 
   while (lyricsListElem.firstChild) {
     lyricsListElem.firstChild.remove();
@@ -126,6 +121,9 @@ function renderLyrics(lines: LyricLines, htmlElement: HTMLElement) {
     el.textContent = line;
     lyricsListElem.appendChild(el);
   }
+
+  // start the timer for auto scroll
+  setTimeoutNextScroll();
 }
 
 function scrollNextLine() {
