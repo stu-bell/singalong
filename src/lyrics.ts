@@ -1,6 +1,6 @@
 import { LyricLines } from "./lrcFile";
-import { propOrDefault } from "./util";
 import { nextSong } from "./player";
+import { propOrDefault } from "./util";
 
 let lyricsListElem: HTMLElement;
 
@@ -101,6 +101,7 @@ function setTimeoutNextScroll() {
 // weJustAutoScrolled returns true if there is a short duration between the now and the last auto scroll event
 const weJustAutoScrolled = (milliseconds = 500) =>
   Date.now() - lastAutoScrollTime < milliseconds;
+
 
 function renderLyrics(lines: LyricLines, htmlElement: HTMLElement) {
   lyricsListElem = htmlElement;

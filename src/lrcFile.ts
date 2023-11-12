@@ -1,4 +1,4 @@
-import { getFileExtension } from "./util";
+import { getFileExtension } from "./files";
 
 type LyricLines = LyricLine[];
 type LyricLine = {
@@ -36,7 +36,7 @@ function parseLrcLines(fileContents: string) {
     (l) => !(l.startsWith("[") && l.endsWith("]"))
   );
   const splitLeadingTimeStamps = removeTags.map((s) => {
-    const matchTimestamp = s.match(/^\[\d\d?:\d\d?\.\d\d?\]/);
+    const matchTimestamp = s.match(/^\[\d?\d?:?\d?\d\.?\d?\d?\d?\]/);
     let splitIndex = 0;
     if (matchTimestamp) {
       splitIndex = matchTimestamp[0].length;
@@ -63,7 +63,7 @@ function parseLyricsFile(fileContent:string, file:File) {
 }
 
 function parseTimestampToSeconds(timestamp: string): number {
-// parseTimestampToSeconds akes string of [mm:ss] and returns the number of seconds
+// parseTimestampToSeconds akes string of [mm:ss.zzz] and returns the number of seconds
   const clean = timestamp.replace(/[[\]]/g, "");
   const parts = clean.split(":");
   const minutes = parseInt(parts[0]);
@@ -71,5 +71,5 @@ function parseTimestampToSeconds(timestamp: string): number {
   return minutes * 60 + seconds;
 }
 
-export { parseLyricsFile };export type { LyricLines };
+export { parseLyricsFile, parseTimestampToSeconds };export type { LyricLines };
 

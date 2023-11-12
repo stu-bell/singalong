@@ -20,47 +20,53 @@
     <p id="songTitle" class="text-2 text-gray-600 m-2"></p>
   </div>
 
-  <div id="home" class="text-left p-2">
-    <input id="fileInput" type="file" webkitdirectory directory multiple />
+  <div id="home" class="text-left px-4">
+    <input id="fileInput" type="file" webkitdirectory directory multiple class="my-3" />
     <p>
-      Choose a folder of .txt files and .lrc files.<br /><br />.lrc files with timestamps will play automatically,
-      otherwise use arrow keys. <br /><br />Optionally save a file in the same folder named `_lyrics.playlist.txt`. This
-      file should contain the file names of the other files in the folder (one filename per row), in the sequence you
-      want them to be displayed. The playlist will be displayed first. <br /><br />Keyboard commands:</p>
+      Choose a folder containing .mp3 files, and .lrc or .txt files for lyrics.<br /><br />.lrc files with timestamps
+      will play automatically,
+      otherwise use arrow keys. <br /><br />Save a file in the same folder named <code
+        class="bg-gray-100">_playlist.tsv</code><br /><br /> This file is how you tell the app which order to play the
+      tracks, and which audio and lyrics files are related. It
+      is a <a href="https://fileinfo.com/extension/tsv" class="hyperlink" target="_blank">Tab Separated Values file</a>
+      which should contain one row per song, in the sequence you want them to be played. On each row you'll need to
+      provide the exact file names for each lyric file (.txt or .lrc) and, optionally the matching .mp3 file. Watch out for typos in the playlist file! If you get any errors, edit and save your playlist file, refresh the page, and try again.<br/><br/>Once you've got all your audio and lyrics files in a folder, and added your playlist file, hit the 'Choose Files' button: 
+    </p>
+    <p> Keyboard commands:</p>
     <table class="text-left table-auto">
-    <thead class="bg-gray-500 text-white">
+      <thead class="bg-gray-500 text-white">
         <tr>
-            <th class="px-4 py-2">Key</th>
-            <th class="px-4 py-2">Command</th>
+          <th class="px-4 py-2">Key</th>
+          <th class="px-4 py-2">Command</th>
         </tr>
-    </thead>
-    <tbody class="text-gray-700">
+      </thead>
+      <tbody class="text-gray-700">
         <tr class="bg-gray-100">
-            <td class="px-4 py-2 border">Down | Right | Space</td>
-            <td class="px-4 py-2 border">Next Line</td>
+          <td class="px-4 py-2 border">Down | Right | Space</td>
+          <td class="px-4 py-2 border">Next Line</td>
         </tr>
         <tr>
-            <td class="px-4 py-2 border">Up | Left</td>
-            <td class="px-4 py-2 border">Previous Line</td>
+          <td class="px-4 py-2 border">Up | Left</td>
+          <td class="px-4 py-2 border">Previous Line</td>
         </tr>
         <tr class="bg-gray-100">
-            <td class="px-4 py-2 border">n</td>
-            <td class="px-4 py-2 border">Next Song</td>
+          <td class="px-4 py-2 border">n</td>
+          <td class="px-4 py-2 border">Next Song</td>
         </tr>
         <tr class="px-4 py-2 border">
-            <td class="px-4 py-2 border">p</td>
-            <td class="px-4 py-2 border">Previous Song</td>
+          <td class="px-4 py-2 border">p</td>
+          <td class="px-4 py-2 border">Previous Song</td>
         </tr>
         <tr class="bg-gray-100">
-            <td class="px-4 py-2 border">s</td>
-            <td class="px-4 py-2 border">Show/hide lyrics</td>
+          <td class="px-4 py-2 border">s</td>
+          <td class="px-4 py-2 border">Show/hide lyrics</td>
         </tr>
         <tr>
-            <td class="px-4 py-2 border"><code>0</code></td>
-            <td class="px-4 py-2 border">Reset the auto scroll timer for the current line back to 0</td>
+          <td class="px-4 py-2 border"><code>0</code></td>
+          <td class="px-4 py-2 border">Reset the auto scroll timer for the current line back to 0</td>
         </tr>
-    </tbody>
-</table>
+      </tbody>
+    </table>
   </div>
 
   <script type="module" src="/src/main.ts"></script>

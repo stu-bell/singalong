@@ -30,3 +30,12 @@ li.zero {
 .hidden {
   display: none;
 }
+
+@layer components {
+  .hyperlink {
+      @apply text-blue-500 underline;
+    }
+    .hyperlink:hover {
+      @apply text-blue-800;
+    }
+  }

@@ -1,14 +1,15 @@
-Karoake/Singalong app for playing local mp3 files and displaying lyrics from local .txt or .lrc files
+Sing-along/karaoke app for playing local mp3 files and displaying lyrics from local .txt or .lrc files
 
 # TODO
 
-- Not auto starting scrolling, or auto fading to next song
-- update home page html instructions
-- _playlist.tsv instead of json, and sample download
-- zoom in/out events scale width and size of text
 - playlist file to include times for auto start/end
+- zoom in/out events scale width and size of text
 - up/left Resets auto scroll timer for current line. Pressing twice moves to the previous line
+- update home page html instructions
+
+- sample tsv download
 - offline usage with service worker
+- Help text on the home page needs to scroll!
 
 # Dev
 

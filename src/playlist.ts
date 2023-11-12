@@ -1,9 +1,9 @@
 // await loadPlaylist
 // then use playlistNext and playlistPrev to shift the playlist position and get the current track
-// current track file text and buffer must be awaited 
-// will start loading the buffers for next track on playlistNext 
+// current track file text and buffer must be awaited
+// will start loading the buffers for next track on playlistNext
 
-import { readFileToString, getFileExtension } from "./util";
+import { readFileToString, getFileExtension, parseTsv } from "./files";
 import { loadAudioFromFile } from "./audio";
 
 let prev: Track | null;
@@ -11,12 +11,14 @@ let curr: Track | null;
 let next: Track | null;
 let playlistIndex: number;
 let playlist: Playlist;
-const playlistFileName = "_playlist.json";
+const playlistFileName = "_playlist.tsv";
 
 type Playlist = PlaylistItem[];
 type PlaylistItem = {
   audio: string;
   audioFile: File | null;
+  audioStart: number | null;
+  audioEnd: number | null;
   lyrics: string;
   lyricsFile: File;
 };
@@ -42,7 +44,7 @@ async function loadPlaylist(folderFiles: File[]) {
   next = loadTrack(playlist[0]);
 }
 
-function playlistNext() { 
+function playlistNext() {
   // bump position if there is a next track
   // if we're at the end of the playlist, null is returned
   if (next) {
@@ -94,7 +96,7 @@ async function parsePlaylistFile(folderfiles: File[]) {
   if (!playlistFile) {
     window.alert(`Error: no ${playlistFileName} file found!`);
   }
-  const playlistFileContents = JSON.parse(
+  const playlistFileContents = parseTsv(
     await readFileToString(playlistFile!)
   ) as Playlist;
   const playlist = loadPlaylistFileHandles(playlistFileContents, folderfiles);
@@ -103,13 +105,15 @@ async function parsePlaylistFile(folderfiles: File[]) {
 
 // loadPlaylistFileHandles attaches File handles to each playlist item. alerts of missing files
 function loadPlaylistFileHandles(playlist: Playlist, folderfiles: File[]) {
-  let warnings: string[] = [];
+  let missingAudioWarning: string[] = [];
   let errors: string[] = [];
   const findFile = (name: string) =>
     folderfiles.find((file) => file.name === name);
   const attachFiles = (item: PlaylistItem) => {
     if (!item.lyrics) {
       errors.push("Each playlist entry must contain a lyrics file.");
+      // remove this entry from the playlist
+      return null;
     } else {
       item.lyricsFile = findFile(item.lyrics)!;
       const ext = getFileExtension(item.lyrics);
@@ -117,12 +121,19 @@ function loadPlaylistFileHandles(playlist: Playlist, folderfiles: File[]) {
         errors.push(
           `Playlist includes ${item.lyrics} but we couldn't find that in the folder.`
         );
+        // remove this entry from the playlist
+        return null;
       } else if (!(ext === "lrc" || ext === "txt")) {
-        errors.push(`Only .lrc or .txt files supported, but found ${ext}`);
+        errors.push(
+          `Only .lrc or .txt files supported, but found ${item.lyrics}`
+        );
+        // remove this entry from the playlist
+        return null;
       }
     }
     if (!item.audio) {
-      warnings.push(`No audio file listed for ${item.lyrics}`);
+      // log the name of the lyrics file without the audio
+      missingAudioWarning.push(item.lyrics);
     } else {
       item.audioFile = findFile(item.audio)!;
       if (!item.audioFile) {
@@ -133,16 +144,25 @@ function loadPlaylistFileHandles(playlist: Playlist, folderfiles: File[]) {
     }
     return item;
   };
-  const playlistWithFiles = playlist.map(attachFiles);
+  // attach the files. remove null entries (null entries failed validation)
+  const playlistWithFiles = playlist.map(attachFiles).filter((x) => x !== null) as Playlist;
+  if (!playlistWithFiles.length) {
+    window.alert(
+      `Error: the ${playlistFileName} file contained no valid rows, or we couldn't find any corresponding files.`
+    );
+  }
   const validationErrors = errors.join("\n");
   if (validationErrors) {
     window.alert(`Error: ${validationErrors}`);
   }
-  const validationWarnings = warnings.join("\n");
+  const validationWarnings = missingAudioWarning.join("\n");
   if (validationWarnings) {
-    window.alert(`Warning: ${validationWarnings}`);
+    window.alert(
+      `Warning: the following tracks don't have audio: ${validationWarnings}`
+    );
   }
   return playlistWithFiles;
 }
 
 export { loadPlaylist, playlistPrev, playlistNext };
+export type { Track };

@@ -1,7 +1,7 @@
 import { parseLyricsFile } from "./lrcFile";
 import { renderLyrics } from "./lyrics";
-import { loadPlaylist, playlistNext, playlistPrev } from "./playlist";
-import { connectAudioGraph, crossFade, fadeIn, getCurrentlyPlaying } from "./audio";
+import { loadPlaylist, playlistNext, playlistPrev, Track } from "./playlist";
+import { connectAudioGraph, crossFade, getCurrentlyPlaying } from "./audio";
 
 let lyricsListElem: HTMLElement;
 
@@ -17,33 +17,29 @@ async function handleFileInputChange(event: Event, listElem: HTMLElement) {
   nextSong();
 }
 
-async function nextSong() {
-  // new current track
-  const track = playlistNext();
+async function playSong(track:Track|null) {
   if (track) {
-    const newAudio = track.audio.buffer
-      ? connectAudioGraph(await track.audio.buffer)
-      : null;
+    const buffer = await track.audio.buffer
+    const newAudio = buffer ? connectAudioGraph(buffer) : null;
     const lines = parseLyricsFile(await track.lyrics.text, track.lyrics.file);
-    crossFade(getCurrentlyPlaying(), newAudio);
+    const crossFadeDuration = 1;
+    crossFade(getCurrentlyPlaying(), newAudio, crossFadeDuration);
     renderLyrics(lines, lyricsListElem);
+    if (buffer?.duration){
+      // play the next song after this one finishes
+      setTimeout(nextSong, (buffer?.duration - crossFadeDuration) * 1000 );
+    }
   } else {
-    // TODO handle no track (end of playlist)
+    // TODO handle no track (when navigating off start or end of playlist)
   }
 }
 
+async function nextSong() {
+  playSong(playlistNext())
+}
+
 async function prevSong() {
-  const track = playlistPrev();
-  if (track) {
-    const newAudio = track.audio.buffer
-      ? connectAudioGraph(await track.audio.buffer)
-      : null;
-    const lines = parseLyricsFile(await track.lyrics.text, track.lyrics.file);
-    crossFade(getCurrentlyPlaying(), newAudio);
-    renderLyrics(lines, lyricsListElem);
-  } else {
-    //TODO handle no previous track (start of playlist)
-  }
+  playSong(playlistPrev())
 }
 
 export { prevSong, nextSong, handleFileInputChange };
