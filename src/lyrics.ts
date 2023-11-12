@@ -1,9 +1,8 @@
-import { parseLrcLines, parseTxtLines } from "./lrcFile";
-import { propOrDefault, removeFileExtension, readFileToString, getFileExtension } from "./util";
-import { loadPlaylist } from "./playlist"
+import { parseLyricsFile, LyricLines } from "./lrcFile";
+import { propOrDefault } from "./util";
+import { loadPlaylist, playlistNext, playlistPrev } from "./playlist"
 
 let lyricsListElem: HTMLElement;
-let songTitleElem: HTMLElement;
 
 let state: {
   fileType: string;
@@ -11,7 +10,7 @@ let state: {
   currentLineIndex: number;
   currentFileIndex: number;
   filesList: any[];
-  lines: any[];
+  lines: LyricLines;
 } = {
   lines: [],
   filesList: [],
@@ -23,12 +22,10 @@ let state: {
 
 async function handleFileInputChange(
   event: Event,
-  listElem: HTMLElement,
-  titleElem: HTMLElement
+  listElem: HTMLElement
 ) {
   // set global lyrcsListElem
   lyricsListElem = listElem;
-  songTitleElem = titleElem;
   if (!event.target) {
     console.error("Null input target");
     return;
@@ -36,11 +33,6 @@ async function handleFileInputChange(
   const target = event.target as HTMLInputElement & { files: FileList };
   const files: FileList = target.files;
   const folderFiles = Array.from(files);
-  state.filesList = folderFiles.filter(
-    (file: any) =>
-      file.webkitRelativePath.toLowerCase().endsWith(".txt") ||
-      file.webkitRelativePath.toLowerCase().endsWith(".lrc")
-  );
 
   // // find an mp3 file and start playing it
   // const mp3Tracks = folderFiles.filter((file) =>
@@ -49,32 +41,9 @@ async function handleFileInputChange(
   // const sources = [mp3Tracks[1], mp3Tracks[0]];
   //playAll(sources);
 
-  loadPlaylist(folderFiles);
-
-  // check for presence of a file named _lyrics.playlist.txt, with lines of file names in the order they should be displayedkk
-  const playlistFile = folderFiles.find(
-    (file: any) => file.name.toLowerCase() === "_lyrics.playlist.txt"
-  );
-  if (playlistFile) {
-    const playlistContents = await readFileToString(playlistFile);
-    const playlistOrder = playlistContents
-      .split("\n")
-      .map((line: string) => line.trim())
-      .filter((line: string) => line !== "");
-    const filesListOrdered = state.filesList.sort((fileA: any, fileB: any) => {
-      const indexA = playlistOrder.indexOf(fileA.name);
-      const indexB = playlistOrder.indexOf(fileB.name);
-      return indexA - indexB;
-    });
-    state.filesList = filesListOrdered;
-    state.currentFileIndex = -1;
-    nextSong();
-  } else {
-    // don't order the folder, just play in what ever order they come
-    state.currentFileIndex = -1;
+    await loadPlaylist(folderFiles);
     nextSong();
   }
-}
 
 function backwards(list: HTMLElement, text: string = "") {
   // backwards prepends to `list` a new element with `text`, and removes the last element
@@ -142,8 +111,8 @@ function setTimeoutNextScroll() {
     state.lines[state.currentLineIndex + 1] &&
     state.lines[state.currentLineIndex + 1].timestamp
   ) {
-    const currentLineTime = state.lines[state.currentLineIndex].timestamp;
-    const nextLineTime = state.lines[state.currentLineIndex + 1].timestamp;
+    const currentLineTime = state.lines[state.currentLineIndex].timestamp || 0;
+    const nextLineTime = state.lines[state.currentLineIndex + 1].timestamp || 0;
     const delay = nextLineTime - currentLineTime;
     if (delay > 0) {
       scrollTimer = setTimeout(() => {
@@ -161,6 +130,8 @@ const weJustAutoScrolled = (milliseconds = 500) =>
   Date.now() - lastAutoScrollTime < milliseconds;
 
 function renderLyrics() {
+  // calling renderLyrics goes back to the start of the song
+  state.currentLineIndex = 0;
   // renderLyrics replaces the current contents of `list` with state.lines
   setTimeoutNextScroll();
 
@@ -179,38 +150,36 @@ function renderLyrics() {
   }
 }
 
-async function loadLyricsFromFileAndRender(file:File) {
-  const lyrics  = await loadLyricsFromFile(file);
-  state.lines = lyrics;
-  state.fileType = getFileExtension(file.name);
-  state.currentLineIndex = 0;
-  songTitleElem.textContent = removeFileExtension(file.name);
-  renderLyrics();
-}
+// async function loadLyricsFromFileAndRender(file:File) {
+//   const lyrics  = await loadLyricsFromFile(file);
+//   state.lines = lyrics;
+//   state.fileType = getFileExtension(file.name);
+//   songTitleElem.textContent = removeFileExtension(file.name);
+//   renderLyrics();
+// }
 
-async function loadLyricsFromFile(file: File) {
-  const fileContents = await readFileToString(file);
-  const ext = getFileExtension(file.name);
-  const parser = (ext === 'lrc') ? parseLrcLines : parseTxtLines;
-  return parser(fileContents);
-}
+// async function loadLyricsFromFile(file: File) {
+//   const fileContents = await readFileToString(file);
+// }
 
-function nextSong() {
-  if (state.currentFileIndex < state.filesList.length) {
-    state.currentFileIndex++;
-    loadLyricsFromFileAndRender(state.filesList[state.currentFileIndex]);
+async function nextSong() {
+  // new current track
+  const track = playlistNext();
+  if (track) {
+    state.lines = parseLyricsFile(await track.lyrics.text, track.lyrics.file)
+    renderLyrics();
+  } else {
+    // TODO handle no track (end of playlist)
   }
 }
 
-function prevSong() {
-  if (state.currentLineIndex > 2) {
-    // go back to start of current song
-    state.currentLineIndex = 0;
+async function prevSong() {
+  const track = playlistPrev();
+  if (track) {
+    state.lines = parseLyricsFile(await track.lyrics.text, track.lyrics.file)
     renderLyrics();
-  } else if (state.currentFileIndex > 0) {
-    // go back to previous song
-    state.currentFileIndex--;
-    loadLyricsFromFileAndRender(state.filesList[state.currentFileIndex]);
+  } else {
+    //TODO handle no previous track (start of playlist)
   }
 }
 
@@ -243,4 +212,5 @@ export {
   handleFileInputChange,
   weJustAutoScrolled,
   setTimeoutNextScroll,
+  loadLyricsFromFile
 };

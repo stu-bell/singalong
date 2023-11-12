@@ -1,3 +1,5 @@
+import { getFileExtension } from "./util";
+
 type LyricLines = LyricLine[];
 type LyricLine = {
   text: string,
@@ -54,6 +56,12 @@ function parseTxtLines(fileContents: string) {
 }
 
 
+function parseLyricsFile(fileContent:string, file:File) {
+  const ext = getFileExtension(file.name);
+  const parser = (ext === 'lrc') ? parseLrcLines : parseTxtLines;
+  return parser(fileContent);
+}
+
 function parseTimestampToSeconds(timestamp: string): number {
 // parseTimestampToSeconds akes string of [mm:ss] and returns the number of seconds
   const clean = timestamp.replace(/[[\]]/g, "");
@@ -63,4 +71,5 @@ function parseTimestampToSeconds(timestamp: string): number {
   return minutes * 60 + seconds;
 }
 
-export { parseLrcLines, parseTxtLines }
+export { parseLyricsFile };export type { LyricLines };
+
