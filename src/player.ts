@@ -25,12 +25,10 @@ async function playSong(track:Track|null) {
     const crossFadeDuration = 1;
     crossFade(getCurrentlyPlaying(), newAudio, crossFadeDuration, track.audio.offset);
     renderLyrics(lines, lyricsListElem);
-    const duration = (track.audio.end) ? (track.audio.end - track.audio.offset) : buffer?.duration;
-    console.log(track.audio.offset)
-    console.log(duration)
-    if (duration){
+    const endpoint = (track.audio.end) ? track.audio.end : buffer?.duration
+    if (endpoint){
       // play the next song after this one finishes
-      setTimeout(nextSong, (duration - crossFadeDuration) * 1000 );
+      setTimeout(nextSong, (endpoint - track.audio.offset - crossFadeDuration) * 1000 );
     }
   } else {
     // TODO handle no track (when navigating off start or end of playlist)
