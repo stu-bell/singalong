@@ -23,11 +23,14 @@ async function playSong(track:Track|null) {
     const newAudio = buffer ? connectAudioGraph(buffer) : null;
     const lines = parseLyricsFile(await track.lyrics.text, track.lyrics.file);
     const crossFadeDuration = 1;
-    crossFade(getCurrentlyPlaying(), newAudio, crossFadeDuration);
+    crossFade(getCurrentlyPlaying(), newAudio, crossFadeDuration, track.audio.offset);
     renderLyrics(lines, lyricsListElem);
-    if (buffer?.duration){
+    const duration = (track.audio.end) ? (track.audio.end - track.audio.offset) : buffer?.duration;
+    console.log(track.audio.offset)
+    console.log(duration)
+    if (duration){
       // play the next song after this one finishes
-      setTimeout(nextSong, (buffer?.duration - crossFadeDuration) * 1000 );
+      setTimeout(nextSong, (duration - crossFadeDuration) * 1000 );
     }
   } else {
     // TODO handle no track (when navigating off start or end of playlist)

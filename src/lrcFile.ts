@@ -63,12 +63,19 @@ function parseLyricsFile(fileContent:string, file:File) {
 }
 
 function parseTimestampToSeconds(timestamp: string): number {
+  let result:number;
 // parseTimestampToSeconds akes string of [mm:ss.zzz] and returns the number of seconds
   const clean = timestamp.replace(/[[\]]/g, "");
   const parts = clean.split(":");
-  const minutes = parseInt(parts[0]);
-  const seconds = parseFloat(parts[1]);
-  return minutes * 60 + seconds;
+  if (parts.length === 1) {
+    // no : so treat as only seconds
+    result =  parseFloat(parts[0]);
+  } else {
+    const minutes = parseInt(parts[0]);
+    const seconds = parseFloat(parts[1]);
+    result = minutes * 60 + seconds;
+  }
+  return result;
 }
 
 export { parseLyricsFile, parseTimestampToSeconds };export type { LyricLines };

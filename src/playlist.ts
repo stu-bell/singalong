@@ -5,6 +5,7 @@
 
 import { readFileToString, getFileExtension, parseTsv } from "./files";
 import { loadAudioFromFile } from "./audio";
+import { parseTimestampToSeconds } from "./lrcFile";
 
 let prev: Track | null;
 let curr: Track | null;
@@ -15,12 +16,12 @@ const playlistFileName = "_playlist.tsv";
 
 type Playlist = PlaylistItem[];
 type PlaylistItem = {
-  audio: string;
-  audioFile: File | null;
-  audioStart: number | null;
-  audioEnd: number | null;
-  lyrics: string;
-  lyricsFile: File;
+  audio: string; // audio file name, from playlist file
+  audioFile: File | null; // audio File handle, added during parsing
+  audio_start: string| null; // audio start timestamp, from playlist file
+  audio_end: string| null; // audio end timestamp, from playlist file
+  lyrics: string; // lyrics file name, from playlist file
+  lyricsFile: File; // lyrics File handle, added during parsing
 };
 
 type Track = {
@@ -31,6 +32,8 @@ type Track = {
   audio: {
     file: File | null;
     buffer: Promise<AudioBuffer> | null;
+    offset: number; // offset to start playing track
+    end: number| undefined; // time in the track we should move next. duration = end - offset
   };
 };
 
@@ -85,6 +88,8 @@ function loadTrack(item: PlaylistItem): Track {
     audio: {
       file: item.audioFile,
       buffer: item.audioFile ? loadAudioFromFile(item.audioFile) : null,
+      offset: (item.audio_start) ? parseTimestampToSeconds(item.audio_start) : 0,
+      end: (item.audio_end) ? parseTimestampToSeconds(item.audio_end) : undefined,
     },
   };
 }
