@@ -80,14 +80,15 @@ function setTimeoutNextScroll() {
     clearTimeout(scrollTimer);
   }
   if (
-    // the first line will not have a starting timestamp, so initialise at 0
     state.lines[state.currentLineIndex + 1] &&
-    state.lines[state.currentLineIndex + 1].timestamp
+    state.lines[state.currentLineIndex + 1].hasOwnProperty('timestamp') && 
+    // first line may have a timestamp of 0, we still want to set auto scroll
+    state.lines[state.currentLineIndex + 1].timestamp! >= 0
   ) {
     const currentLineTime = state.lines[state.currentLineIndex].timestamp || 0;
     const nextLineTime = state.lines[state.currentLineIndex + 1].timestamp || 0;
     const delay = nextLineTime - currentLineTime;
-    if (delay > 0) {
+    if (delay >= 0) {
       scrollTimer = setTimeout(() => {
         // register time we last auto-scrolled
         lastAutoScrollTime = Date.now();

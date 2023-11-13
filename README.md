@@ -2,14 +2,14 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 
 # TODO
 
-- playlist file to include times for auto start/end
 - zoom in/out events scale width and size of text
-- up/left Resets auto scroll timer for current line. Pressing twice moves to the previous line
 - update home page html instructions
+- Help text on the home page needs to scroll!
 
 - sample tsv download
 - offline usage with service worker
-- Help text on the home page needs to scroll!
+- play/pause?
+- prev song should reset to start of current song, double tap to go to prev
 
 # Dev
 
