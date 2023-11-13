@@ -49,6 +49,22 @@ li.zero {
   display: none;
 }
 
+.cursor-none {
+  cursor: none;
+}
+
+.cursor-auto {
+  cursor: auto;  
+}
+
+#lyricsContainer {
+  user-select: none; 
+  -moz-user-select: none; 
+  -khtml-user-select: none; 
+  -webkit-user-select: none; 
+  -ms-user-select: none; 
+}
+
 @layer components {
   .hyperlink {
       @apply text-blue-500 underline cursor-pointer;
