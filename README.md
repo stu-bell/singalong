@@ -2,8 +2,8 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 
 # TODO
 
-- last song plays on repeat? we probably want to stop at the end of the set? Or you could just put a .txt file thank you?
 - lrc offset
+- last song plays on repeat? we probably want to stop at the end of the set? Or you could just put a .txt file thank you?
 - offline usage with service worker
 
 # Dev

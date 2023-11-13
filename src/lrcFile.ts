@@ -49,6 +49,12 @@ function parseLrcLines(fileContents: string) {
   return [{ timestamp: 0, text: "" }, ...splitLeadingTimeStamps] as LyricLines;
 }
 
+// seekTimestamp returns the index of the line just before the required position
+// TODO: offset next scroll from the seek position 
+function seekTimestamp(lines: LyricLines, position:number) {
+  return lines.findIndex(line => line.timestamp! > position) -1
+}
+
 function parseTxtLines(fileContents: string) {
   const lines = fileContents.split("\n");
   const mapped = lines.map((l: any) => ({ text: l, timestamp: null }));

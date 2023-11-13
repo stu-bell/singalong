@@ -39,12 +39,11 @@ type Track = {
 
 async function loadPlaylist(folderFiles: File[]) {
   playlist = await parsePlaylistFile(folderFiles);
-  if (!playlist.length) {
-    window.alert(`Error: ${playlistFileName} empty`);
+  if (playlist.length) {
+    // initialise by queuing the next track
+    playlistIndex = -1;
+    next = loadTrack(playlist[0]);
   }
-  // initialise by queuing the next track
-  playlistIndex = -1;
-  next = loadTrack(playlist[0]);
 }
 
 function playlistNext() {
@@ -99,12 +98,18 @@ async function parsePlaylistFile(folderfiles: File[]) {
     (file: File) => file.name.toLowerCase() === playlistFileName
   );
   if (!playlistFile) {
-    window.alert(`Error: no ${playlistFileName} file found!`);
+    window.alert(`Oops! We couldn't find a ${playlistFileName} file in that folder! Save one in that folder and edit it to make your playlist.`);
+    downloadExamplePlaylistFile(folderfiles);
+    window.alert(`We've just downloaded a ${playlistFileName} file for you, with the tracks we could find in the folder you chose. Open it in a spreadsheet and put the lyrics and audio files in the correct order. Then refresh the sing along app and retry.`)
+    return [];
   }
   const playlistFileContents = parseTsv(
     await readFileToString(playlistFile!)
   ) as Playlist;
   const playlist = loadPlaylistFileHandles(playlistFileContents, folderfiles);
+  if (!playlist.length) {
+    window.alert(`Error: ${playlistFileName} empty`);
+  }
   return playlist;
 }
 
@@ -116,7 +121,7 @@ function loadPlaylistFileHandles(playlist: Playlist, folderfiles: File[]) {
     folderfiles.find((file) => file.name === name);
   const attachFiles = (item: PlaylistItem) => {
     if (!item.lyrics) {
-      errors.push("Each playlist entry must contain a lyrics file.");
+      errors.push(`Each playlist row must contain a lyrics file. ${item.audio ? item.audio : ''}`);
       // remove this entry from the playlist
       return null;
     } else {
@@ -169,11 +174,19 @@ function loadPlaylistFileHandles(playlist: Playlist, folderfiles: File[]) {
   return playlistWithFiles;
 }
 
-function downloadExamplePlaylistFile() {
-  const exampleContent = `lyrics	audio	audio_start	audio_end
-First lyrics.txt	First.mp3	2
-Second lyrics.lrc	second.mp3
-Third.lrc	third.mp3	0	1:10.5`
+function downloadExamplePlaylistFile(files: File[]) {
+  const audioFiles = files.filter((file) => getFileExtension(file.name) === 'mp3').map(file => file.name);
+  const lyricsFiles = files.filter((file) => {
+    const ext = getFileExtension(file.name);
+    return ext === 'lrc' || ext === 'txt;'
+   }).map(file => file.name);
+
+  const len = (audioFiles.length > lyricsFiles.length) ? audioFiles.length : lyricsFiles.length;
+  let res = [];
+  for (let i = 0; i < len; i++) {
+    res.push(`${lyricsFiles[i] || ''}\t${audioFiles[i] || ''}\t`)
+  }
+  const exampleContent = `lyrics	audio	audio_start	audio_end\r\n` + res.join('\r\n');
   downloadFile(exampleContent, '_playlist.tsv');
 }
 
