@@ -7,24 +7,39 @@ li {
   margin: 0 10px;
 }
 
- /*Important that font size and li width stay in proportion to prevent line wrap changes when transitioning sizes */
+/*important for animation for font size and width to stay in proportion*/
 li {
   font-size: 2rem;
   width: 50%;
   opacity: 0.6;
 }
-
 li.large {
   font-size: 4rem;
   width: 100%;
   opacity: 1;
 }
-
 li.zero {
-  /*Important that font size and li width stay in proportion to prevent line wrap changes when transitioning sizes */
   font-size: 0;
   width: 0;
 }
+
+/* previous version of list styles - not compatible with zoom?*/
+/* li { */
+/*   font-size: 4vw; */
+/*   width: 40vw; */
+/*   opacity: 0.6; */
+/* } */
+/*  */
+/* li.large { */
+/*   font-size: 8vw; */
+/*   width: 80vw; */
+/*   opacity: 1; */
+/* } */
+/*  */
+/* li.zero { */
+/*   font-size: 0vw; */
+/*   width: 0vw; */
+/* } */
 
 .hidden {
   display: none;
