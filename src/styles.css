@@ -33,7 +33,7 @@ li.zero {
 
 @layer components {
   .hyperlink {
-      @apply text-blue-500 underline;
+      @apply text-blue-500 underline cursor-pointer;
     }
     .hyperlink:hover {
       @apply text-blue-800;

@@ -53,4 +53,17 @@ function parseTsv(fileContent: string): Object[] {
   return data.filter((x) => (!!x));
 }
 
-export { removeFileExtension, getFileExtension, readFileToString, parseTsv };
+function downloadFile(content:string, fileName:string) {
+    const data = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(data);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    // Add the link to the DOM (needed for Firefox)
+    document.body.appendChild(link);
+    // Programmatically click the link
+    link.click();
+    document.body.removeChild(link);
+}
+
+export { downloadFile, removeFileExtension, getFileExtension, readFileToString, parseTsv };

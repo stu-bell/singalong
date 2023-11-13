@@ -10,6 +10,7 @@ import {
   weJustAutoScrolled,
   setTimeoutNextScroll,
 } from "./lyrics"
+import { downloadExamplePlaylistFile } from "./playlist";
 
 const lyricsContainer = assertElementById("lyricsContainer");
 
@@ -18,6 +19,8 @@ assertElementById("fileInput").addEventListener("change", (e) =>{
   handleFileInputChange(e, lyricsContainer);
   assertElementById('home').classList.add('hidden');  
 });
+
+assertElementById('aDownloadEgFile').addEventListener('click', (e) => downloadExamplePlaylistFile());
 
 // show hide lyrics
 document.addEventListener("keydown", function (event) {

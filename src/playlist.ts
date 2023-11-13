@@ -3,7 +3,7 @@
 // current track file text and buffer must be awaited
 // will start loading the buffers for next track on playlistNext
 
-import { readFileToString, getFileExtension, parseTsv } from "./files";
+import { readFileToString, getFileExtension, parseTsv, downloadFile } from "./files";
 import { loadAudioFromFile } from "./audio";
 import { parseTimestampToSeconds } from "./lrcFile";
 
@@ -169,5 +169,13 @@ function loadPlaylistFileHandles(playlist: Playlist, folderfiles: File[]) {
   return playlistWithFiles;
 }
 
-export { loadPlaylist, playlistPrev, playlistNext };
+function downloadExamplePlaylistFile() {
+  const exampleContent = `lyrics	audio	audio_start	audio_end
+First lyrics.txt	First.mp3	2
+Second lyrics.lrc	second.mp3
+Third.lrc	third.mp3	0	1:10.5`
+  downloadFile(exampleContent, '_playlist.tsv');
+}
+
+export { loadPlaylist, playlistPrev, playlistNext, downloadExamplePlaylistFile };
 export type { Track };

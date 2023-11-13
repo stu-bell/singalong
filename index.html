@@ -13,6 +13,7 @@
 
 <body class="font-arial h-screen flex flex-col overflow-hidden">
 
+  <!-- main container for song lyrics -->
   <ul id="lyricsContainer" class="flex flex-col items-center list-none text-center mt-32">
     <li></li>
   </ul>
@@ -20,7 +21,7 @@
     <p id="songTitle" class="text-2 text-gray-600 m-2"></p>
   </div>
 
-  <div id="home" class="text-left px-4">
+  <div id="home" class="text-left px-4 max-h-screen overflow-y-auto">
     <input id="fileInput" type="file" webkitdirectory directory multiple class="my-3" />
     <p>
       Choose a folder containing .mp3 files, and .lrc or .txt files for lyrics.<br /><br />.lrc files with timestamps
@@ -29,11 +30,11 @@
         class="bg-gray-100">_playlist.tsv</code><br /><br /> This file is how you tell the app which order to play the
       tracks, and which audio and lyrics files are related. It
       is a <a href="https://fileinfo.com/extension/tsv" class="hyperlink" target="_blank">Tab Separated Values file</a>
-      which should contain one row per song, in the sequence you want them to be played. On each row you'll need to
-      provide the exact file names for each lyric file (.txt or .lrc) and, optionally the matching .mp3 file. Watch out for typos in the playlist file! If you get any errors, edit and save your playlist file, refresh the page, and try again.<br/><br/>Once you've got all your audio and lyrics files in a folder, and added your playlist file, hit the 'Choose Files' button: 
+      which should contain one row per song, in the sequence you want them to be played. On each row you'll need to provide the exact file names for each lyric file (.txt or .lrc) and, optionally the matching .mp3 file. Watch out for typos in the playlist file! If you get any errors, edit and save your playlist file, refresh the page, and try again. You can include two extra optional columns called 'audio_start' and 'audio_end', which should show the times in seconds the current audio track should start and finish. <a id="aDownloadEgFile" class="hyperlink">Click to download a playlist file template</a>.
+      <br/><br/>Once you've got all your audio and lyrics files in a folder, and added your playlist file, hit the 'Choose Files' button, above.<br/><br/> 
     </p>
     <p> Keyboard commands:</p>
-    <table class="text-left table-auto">
+    <table class="text-left table-auto my-2">
       <thead class="bg-gray-500 text-white">
         <tr>
           <th class="px-4 py-2">Key</th>
