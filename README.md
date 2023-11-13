@@ -2,14 +2,8 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 
 # TODO
 
-- zoom in/out events scale width and size of text
-- update home page html instructions
-- Help text on the home page needs to scroll!
-
-- sample tsv download
+- lrc offset
 - offline usage with service worker
-- play/pause?
-- prev song should reset to start of current song, double tap to go to prev
 
 # Dev
 

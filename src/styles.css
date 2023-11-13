@@ -41,6 +41,10 @@ li.zero {
 /*   width: 0vw; */
 /* } */
 
+.mt-vh {
+  margin-top: 10vh;
+}
+
 .hidden {
   display: none;
 }
