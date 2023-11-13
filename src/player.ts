@@ -17,6 +17,7 @@ async function handleFileInputChange(event: Event, listElem: HTMLElement) {
   nextSong();
 }
 
+let nextSongTimeout: number | null = null;
 async function playSong(track:Track|null) {
   if (track) {
     const buffer = await track.audio.buffer
@@ -31,7 +32,11 @@ async function playSong(track:Track|null) {
     // console.log('end or duration', endpoint)
     if (endpoint){
       // play the next song after this one finishes
-      setTimeout(nextSong, (endpoint - track.audio.offset - crossFadeDuration) * 1000 );
+      if (nextSongTimeout) {
+        // cancel inflight timer, since we might have skipped
+        clearTimeout(nextSongTimeout);
+      }
+      nextSongTimeout = setTimeout(nextSong, (endpoint - track.audio.offset - crossFadeDuration) * 1000 );
     }
   } else {
     // TODO handle no track (when navigating off start or end of playlist)
