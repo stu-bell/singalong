@@ -7,24 +7,23 @@ li {
   margin: 0 10px;
 }
 
+ /*Important that font size and li width stay in proportion to prevent line wrap changes when transitioning sizes */
 li {
-  /*important for animation for font size and width to stay in proportion*/
-  font-size: 4vw;
-  width: 40vw;
+  font-size: 2rem;
+  width: 50%;
   opacity: 0.6;
 }
 
 li.large {
-  /*important for animation for font size and width to stay in proportion*/
-  font-size: 8vw;
-  width: 80vw;
+  font-size: 4rem;
+  width: 100%;
   opacity: 1;
 }
 
 li.zero {
-  /*important for animation for font size and width to stay in proportion*/
-  font-size: 0vw;
-  width: 0vw;
+  /*Important that font size and li width stay in proportion to prevent line wrap changes when transitioning sizes */
+  font-size: 0;
+  width: 0;
 }
 
 .hidden {
