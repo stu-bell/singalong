@@ -36,7 +36,7 @@ function parseLrcLines(lrcFile: string) {
 function parseTxtLines(fileContents: string) {
   const lines = fileContents.split("\n");
   const mapped = lines.map((l: any) => ({ text: l, timestamp: null }));
-  return mapped as LyricLines;
+  return [{ timestamp: 0, text: "" }, ...mapped] as LyricLines;
 }
 
 

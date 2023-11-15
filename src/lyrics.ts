@@ -33,7 +33,7 @@ function backwards(list: HTMLElement, text: string = "") {
 
   const first = list.firstElementChild as HTMLElement;
   if (first) {
-    void first.offsetWidth;
+    void first.offsetWidth; // reset transition
     first.classList.remove("zero");
     first.classList.add("large");
     const second = list.getElementsByTagName("li")[1];
