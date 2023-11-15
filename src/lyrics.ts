@@ -73,7 +73,7 @@ function forwards(list: HTMLElement, text: string = "") {
 // setTimeout allowing us to adjust the timer
 let scrollTimer: number | null = null;
 let lastAutoScrollTime: number;
-function setTimeoutNextScroll() {
+function setTimeoutNextScroll(from?:number) {
   // setTimeoutNextScroll sets an auto scroll for the next line, based on timestamps
   if (scrollTimer) {
     // cancel inflight timer, since we might have skipped
@@ -85,7 +85,7 @@ function setTimeoutNextScroll() {
     // first line may have a timestamp of 0, we still want to set auto scroll
     state.lines[state.currentLineIndex + 1].timestamp! >= 0
   ) {
-    const currentLineTime = state.lines[state.currentLineIndex].timestamp || 0;
+    const currentLineTime = from ? from : state.lines[state.currentLineIndex].timestamp || 0;
     const nextLineTime = state.lines[state.currentLineIndex + 1].timestamp || 0;
     const delay = nextLineTime - currentLineTime;
     if (delay >= 0) {
@@ -96,6 +96,16 @@ function setTimeoutNextScroll() {
       }, delay * 1000);
     }
     // if the timestamps on current and nextlines are the same, do we just want to skip now?
+  }
+}
+
+// seekTimestamp used for offsetting the automated lyrics
+// eg if offset = 10, lyrics should start displaying from 10 seconds into the 'song'
+function seekTimestamp(lines: LyricLines, offset:number) {
+  const index =  lines.findIndex(line => line.timestamp! > offset)
+  if (index) {
+    state.currentLineIndex = index -1;
+    setTimeoutNextScroll(offset)
   }
 }
 
@@ -155,5 +165,6 @@ export {
   scrollPreviousLine,
   weJustAutoScrolled,
   setTimeoutNextScroll,
+  seekTimestamp,
   renderLyrics,
 };

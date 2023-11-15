@@ -5,6 +5,7 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 - lrc offset: lrcFile.ts seekTimestamp
 - last song plays on repeat? we probably want to stop at the end of the set? Or you could just put a .txt file thank you?
 - offline usage with service worker
+- bugs with .txt files
 
 # Dev
 
