@@ -82,6 +82,7 @@ function setTimeoutNextScroll() {
   if (
     state.lines[state.currentLineIndex + 1] &&
     state.lines[state.currentLineIndex + 1].hasOwnProperty('timestamp') && 
+    state.lines[state.currentLineIndex + 1].timestamp !== null && 
     // first line may have a timestamp of 0, we still want to set auto scroll
     state.lines[state.currentLineIndex + 1].timestamp! >= 0
   ) {
