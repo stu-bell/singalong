@@ -13,7 +13,7 @@ async function handleFileInputChange(event: Event, listElem: HTMLElement) {
   const folderFiles = Array.from(files);
 
   await loadPlaylist(folderFiles);
-  // start playing the first song
+  // start playit ng the first song
   nextSong();
 }
 
@@ -25,7 +25,7 @@ async function playSong(track:Track|null) {
     const lines = parseLyricsFile(await track.lyrics.text, track.lyrics.file);
     const crossFadeDuration = 1;
     crossFade(getCurrentlyPlaying(), newAudio, crossFadeDuration, track.audio.offset);
-    renderLyrics(lines, lyricsListElem);
+    renderLyrics(lines, lyricsListElem, track.lyrics.offset);
     const endpoint = (track.audio.end) ? track.audio.end : buffer?.duration
     if (endpoint){
       // play the next song after this one finishes

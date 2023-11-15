@@ -73,7 +73,7 @@ function forwards(list: HTMLElement, text: string = "") {
 // setTimeout allowing us to adjust the timer
 let scrollTimer: number | null = null;
 let lastAutoScrollTime: number;
-function setTimeoutNextScroll() {
+function setTimeoutNextScroll(from?:number) {
   // setTimeoutNextScroll sets an auto scroll for the next line, based on timestamps
   if (scrollTimer) {
     // cancel inflight timer, since we might have skipped
@@ -86,7 +86,7 @@ function setTimeoutNextScroll() {
     // first line may have a timestamp of 0, we still want to set auto scroll
     state.lines[state.currentLineIndex + 1].timestamp! >= 0
   ) {
-    const currentLineTime = state.lines[state.currentLineIndex].timestamp || 0;
+    const currentLineTime = from ? from : state.lines[state.currentLineIndex].timestamp || 0;
     const nextLineTime = state.lines[state.currentLineIndex + 1].timestamp || 0;
     const delay = nextLineTime - currentLineTime;
     if (delay >= 0) {
@@ -100,29 +100,25 @@ function setTimeoutNextScroll() {
   }
 }
 
-// seekTimestamp used for offsetting the automated lyrics
-// eg if offset = 10, lyrics should start displaying from 10 seconds into the 'song'
-function seekTimestamp(lines: LyricLines, offset:number) {
-  const index =  lines.findIndex(line => line.timestamp! > offset)
-  if (index) {
-    state.currentLineIndex = index -1;
-    // TODO: render and set the timeout for auto scroll (offset will land between two timestamps, so the current set timeout next scroll won't be precise)
-    // renderLyrics();
-    // setTimeoutNextScroll(offset)
-  }
-}
-
 // weJustAutoScrolled returns true if there is a short duration between the now and the last auto scroll event
 const weJustAutoScrolled = (milliseconds = 500) =>
   Date.now() - lastAutoScrollTime < milliseconds;
 
 
-function renderLyrics(lines: LyricLines, htmlElement: HTMLElement) {
+// eg if offset = 10, lyrics should start displaying from 10 seconds into the 'song'
+function renderLyrics(lines: LyricLines, htmlElement: HTMLElement, offset:number=0) {
   lyricsListElem = htmlElement;
   // set lines for current track
   state.lines = lines;
-  // calling renderLyrics goes back to the start of the song
-  state.currentLineIndex = 0;
+
+  console.log(offset)
+  const index =  lines.findIndex(line => line.timestamp! >= offset)
+  if (index) {
+    state.currentLineIndex = index -1;
+  } else {
+    // calling renderLyrics goes back to the start of the song
+    state.currentLineIndex = 0;
+  }
 
   while (lyricsListElem.firstChild) {
     lyricsListElem.firstChild.remove();
@@ -139,7 +135,7 @@ function renderLyrics(lines: LyricLines, htmlElement: HTMLElement) {
   }
 
   // start the timer for auto scroll
-  setTimeoutNextScroll();
+  setTimeoutNextScroll(offset);
 }
 
 function scrollNextLine() {
