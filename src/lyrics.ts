@@ -137,10 +137,6 @@ function renderLyrics(lines: LyricLines, htmlElement: HTMLElement) {
     lyricsListElem.appendChild(el);
   }
 
-
-  console.log(lyricsListElem.innerHTML)
-
-
   // start the timer for auto scroll
   setTimeoutNextScroll();
 }

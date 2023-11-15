@@ -6,47 +6,31 @@ type LyricLine = {
   timestamp: number | null
 }
 
-function sortLrcFile(lrcFile: string) {
+const alltimestamppattern = /\[\d?\d?:?\d?\d\.?\d?\d?\d?\]/g;
+function parseLrcLines(lrcFile: string) {
   // some lrc files have repeated lyrics on one line with multiple timetamps. This splits into multiple lines and sorts the result lines
   // split file by newline and filter out blank lines
-  const lines = lrcFile
-    .split("\n")
-    .filter((line: string) => line.trim() !== "");
-  let result: string[] = [];
+  const lines = lrcFile.replace('\r\n', '\n').replace('\r', '\n')
+    .split('\n')
+    .filter((line: string) => line.trim() !== "") 
+    .filter((line) => !(line.startsWith("[") && line.endsWith("]")));
+  // initialise with empty line
+  let result: LyricLine[] = [{ timestamp: 0, text: "" }];
   lines.forEach((line: string) => {
     const trimmedLine = line.trim();
-    const timestampPattern = /\[\d{2}:\d{2}\.\d{2}\]/g;
-    const matches = trimmedLine.match(timestampPattern);
-    if (matches && matches.length > 1) {
-      const lyric = trimmedLine.replace(timestampPattern, "").trim();
+    const matches = trimmedLine.match(alltimestamppattern);
+    if (matches && matches.length > 0) {
+      const lyric = trimmedLine.replace(alltimestamppattern, "").trim();
       matches.forEach((timestamp: any) => {
-        result.push(`${timestamp}${lyric}`);
+        result.push({
+          timestamp: parseTimestampToSeconds(timestamp),
+          text: lyric
+        });
       });
-    } else {
-      result.push(trimmedLine);
     }
   });
-  result.sort();
+  result.sort((a,b) => (a.timestamp || 0) - (b.timestamp || 0));
   return result;
-}
-
-function parseLrcLines(fileContents: string) {
-  const lines = sortLrcFile(fileContents);
-  const removeTags = lines.filter(
-    (l) => !(l.startsWith("[") && l.endsWith("]"))
-  );
-  const splitLeadingTimeStamps = removeTags.map((s) => {
-    const matchTimestamp = s.match(/^\[\d?\d?:?\d?\d\.?\d?\d?\d?\]/);
-    let splitIndex = 0;
-    if (matchTimestamp) {
-      splitIndex = matchTimestamp[0].length;
-    }
-    return {
-      timestamp: parseTimestampToSeconds(s.substring(0, splitIndex)),
-      text: s.substring(splitIndex),
-    };
-  });
-  return [{ timestamp: 0, text: "" }, ...splitLeadingTimeStamps] as LyricLines;
 }
 
 function parseTxtLines(fileContents: string) {
