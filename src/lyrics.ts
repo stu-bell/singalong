@@ -105,6 +105,8 @@ function seekTimestamp(lines: LyricLines, offset:number) {
   const index =  lines.findIndex(line => line.timestamp! > offset)
   if (index) {
     state.currentLineIndex = index -1;
+    // TODO: render and set the timeout for auto scroll (offset will land between two timestamps, so the current set timeout next scroll won't be precise)
+    // renderLyrics();
     // setTimeoutNextScroll(offset)
   }
 }
