@@ -164,6 +164,5 @@ export {
   scrollPreviousLine,
   weJustAutoScrolled,
   setTimeoutNextScroll,
-  seekTimestamp,
   renderLyrics,
 };

@@ -10,7 +10,7 @@ import {
 const lyricsContainer = assertElementById("lyricsContainer");
 
 // select folder event
-assertElementById("fileInputButton").addEventListener("click", (e) =>
+assertElementById("fileInputButton").addEventListener("click", () =>
   assertElementById("fileInput").click()
 );
 assertElementById("fileInput").addEventListener("change", (e) => {
