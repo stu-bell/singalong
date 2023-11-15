@@ -26,6 +26,8 @@ async function playSong(track:Track|null) {
     const crossFadeDuration = 1;
     crossFade(getCurrentlyPlaying(), newAudio, crossFadeDuration, track.audio.offset);
     renderLyrics(lines, lyricsListElem);
+    console.log(lines)
+    console.log(lyricsListElem.innerHTML)
     const endpoint = (track.audio.end) ? track.audio.end : buffer?.duration
     // console.log('offset', track.audio.offset)
     // console.log('end', track.audio.end)

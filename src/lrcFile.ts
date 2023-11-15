@@ -58,8 +58,6 @@ function parseTxtLines(fileContents: string) {
 
 function parseLyricsFile(fileContent:string, file:File) {
   const ext = getFileExtension(file.name);
-  console.log(fileContent)
-  console.log(ext)
   const parser = (ext === 'lrc') ? parseLrcLines : parseTxtLines;
   return parser(fileContent);
 }
