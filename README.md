@@ -9,6 +9,10 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 - last song plays on repeat? we probably want to stop at the end of the set? Or you could just put a .txt file thank you?
 - bug when scroll backwards, list items disappear from the bottom
 - resizable window for lyrics. show a preview on home screen?
+- bug with lyrics offset? offset should be to align lrc file with beginning of your audio. should it just offset based on audio start?
+- smooth transition of lyrics from one song to next (or just hide lyrics that are going to be skipped?)
+
+- does it work with a slideshow remote?
 
 # Dev
 
