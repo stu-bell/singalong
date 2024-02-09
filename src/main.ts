@@ -30,12 +30,15 @@ document.addEventListener("keydown", function (event) {
   if (
     (event.key === " " ||
       event.key === "ArrowDown" ||
+      event.key === "PageDown" ||
       event.key === "ArrowRight") &&
     // don't scroll next if we've just followed an auto scroll
     !weJustAutoScrolled(500)
   ) {
     scrollNextLine();
-  } else if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
+  } else if (event.key === "ArrowUp" ||
+              event.key === "PageUp" ||
+             event.key === "ArrowLeft") {
     scrollPreviousLine();
   } else if (event.key === "0") {
     // resset the timeout until the next autoscroll. Useful if the lyrics are going too fast
