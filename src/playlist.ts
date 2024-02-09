@@ -22,14 +22,13 @@ type PlaylistItem = {
   audio_end: string| null; // audio end timestamp, from playlist file
   lyrics: string; // lyrics file name, from playlist file
   lyricsFile: File; // lyrics File handle, added during parsing
-  lyrics_offset:string|null; // offset for starting lyrics, from playlist file
+  // lyrics_offset:string|null; // offset for starting lyrics, from playlist file
 };
 
 type Track = {
   lyrics: {
     file: File;
     text: Promise<any>;
-    offset:number
   };
   audio: {
     file: File | null;
@@ -85,7 +84,6 @@ function loadTrack(item: PlaylistItem): Track {
     lyrics: {
       file: item.lyricsFile,
       text: readFileToString(item.lyricsFile),
-      offset: (item.lyrics_offset) ? parseFloat(item.lyrics_offset) : 0
     },
     audio: {
       file: item.audioFile,
@@ -190,7 +188,7 @@ function downloadExamplePlaylistFile(files: File[]) {
   for (let i = 0; i < len; i++) {
     res.push(`${lyricsFiles[i] || ''}\t${audioFiles[i] || ''}\t`)
   }
-  const exampleContent = `lyrics	audio	audio_start	audio_end	lyrics_offset\r\n` + res.join('\r\n');
+  const exampleContent = `lyrics	audio	audio_start	audio_end\r\n` + res.join('\r\n');
   downloadFile(exampleContent, '_playlist.tsv');
 }
 

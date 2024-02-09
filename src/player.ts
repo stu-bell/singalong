@@ -25,7 +25,7 @@ async function playSong(track:Track|null) {
     const lines = parseLyricsFile(await track.lyrics.text, track.lyrics.file);
     const crossFadeDuration = 1;
     crossFade(getCurrentlyPlaying(), newAudio, crossFadeDuration, track.audio.offset);
-    renderLyrics(lines, lyricsListElem, track.lyrics.offset);
+    renderLyrics(lines, lyricsListElem);
     const endpoint = (track.audio.end) ? track.audio.end : buffer?.duration
     if (endpoint){
       // play the next song after this one finishes

@@ -3,6 +3,7 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 # TODO
 
 - offline usage with service worker
+- page up / page down
 - m4a and other music formats filter
 - n and p keys are dangerously close to space and 0
 - previous line/song should take you back to start of current line/song, then press again to move to previous line/song 

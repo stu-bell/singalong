@@ -105,20 +105,13 @@ const weJustAutoScrolled = (milliseconds = 500) =>
   Date.now() - lastAutoScrollTime < milliseconds;
 
 
-// eg if offset = 10, lyrics should start displaying from 10 seconds into the 'song'
-function renderLyrics(lines: LyricLines, htmlElement: HTMLElement, offset:number=0) {
+function renderLyrics(lines: LyricLines, htmlElement: HTMLElement) {
   lyricsListElem = htmlElement;
   // set lines for current track
   state.lines = lines;
 
-  console.log(offset)
-  const index =  lines.findIndex(line => line.timestamp! >= offset)
-  if (index) {
-    state.currentLineIndex = index -1;
-  } else {
     // calling renderLyrics goes back to the start of the song
-    state.currentLineIndex = 0;
-  }
+  state.currentLineIndex = 0;
 
   while (lyricsListElem.firstChild) {
     lyricsListElem.firstChild.remove();
@@ -135,7 +128,7 @@ function renderLyrics(lines: LyricLines, htmlElement: HTMLElement, offset:number
   }
 
   // start the timer for auto scroll
-  setTimeoutNextScroll(offset);
+  setTimeoutNextScroll();
 }
 
 function scrollNextLine() {
