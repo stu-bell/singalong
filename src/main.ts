@@ -53,9 +53,9 @@ document.addEventListener("touchstart", function () {
 
 // next prev events
 document.addEventListener("keydown", function (event) {
-  if (event.key === "n") {
+  if (event.key === "N") { // shift+ n
     nextSong();
-  } else if (event.key === "p") {
+  } else if (event.key === "P") { // shift + p
     prevSong();
   }
 });

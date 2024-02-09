@@ -15,7 +15,7 @@ let state: {
   lines: [],
   filesList: [],
   fileType: "txt",
-  numberOfLines: 10,
+  numberOfLines: 5,
   currentLineIndex: 0,
   currentFileIndex: 0,
 };
