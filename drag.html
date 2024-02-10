@@ -12,12 +12,22 @@
   resize: both;
   overflow: auto;
 }
+#mydivheader {
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-bottom: 10px solid black;
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: move;
+}
 </style>
 </head>
 <body>
 
 <div class="container" id="mydiv">
-  <div id="mydivheader">Click this text to move</div>
+  <div id="mydivheader"></div>
   <p>Your web app goes here.</p>
 </div>
 
