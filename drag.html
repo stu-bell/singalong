@@ -29,9 +29,16 @@
 <div class="container" id="mydiv">
   <div id="mydivheader"></div>
   <p>Your web app goes here.</p>
+  <button onclick="go()">go!</button>
 </div>
 
 <script>
+function go() {
+    // TODO: get the current dimensions of the container, then hide the border and make it not moveable
+    dimensions = 'todo'
+    window.alert(dimensions);
+}
+
 dragElement(document.getElementById("mydiv"));
 
 function dragElement(elmnt) {
