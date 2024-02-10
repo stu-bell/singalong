@@ -9,8 +9,8 @@
   <!-- <link rel="manifest" href="manifest.json" /> -->
   <meta name="theme-color" content="#000000">
   <title>Sing along</title>
-  <script type="module" crossorigin src="/lyrics-player/assets/index-856f20f2.js"></script>
-  <link rel="stylesheet" href="/lyrics-player/assets/index-ef49e7f4.css">
+  <script type="module" crossorigin src="/singalong/assets/index-18f71abd.js"></script>
+  <link rel="stylesheet" href="/singalong/assets/index-ef49e7f4.css">
 </head>
 
 <body class="font-arial h-screen flex flex-col overflow-hidden cursor-none">
@@ -29,53 +29,49 @@
     <input id="fileInput" type="file" webkitdirectory directory multiple class="hidden" />
     </div>
     <p>
-      Choose a folder containing .mp3 files, and .lrc or .txt files for lyrics.<br /><br />.lrc files with timestamps will play automatically, otherwise use arrow keys. <br /><br />Choose Folder above to download your playlist file</a> and save it in the same folder named <code class="bg-gray-100">_playlist.tsv</code><br /><br /> This file is how you tell the app which order to play the tracks, and which audio and lyrics files are related. Open the playlist file in a spreadsheet editor and match the lyrics and audio files. The playlist should contain one row per song, in the sequence you want them to be played. On each row you'll need to provide the exact file names for each lyric file (.txt or .lrc) and, optionally the matching .mp3 file. Watch out for typos in the playlist file! If you get any errors, edit and save your playlist file, refresh the page, and try again. You can include two extra optional columns called 'audio_start' and 'audio_end', which should show the times in seconds the current audio track should start and finish. But if you just want to play the full songs, you can leave these columns blank. 
-      <br/><br/>Once you've got all your audio and lyrics files in a folder, and added your playlist file, hit the `Let's Go!` button.<br/><br/> 
+      Choose a folder containing .mp3, .m4a files, and .lrc or .txt files for lyrics.<br /><br />.lrc files with timestamps will play automatically, otherwise use arrow keys or a USB presentation remote. <br /><br />Choose Folder above to download your playlist file</a> and save it in the same folder named <code class="bg-gray-100">_playlist.tsv</code><br /><br /> The _playlist.tsv file is how you tell the app which order to play the tracks, and which lyrics go with each audio file. Open the playlist file in a spreadsheet editor and match the lyrics and audio files. The playlist should contain one row per song, in the sequence you want them to be played. On each row you'll need to provide the exact file names for each lyric file (.txt or .lrc) and, optionally the matching .mp3 file. Watch out for typos in the playlist file! If you get any errors, edit and save your playlist file, refresh the page, and try again. You can include two extra optional columns called 'audio_start' and 'audio_end', which should show the times in seconds the current audio track should start and finish. But if you just want to play the full songs, you can leave these columns blank. 
+      <br/><br/>Once you've got all your audio and lyrics files in a folder, and added your playlist file, hit the `Choose Folder` button.<br/><br/> The last song currently loops. If you'd like to prevent this, add a blank or thankyou .txt file as the last item in the _playlist.tsv <br/><br/>
     </p>
     <p> Keyboard commands:</p>
     <table class="text-left table-auto my-2">
       <thead class="bg-gray-500 text-white">
         <tr>
-          <th class="px-4 py-2 border">Key</th>
           <th class="px-4 py-2 border">Command</th>
+          <th class="px-4 py-2 border">Key</th>
         </tr>
       </thead>
       <tbody class="text-gray-700">
         <tr>
-          <td class="px-4 py-2 border">Down | Right | Space</td>
           <td class="px-4 py-2 border">Next Line</td>
+          <td class="px-4 py-2 border">PageDown | Down Arrow | Right Arrow | Space</td>
         </tr>
         <tr class="bg-gray-100">
-          <td class="px-4 py-2 border">Up | Left</td>
-          <td class="px-4 py-2 border">Previous Line</td>
+          <td class="px-4 py-2 border">Restart Line (double tap for previous line)</td>
+          <td class="px-4 py-2 border">PageUp | Up Arrow | Left Arrow</td>
         </tr>
         <tr class="">
-          <td class="px-4 py-2 border">n</td>
           <td class="px-4 py-2 border">Next Song</td>
+          <td class="px-4 py-2 border">Shift + N</td>
         </tr>
         <tr  class="bg-gray-100">
-          <td class="px-4 py-2 border">p</td>
           <td class="px-4 py-2 border">Previous Song</td>
+          <td class="px-4 py-2 border">Shift + P</td>
         </tr>
         <tr class="">
-          <td class="px-4 py-2 border">s</td>
           <td class="px-4 py-2 border">Show/hide lyrics</td>
-        </tr>
-        <tr class="bg-gray-100">
-          <td class="px-4 py-2 border"><code>0</code></td>
-          <td class="px-4 py-2 border">Reset the auto scroll timer for the current line back to 0</td>
+          <td class="px-4 py-2 border">Shift + S</td>
         </tr>
         <tr>
-          <td class="px-4 py-2 border"><code>Ctrl +</code></td>
           <td class="px-4 py-2 border">Text bigger</td>
+          <td class="px-4 py-2 border"><code>Ctrl +</code></td>
         </tr>
         <tr class="bg-gray-100">
-          <td class="px-4 py-2 border"><code>Ctrl -</code></td>
           <td class="px-4 py-2 border">Text smaller</td>
+          <td class="px-4 py-2 border"><code>Ctrl -</code></td>
         </tr>
         <tr>
-          <td class="px-4 py-2 border"><code>Ctrl 0</code></td>
           <td class="px-4 py-2 border">Reset text size</td>
+          <td class="px-4 py-2 border"><code>Ctrl 0</code></td>
         </tr>
       </tbody>
     </table>
