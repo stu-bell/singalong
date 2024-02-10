@@ -104,7 +104,6 @@ function setTimeoutNextScroll(from?:number) {
 const weJustAutoScrolled = (milliseconds = 500) =>
   Date.now() - lastAutoScrollTime < milliseconds;
 
-
 function renderLyrics(lines: LyricLines, htmlElement: HTMLElement) {
   lyricsListElem = htmlElement;
   // set lines for current track
@@ -144,12 +143,20 @@ function scrollNextLine() {
   forwards(lyricsListElem, appendText);
 }
 
+let lastPrevScollTime: number;
 function scrollPreviousLine() {
-  state.currentLineIndex--;
-  setTimeoutNextScroll();
-  const prependLine = state.lines[state.currentLineIndex];
-  const prependText = prependLine ? prependLine.text : "";
-  backwards(lyricsListElem, prependText);
+  if ((Date.now() - lastPrevScollTime) < 800 ) {
+    // double scroll back command
+    state.currentLineIndex--;
+    setTimeoutNextScroll();
+    const prependLine = state.lines[state.currentLineIndex];
+    const prependText = prependLine ? prependLine.text : "";
+    backwards(lyricsListElem, prependText);
+  } else {
+    // single scroll back command, only reset the timer for the current line
+    setTimeoutNextScroll();
+  }
+  lastPrevScollTime = Date.now();
 }
 
 export {

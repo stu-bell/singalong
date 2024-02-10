@@ -20,7 +20,7 @@ assertElementById("fileInput").addEventListener("change", (e) => {
 
 // show hide lyrics
 document.addEventListener("keydown", function (event) {
-  if (event.key === "s") {
+  if (event.key === "S") { // shift + S
     lyricsContainer.classList.toggle("hidden");
   }
 });
