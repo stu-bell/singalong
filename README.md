@@ -3,7 +3,7 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 # TODO
 
 - offline usage with service worker
-- resizable window for lyrics. show  preview on home screen?
+- resizable window for lyrics. show  preview on home screen? - see drag.html
 - bug when scroll backwards, list items disappear from the bottom
 - offset should be to align lrc file with beginning of your audio. should it just offset based on audio start?
 
