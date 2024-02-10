@@ -22,12 +22,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stu-bell/lyrics-player.git"
+    "url": "git+https://github.com/stu-bell/singalong.git"
   },
   "author": "Stuart Bell",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/stu-bell/lyrics-player/issues"
+    "url": "https://github.com/stu-bell/singalong/issues"
   },
-  "homepage": "https://github.com/stu-bell/lyrics-player"
+  "homepage": "https://github.com/stu-bell/singalong"
 }
