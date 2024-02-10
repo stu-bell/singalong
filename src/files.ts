@@ -9,6 +9,7 @@ function removeFileExtension(filename: string) {
 }
 
 function getFileExtension(filename: string) {
+  // returns lower case file extension, without the dot
   var lastDotIndex = filename.lastIndexOf(".");
   if (lastDotIndex === -1) {
     // No file extension found

@@ -177,7 +177,10 @@ function loadPlaylistFileHandles(playlist: Playlist, folderfiles: File[]) {
 }
 
 function downloadExamplePlaylistFile(files: File[]) {
-  const audioFiles = files.filter((file) => getFileExtension(file.name) === 'mp3').map(file => file.name);
+  const audioFiles = files.filter((file) => {
+    const ext = getFileExtension(file.name);
+    return ext === 'mp3' || ext === 'm4a'
+  }).map(file => file.name);
   const lyricsFiles = files.filter((file) => {
     const ext = getFileExtension(file.name);
     return ext === 'lrc' || ext === 'txt';

@@ -45,7 +45,7 @@ async function nextSong() {
 }
 
 async function prevSong() {
-  playSong(playlistPrev())
+    playSong(playlistPrev())
 }
 
 export { prevSong, nextSong, handleFileInputChange };
