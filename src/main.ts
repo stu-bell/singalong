@@ -16,11 +16,15 @@ assertElementById("fileInputButton").addEventListener("click", () =>
 assertElementById("fileInput").addEventListener("change", (e) => {
   handleFileInputChange(e, lyricsContainer);
   assertElementById("home").classList.add("hidden");
+  // Tab hides lyrics container - we want to make sure it's initially visible
+  lyricsContainer.classList.remove("hidden");
 });
 
 // show hide lyrics
 document.addEventListener("keydown", function (event) {
-  if (event.key === "S") { // shift + S
+  if (event.key === "S" || // shift + S
+      event.key === "Tab"
+      ) { 
     lyricsContainer.classList.toggle("hidden");
   }
 });

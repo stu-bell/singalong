@@ -3,11 +3,15 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 # TODO
 
 - offline usage with service worker
-- resizable window for lyrics. show  preview on home screen? - see drag.html
+- resizable window for lyrics - see drag.html - show and enable drag/resize on keyboard shortcut? 
+- sync the start and end of lrc files with the start and end of the audio
+- in the sample _playlist.tsv downloaded, add 0 as the start time and the end as the duration of the track
+- pause audio/lrc?
 - bug when scroll backwards, list items disappear from the bottom
-- offset should be to align lrc file with beginning of your audio. should it just offset based on audio start?
 
 # Dev
+
+Requires [node.js](https://nodejs.org)
 
 1. `npm install`
 1. `npm run dev` 
