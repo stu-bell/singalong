@@ -6,6 +6,9 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 - resizable window for lyrics - see drag.html - show and enable drag/resize on keyboard shortcut? 
 - sync the start and end of lrc files with the start and end of the audio (ie remove lines before the audio start time, and after the audio end time)
 - in the sample _playlist.tsv downloaded, add 0 as the start time and the end as the duration of the track
+
+- sample playlist.tsv downloaded, try fuzzy matching lyrics and audio names?
+- search feature for searching lyrics in a folder, when accompanying live music on request
 - pause audio/lrc?
 - bug when scroll backwards, list items disappear from the bottom
 
