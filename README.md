@@ -10,6 +10,7 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 
 - sample playlist.tsv downloaded, try fuzzy matching lyrics and audio names?
 - search feature for searching lyrics in a folder, when accompanying live music on request
+- background gif. If lyrics are wide, they might overlay a background and not be clearly visible - put a translucent background over lyrics? _background.gif in the playlist folder? Should stay within the container, if resized - resizing is for aligning on a projector
 - pause audio/lrc?
 - bug when scroll backwards, list items disappear from the bottom
 
