@@ -8,6 +8,7 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 - sync the start and end of lrc files with the start and end of the audio (ie remove lines before the audio start time, and after the audio end time)
 - in the sample _playlist.tsv downloaded, add 0 as the start time and the end as the duration of the track
 
+- background gif on loop. Lyrics should have a fading border around them in case they overlap the background?
 - sample playlist.tsv downloaded, try fuzzy matching lyrics and audio names?
 - search feature for searching lyrics in a folder, when accompanying live music on request
 - background gif. If lyrics are wide, they might overlay a background and not be clearly visible - put a translucent background over lyrics? _background.gif in the playlist folder? Should stay within the container, if resized - resizing is for aligning on a projector
