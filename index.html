@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.dragcontainer {
+  width: 98vw;
+  height: 98vh;
+  border: 1px solid black;
+  position: absolute;
+  top: 0vw;
+  left: 1vh;
+  overflow: auto;
+  resize: both; /*both allows adjusting height and width of container*/
+}
+/* #marker { */
+/*   width: 0; */
+/*   height: 0; */
+/*   border-right: 10px solid transparent; */
+/*   border-top: 10px solid black; */
+/*   position: absolute; */
+/*   top: 0; */
+/*   left: 0; */
+/*   cursor: move; */
+/* } */
+</style>
+</head>
+<body>
+
+<div class="dragcontainer" id="mydiv">
+  <!-- <div id="mydivheader"></div> -->
+  <p>Move bottom right corner first!</p>
+  <button onclick="go()">go!</button>
+</div>
+
+<script>
+function go() {
+    // TODO: get the current dimensions of the container, then hide the border and make it not moveable
+    dimensions = 'todo'
+    window.alert(dimensions);
+}
+
+dragElement(document.getElementById("mydiv"));
+
+function dragElement(elmnt) {
+
+  addDragMarker(elmnt);
+
+  function addDragMarker(el) {
+    // add top left marker
+    const marker = document.createElement('div');
+    marker.classList.add('dragMarker');
+    marker.style.width = '0';
+    marker.style.height = '0';
+    marker.style.borderRight = '10px solid transparent';
+    marker.style.borderTop = '10px solid black';
+    marker.style.position = 'absolute';
+    marker.style.top = '0';
+    marker.style.left = '0';
+    marker.style.cursor = 'move';
+    marker.onmousedown = dragMouseDown
+    elmnt.prepend(marker);
+  }
+
+  //FIXME: prevent users dragging corners off the viewport
+  // this resets the position? can we just unassign initial value?
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  // + header is referring to mydiv and mydivheader
+  // if (document.getElementById(elmnt.id + "header")) {
+  //   document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+  // } else {
+  // elmnt.onmousedown = dragMouseDown;
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+    e.preventDefault();
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
+</script>
+
+</body>
+</html>
