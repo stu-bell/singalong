@@ -3,9 +3,15 @@
 // current track file text and buffer must be awaited
 // will start loading the buffers for next track on playlistNext
 
-import { readFileToString, getFileExtension, parseTsv, downloadFile } from "./files";
+import {
+  readFileToString,
+  getFileExtension,
+  parseTsv,
+  downloadFile,
+} from "./files";
 import { loadAudioFromFile, audioFileDuration } from "./audio";
 import { parseTimestampToSeconds } from "./lrcFile";
+import { ratio } from "fuzzball";
 
 let prev: Track | null;
 let curr: Track | null;
@@ -18,8 +24,8 @@ type Playlist = PlaylistItem[];
 type PlaylistItem = {
   audio: string; // audio file name, from playlist file
   audioFile: File | null; // audio File handle, added during parsing
-  audio_start: string| null; // audio start timestamp, from playlist file
-  audio_end: string| null; // audio end timestamp, from playlist file
+  audio_start: string | null; // audio start timestamp, from playlist file
+  audio_end: string | null; // audio end timestamp, from playlist file
   lyrics: string; // lyrics file name, from playlist file
   lyricsFile: File; // lyrics File handle, added during parsing
   // lyrics_offset:string|null; // offset for starting lyrics, from playlist file
@@ -34,7 +40,7 @@ type Track = {
     file: File | null;
     buffer: Promise<AudioBuffer> | null;
     offset: number; // offset to start playing track
-    end: number| undefined; // time in the track we should move next. duration = end - offset
+    end: number | undefined; // time in the track we should move next. duration = end - offset
   };
 };
 
@@ -88,8 +94,8 @@ function loadTrack(item: PlaylistItem): Track {
     audio: {
       file: item.audioFile,
       buffer: item.audioFile ? loadAudioFromFile(item.audioFile) : null,
-      offset: (item.audio_start) ? parseTimestampToSeconds(item.audio_start) : 0,
-      end: (item.audio_end) ? parseTimestampToSeconds(item.audio_end) : undefined,
+      offset: item.audio_start ? parseTimestampToSeconds(item.audio_start) : 0,
+      end: item.audio_end ? parseTimestampToSeconds(item.audio_end) : undefined,
     },
   };
 }
@@ -99,9 +105,13 @@ async function parsePlaylistFile(folderfiles: File[]) {
     (file: File) => file.name.toLowerCase() === playlistFileName
   );
   if (!playlistFile) {
-    window.alert(`Oops! We couldn't find a ${playlistFileName} file in that folder! Save one in that folder and edit it to make your playlist.`);
+    window.alert(
+      `Oops! We couldn't find a ${playlistFileName} file in that folder! Save one in that folder and edit it to make your playlist.`
+    );
     downloadExamplePlaylistFile(folderfiles);
-    window.alert(`We've just downloaded a ${playlistFileName} file for you, with the tracks we could find in the folder you chose. Open it in a spreadsheet and put the lyrics and audio files in the correct order. Then refresh the sing along app and retry.`);
+    window.alert(
+      `We've just downloaded a ${playlistFileName} file for you, with the tracks we could find in the folder you chose. Open it in a spreadsheet and put the lyrics and audio files in the correct order. Then refresh the sing along app and retry.`
+    );
     // refresh the page so we don't navigate
     location.reload();
   }
@@ -123,7 +133,11 @@ function loadPlaylistFileHandles(playlist: Playlist, folderfiles: File[]) {
     folderfiles.find((file) => file.name === name);
   const attachFiles = (item: PlaylistItem) => {
     if (!item.lyrics) {
-      errors.push(`Each playlist row must contain a lyrics file. ${item.audio ? item.audio : ''}`);
+      errors.push(
+        `Each playlist row must contain a lyrics file. ${
+          item.audio ? item.audio : ""
+        }`
+      );
       // remove this entry from the playlist
       return null;
     } else {
@@ -157,7 +171,9 @@ function loadPlaylistFileHandles(playlist: Playlist, folderfiles: File[]) {
     return item;
   };
   // attach the files. remove null entries (null entries failed validation)
-  const playlistWithFiles = playlist.map(attachFiles).filter((x) => x !== null) as Playlist;
+  const playlistWithFiles = playlist
+    .map(attachFiles)
+    .filter((x) => x !== null) as Playlist;
   if (!playlistWithFiles.length) {
     window.alert(
       `Error: the ${playlistFileName} file contained no valid rows, or we couldn't find any corresponding files.`
@@ -177,27 +193,60 @@ function loadPlaylistFileHandles(playlist: Playlist, folderfiles: File[]) {
 }
 
 function downloadExamplePlaylistFile(files: File[]) {
+  console.log("hi");
   // grab relevant files
   const audioFiles = files.filter((file) => {
     const ext = getFileExtension(file.name);
-    return ext === 'mp3' || ext === 'm4a'
+    return ext === "mp3" || ext === "m4a";
   });
   const lyricsFiles = files.filter((file) => {
     const ext = getFileExtension(file.name);
-    return ext === 'lrc' || ext === 'txt';
-   }).map(file => file.name);
+    return ext === "lrc" || ext === "txt";
+  });
 
-  // add list of files to example .TSV
-  // TODO: add default start and end times
-  // TODO: fuzzy matching
-  const len = (audioFiles.length > lyricsFiles.length) ? audioFiles.length : lyricsFiles.length;
   let res = [];
-  for (let i = 0; i < len; i++) {
-    res.push(`${lyricsFiles[i] || ''}\t${audioFiles[i] ? audioFiles[i].name : ''}\t${audioFiles[i] ? '0':''}\t${audioFiles[i] ? audioFileDuration(audioFiles[i]) : ''}`)
+  let match: File | null = null;
+  // assume that the audio files list is shorter (or equal)
+  for (let i = 0; i < audioFiles.length; i++) {
+    let highest = 0;
+    // find the lyircs file name that most closely mathches
+    for (let j = 0; j < lyricsFiles.length; j++) {
+      console.log(audioFiles[i].name);
+      console.log(lyricsFiles[j].name);
+      let score = ratio(audioFiles[i].name, lyricsFiles[j].name);
+      if (score > highest) {
+        highest = score;
+        match = lyricsFiles[j];
+        // remove the matched element from the list of available options
+        lyricsFiles.splice(j, 1);
+        console.log("remaining", lyricsFiles);
+      }
+    }
+
+    // add the row to the result playlist, format as .TSV
+    res.push(
+      [
+        match ? match.name : "",
+        audioFiles[i] ? audioFiles[i].name : "",
+        audioFiles[i] ? "0" : "",
+        audioFiles[i] ? audioFileDuration(audioFiles[i]) : "",
+      ].join("\t")
+    );
   }
-  const exampleContent = `lyrics	audio	audio_start	audio_end\r\n` + res.join('\r\n');
-  downloadFile(exampleContent, '_playlist.tsv');
+  for (let k = 0; k < lyricsFiles.length; k++) {
+    // add remaining lyrics files
+    res.push(lyricsFiles[k].name);
+  }
+  const exampleContent =
+    // header row, plus data
+    `lyrics	audio	audio_start	audio_end\r\n` + res.join("\r\n");
+  downloadFile(exampleContent, "_playlist.tsv");
 }
 
-export { loadPlaylist, playlistPrev, playlistNext, downloadExamplePlaylistFile };
+export {
+  loadPlaylist,
+  playlistPrev,
+  playlistNext,
+  downloadExamplePlaylistFile,
+};
 export type { Track };

@@ -29,5 +29,8 @@
   "bugs": {
     "url": "https://github.com/stu-bell/singalong/issues"
   },
-  "homepage": "https://github.com/stu-bell/singalong"
+  "homepage": "https://github.com/stu-bell/singalong",
+  "dependencies": {
+    "fuzzball": "^2.1.2"
+  }
 }
