@@ -24,10 +24,10 @@ assertElementById("fileInputButton").addEventListener("click", () =>
 );
 assertElementById("fileInput").addEventListener("change", (e) => {
   handleFileInputChange(e, lyricsContainer);
-  assertElementById("home").classList.add("hidden");
   // Tab hides lyrics container - we want to make sure it's initially visible
   dragContainer.classList.remove('hidden')
-  lyricsContainer.classList.add("user-select-none");
+  lyricsContainer.classList.remove('hidden')
+  assertElementById("home").classList.add("hidden");
   assertElementById('body').classList.add('cursor-none');
 });
 
