@@ -1,14 +1,14 @@
-// FIXME: prevent dragging off screen
-    function makeDragable(elmnt: HTMLElement) {
-      // makes an element dragable, when it has the class 'dragmode'
-    const lableText = 'Drag from bottom right first, then top left';
+function makeDragable(elmnt: HTMLElement) {
+  // makes an element dragable, when it has the class 'dragmode'
+  // FIXME: prevent dragging off screen
+  const lableText = "Drag from bottom right first, then top left";
 
-      // add a marker element in the top left
-      addDragMarker(elmnt);
+  // add a marker element in the top left
+  addDragMarker(elmnt);
 
-      // add drag styles 
-      const styleElement = document.createElement('style');
-      styleElement.textContent = `
+  // add drag styles
+  const styleElement = document.createElement("style");
+  styleElement.textContent = `
         .dragcontainer {
           width: 98vw;
           height: 98vh;
@@ -36,43 +36,46 @@
           cursor: move;
         }
   `;
-      document.head.appendChild(styleElement);
+  document.head.appendChild(styleElement);
 
-      function addDragMarker(elmnt:HTMLElement) {
-        // add top left marker
-        const marker = document.createElement('div');
-        marker.classList.add('drag-marker');
-        marker.onmousedown = dragMouseDown
-        marker.innerText = lableText || '';
-        elmnt.prepend(marker);
-      }
+  function addDragMarker(elmnt: HTMLElement) {
+    // add top left marker
+    const marker = document.createElement("div");
+    marker.classList.add("drag-marker");
+    marker.onmousedown = dragMouseDown;
+    marker.innerText = lableText || "";
+    elmnt.prepend(marker);
+  }
 
-      let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  let pos1 = 0,
+    pos2 = 0,
+    pos3 = 0,
+    pos4 = 0;
 
-      function dragMouseDown(e) {
-        e = e || window.event;
-        e.preventDefault();
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        document.onmouseup = closeDragElement;
-        document.onmousemove = elementDrag;
-      }
+  function dragMouseDown(e: MouseEvent) {
+    e = e || window.event;
+    e.preventDefault();
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+  }
 
-      function elementDrag(e) {
-        e = e || window.event;
-        e.preventDefault();
-        pos1 = pos3 - e.clientX;
-        pos2 = pos4 - e.clientY;
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-        elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-      }
+  function elementDrag(e: MouseEvent) {
+    e = e || window.event;
+    e.preventDefault();
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    elmnt.style.top = elmnt.offsetTop - pos2 + "px";
+    elmnt.style.left = elmnt.offsetLeft - pos1 + "px";
+  }
 
-      function closeDragElement() {
-        document.onmouseup = null;
-        document.onmousemove = null;
-      }
-    }
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
 
-export {makeDragable};
+export { makeDragable };
