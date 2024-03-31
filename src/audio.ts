@@ -93,6 +93,14 @@ function crossFade(
   }
 }
 
+async function audioFileDuration(file: File): Promise<number> {
+  if (file) {
+    return (await loadAudioFromFile(file)).duration
+  } else {
+    throw new Error('file not provided')
+  }
+}
+
 // function playNext() {
 //   // currentFileIndex is null first time round as there is nothing to crossfade from
 //   if (currentFileIndex === null) {
@@ -123,4 +131,5 @@ export {
   crossFade,
   connectAudioGraph,
   getCurrentlyPlaying,
+  audioFileDuration
 };

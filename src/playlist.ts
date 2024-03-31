@@ -4,7 +4,7 @@
 // will start loading the buffers for next track on playlistNext
 
 import { readFileToString, getFileExtension, parseTsv, downloadFile } from "./files";
-import { loadAudioFromFile } from "./audio";
+import { loadAudioFromFile, audioFileDuration } from "./audio";
 import { parseTimestampToSeconds } from "./lrcFile";
 
 let prev: Track | null;
@@ -177,19 +177,23 @@ function loadPlaylistFileHandles(playlist: Playlist, folderfiles: File[]) {
 }
 
 function downloadExamplePlaylistFile(files: File[]) {
+  // grab relevant files
   const audioFiles = files.filter((file) => {
     const ext = getFileExtension(file.name);
     return ext === 'mp3' || ext === 'm4a'
-  }).map(file => file.name);
+  });
   const lyricsFiles = files.filter((file) => {
     const ext = getFileExtension(file.name);
     return ext === 'lrc' || ext === 'txt';
    }).map(file => file.name);
 
+  // add list of files to example .TSV
+  // TODO: add default start and end times
+  // TODO: fuzzy matching
   const len = (audioFiles.length > lyricsFiles.length) ? audioFiles.length : lyricsFiles.length;
   let res = [];
   for (let i = 0; i < len; i++) {
-    res.push(`${lyricsFiles[i] || ''}\t${audioFiles[i] || ''}\t`)
+    res.push(`${lyricsFiles[i] || ''}\t${audioFiles[i] ? audioFiles[i].name : ''}\t${audioFiles[i] ? '0':''}\t${audioFiles[i] ? audioFileDuration(audioFiles[i]) : ''}`)
   }
   const exampleContent = `lyrics	audio	audio_start	audio_end\r\n` + res.join('\r\n');
   downloadFile(exampleContent, '_playlist.tsv');
