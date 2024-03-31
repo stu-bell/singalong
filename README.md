@@ -6,6 +6,7 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 - sync the start and end of lrc files with the start and end of the audio (ie remove lines before the audio start time, and after the audio end time)
 
 ## bugs
+- can't seem to select the choose folder button?
 - when resizing, you can accidentally drag the area off screen
 - bug when scroll backwards, list items disappear from the bottom
 - empty lines at the top of the screen should be large height - what about replacing with a space?

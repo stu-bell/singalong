@@ -12,18 +12,7 @@
 </head>
 
 <body id="body" class="font-arial h-screen flex flex-col overflow-hidden">
-
-  <div id="dragcontainer" class="dragcontainer">
-    <!-- main container for song lyrics -->
-    <ul id="lyricsContainer" class="flex flex-col items-center list-none text-center mt-vh">
-      <li></li>
-    </ul>
-  </div>
-  <div id="songTitleContainer" class="text-left fixed bottom-0 w-full box-border">
-    <p id="songTitle" class="text-2 text-gray-600 m-2"></p>
-  </div>
-
-  <div id="home" class="text-left px-4 max-h-screen overflow-y-auto cursor-auto">
+  <div id="home" class="text-left px-4 max-h-screen overflow-y-auto">
     <div>
       <button id="fileInputButton" class="my-3 button">Choose Folder</button>
       <input id="fileInput" type="file" webkitdirectory directory multiple class="hidden" />
@@ -107,6 +96,16 @@
       <li><a class="hyperlink text-sm" target="_blank" href="https://www.azlyrics.com/">azlyrics.com</a></li>
     </ul>
     </p>
+  </div>
+
+  <div id="dragcontainer" class="dragcontainer"></div>
+  <!-- main container for song lyrics -->
+  <ul id="lyricsContainer" class="flex flex-col items-center list-none text-center mt-vh">
+    <li></li>
+  </ul>
+  <div id="songTitleContainer" class="text-left fixed bottom-0 w-full box-border">
+    <p id="songTitle" class="text-2 text-gray-600 m-2"></p>
+  </div>
   </div>
 
   <script type="module" src="/src/main.ts"></script>
