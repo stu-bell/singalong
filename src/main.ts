@@ -26,8 +26,8 @@ assertElementById("fileInput").addEventListener("change", (e) => {
   handleFileInputChange(e, lyricsContainer);
   assertElementById("home").classList.add("hidden");
   // Tab hides lyrics container - we want to make sure it's initially visible
-  lyricsContainer.classList.remove("hidden");
-  // hide cursor
+  dragContainer.classList.remove('hidden')
+  lyricsContainer.classList.add("user-select-none");
   assertElementById('body').classList.add('cursor-none');
 });
 
