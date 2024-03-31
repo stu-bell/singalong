@@ -15,8 +15,8 @@
 #mydivheader {
   width: 0;
   height: 0;
-  border-left: 10px solid transparent;
-  border-bottom: 10px solid black;
+  border-right: 10px solid transparent;
+  border-top: 10px solid black;
   position: absolute;
   top: 0;
   left: 0;
@@ -28,7 +28,7 @@
 
 <div class="container" id="mydiv">
   <div id="mydivheader"></div>
-  <p>Your web app goes here.</p>
+  <p>Move bottom right corner first!</p>
   <button onclick="go()">go!</button>
 </div>
 
@@ -42,6 +42,7 @@ function go() {
 dragElement(document.getElementById("mydiv"));
 
 function dragElement(elmnt) {
+  //FIXME: prevent users dragging corners off the viewport
   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
   if (document.getElementById(elmnt.id + "header")) {
     document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
