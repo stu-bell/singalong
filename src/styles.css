@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 li {
   transition: 0.2s linear all;
   margin: 0 10px;

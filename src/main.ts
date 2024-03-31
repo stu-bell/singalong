@@ -1,3 +1,4 @@
+import { makeDragable } from "./drag";
 import { assertElementById } from "./util";
 import { prevSong, nextSong, handleFileInputChange } from "./player";
 import {
@@ -6,6 +7,14 @@ import {
   weJustAutoScrolled,
   setTimeoutNextScroll,
 } from "./lyrics";
+
+// drag the lyrics container 
+const dragContainer = assertElementById('dragcontainer')
+makeDragable(dragContainer);
+function toggleDragMode() {
+  assertElementById('body').classList.toggle('cursor-none')
+  dragContainer.classList.toggle('dragmode')
+}
 
 const lyricsContainer = assertElementById("lyricsContainer");
 
@@ -18,6 +27,8 @@ assertElementById("fileInput").addEventListener("change", (e) => {
   assertElementById("home").classList.add("hidden");
   // Tab hides lyrics container - we want to make sure it's initially visible
   lyricsContainer.classList.remove("hidden");
+  // hide cursor
+  assertElementById('body').classList.add('cursor-none');
 });
 
 // show hide lyrics
@@ -55,7 +66,7 @@ document.addEventListener("touchstart", function () {
   scrollNextLine();
 });
 
-// next prev events
+// next prev song events
 document.addEventListener("keydown", function (event) {
   if (event.key === "N") { // shift+ n
     nextSong();
@@ -63,6 +74,14 @@ document.addEventListener("keydown", function (event) {
     prevSong();
   }
 });
+
+// drag/ resize
+document.addEventListener("keydown", function (event) {
+  if (event.key === "Z") { // shift+ z
+    toggleDragMode();
+  }
+});
+
 
 // Check compatibility with required APIs
 if (!window.FileReader || !window.FileList || !window.File || !window.Blob) {
