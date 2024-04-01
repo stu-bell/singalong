@@ -86,11 +86,11 @@ function makeDragable(elmnt: HTMLElement) {
     pos4 = e.clientY;
 
     // don't scroll off the screen
-    if (e.clientX >= 0) {
+    if (e.clientX > 0) {
       elmnt.style.left = elmnt.offsetLeft - pos1 + "px";
       elmnt.style.width = elmnt.offsetWidth + pos1 + "px";
     }
-    if (e.clientY >= 0) {
+    if (e.clientY > 0) {
       elmnt.style.top = elmnt.offsetTop - pos2 + "px";
       elmnt.style.height = elmnt.offsetHeight + pos2 + "px";
     }
@@ -104,8 +104,13 @@ function makeDragable(elmnt: HTMLElement) {
     pos2 = pos4 - e.clientY;
     pos3 = e.clientX;
     pos4 = e.clientY;
-    elmnt.style.height = elmnt.offsetHeight - pos2 + "px";
-    elmnt.style.width = elmnt.offsetWidth - pos1 + "px";
+    // only resize if we're within the window
+    if (e.clientX < window.innerWidth) {
+      elmnt.style.width = elmnt.offsetWidth - pos1 + "px";
+    }
+    if (e.clientY < window.innerHeight) {
+      elmnt.style.height = elmnt.offsetHeight - pos2 + "px";
+    }
   }
 
   function closeDragElement() {

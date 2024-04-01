@@ -6,7 +6,6 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 - sync the start and end of lrc files with the start and end of the audio (ie remove lines before the audio start time, and after the audio end time)
 
 ## bugs
-- when resizing, you can accidentally drag the area off screen
 - bug when scroll backwards, list items disappear from the bottom
 - empty lines at the top of the screen should be large height - what about replacing with a space?
 
@@ -16,6 +15,7 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 - background gif on loop. Lyrics should have a fading border around them in case they overlap the background?
 - search feature for searching lyrics in a folder, when accompanying live music on request
 - background gif. If lyrics are wide, they might overlay a background and not be clearly visible - put a translucent background over lyrics? _background.gif in the playlist folder? Should stay within the container, if resized - resizing is for aligning on a projector
+- plane rotation for scenarios where projector isn't in line with projector screen? toggle a slider on the X and Y axis to tilt the plan of the lyrics container??
 - pause audio/lrc?
 - touch controls? single tap moves forwards. What about double tap to move back? Or swipe?
 
