@@ -1,8 +1,6 @@
 function makeDragable(elmnt: HTMLElement) {
   // makes an element dragable, when it has the class 'dragmode'
-  // FIXME: prevent dragging off screen
-
-  // add a marker element in the top left
+  // add a marker element in the top left and bottom right
   addDragMarker(elmnt);
 
   // add drag styles
