@@ -20,6 +20,7 @@ async function handleFileInputChange(event: Event, listElem: HTMLElement) {
 let nextSongTimeout: number | null = null;
 async function playSong(track:Track|null) {
   if (track) {
+    console.log(track)
     const buffer = await track.audio.buffer
     const newAudio = buffer ? connectAudioGraph(buffer) : null;
     const lines = parseLyricsFile(await track.lyrics.text, track.lyrics.file);

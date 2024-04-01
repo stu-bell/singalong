@@ -57,6 +57,7 @@ function fadeIn(
   offset?: number | undefined,
   duration?: number | undefined
 ) {
+  console.log(fadeDuration)
   const audioContext = graph.source.context;
   graph.source.start(when, offset, duration);
   graph.gain.gain.setValueAtTime(0, audioContext.currentTime);
@@ -69,6 +70,7 @@ function fadeIn(
 }
 
 function fadeOut(graph: Graph, fadeDuration: number = 0) {
+  console.log(fadeDuration)
   const audioContext = graph.source.context;
   const endTime = audioContext.currentTime + fadeDuration;
   graph.gain.gain.setValueAtTime(1, audioContext.currentTime);
@@ -82,8 +84,9 @@ function crossFade(
   graphNext: Graph | null,
   crossfadeDuration: number = 0,
   offset?: number,
-  duration?: number
+  duration?: number // duration for starting the next track
 ) {
+  console.log(crossfadeDuration)
   if (graphNext) { 
     // undefined => start fadeIn at current time
     fadeIn(graphNext, crossfadeDuration, undefined, offset, duration);
