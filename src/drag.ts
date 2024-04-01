@@ -21,7 +21,7 @@ function makeDragable(elmnt: HTMLElement) {
         }
         .drag-marker {
           display: none;
-          cursor: move;
+          cursor: se-resize;
           position: absolute;
           width: 0;
           height: 0;
@@ -67,25 +67,39 @@ function makeDragable(elmnt: HTMLElement) {
     pos3 = e.clientX;
     pos4 = e.clientY;
     document.onmouseup = closeDragElement;
-    document.onmousemove = elementDrag;
+    if ((e.target as HTMLElement)?.className.includes("drag-marker-top")) {
+      document.onmousemove = elementDragTop;
+    } else if (
+      (e.target as HTMLElement)?.className.includes("drag-marker-tail")
+    ) {
+      document.onmousemove = elementDragTail;
+    }
   }
 
-  function elementDrag(e: MouseEvent) {
+  function elementDragTop(e: MouseEvent) {
+    // drag the top left corner
     e = e || window.event;
     e.preventDefault();
     pos1 = pos3 - e.clientX;
     pos2 = pos4 - e.clientY;
     pos3 = e.clientX;
     pos4 = e.clientY;
-    if ((e.target as HTMLElement)?.className.includes('drag-marker-top')) {
-      // drag the top left corner
-      elmnt.style.top = elmnt.offsetTop - pos2 + "px";
-      elmnt.style.left = elmnt.offsetLeft - pos1 + "px";
-    } else {
-      // drag bottom right corner
-      elmnt.style.height = elmnt.offsetHeight + pos2 + "px";
-      elmnt.style.width = elmnt.offsetWidth + pos1 + "px";
-    }
+    elmnt.style.top = elmnt.offsetTop - pos2 + "px";
+    elmnt.style.left = elmnt.offsetLeft - pos1 + "px";
+    elmnt.style.height = elmnt.offsetHeight + pos2 + "px";
+    elmnt.style.width = elmnt.offsetWidth + pos1 + "px";
+  }
+
+  function elementDragTail(e: MouseEvent) {
+    // drag bottom right corner
+    e = e || window.event;
+    e.preventDefault();
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    elmnt.style.height = elmnt.offsetHeight - pos2 + "px";
+    elmnt.style.width = elmnt.offsetWidth - pos1 + "px";
   }
 
   function closeDragElement() {
