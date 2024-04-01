@@ -13,7 +13,7 @@ async function handleFileInputChange(event: Event, listElem: HTMLElement) {
   const folderFiles = Array.from(files);
 
   await loadPlaylist(folderFiles);
-  // start playit ng the first song
+  // start playing the first song
   nextSong();
 }
 
@@ -23,8 +23,7 @@ async function playSong(track:Track|null) {
     const buffer = await track.audio.buffer
     const newAudio = buffer ? connectAudioGraph(buffer) : null;
     const lines = parseLyricsFile(await track.lyrics.text, track.lyrics.file);
-    const crossFadeDuration = 1;
-    crossFade(getCurrentlyPlaying(), newAudio, crossFadeDuration, track.audio.offset);
+    crossFade(getCurrentlyPlaying(), newAudio, track.audio.fade, track.audio.offset);
     renderLyrics(lines, lyricsListElem);
     const endpoint = (track.audio.end) ? track.audio.end : buffer?.duration
     if (endpoint){
@@ -33,7 +32,7 @@ async function playSong(track:Track|null) {
         // cancel inflight timer, since we might have skipped
         clearTimeout(nextSongTimeout);
       }
-      nextSongTimeout = setTimeout(nextSong, (endpoint - track.audio.offset - crossFadeDuration) * 1000 );
+      nextSongTimeout = setTimeout(nextSong, (endpoint - track.audio.offset - track.audio.fade) * 1000 );
     }
   } else {
     // TODO handle no track (when navigating off start or end of playlist)

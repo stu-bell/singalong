@@ -42,7 +42,7 @@ type Track = {
     buffer: Promise<AudioBuffer> | null;
     offset: number; // offset to start playing track
     end: number | undefined; // time in the track we should move next. duration = end - offset
-    fade: number | undefined; // fade duration
+    fade: number; // fade duration
   };
 };
 
@@ -98,6 +98,7 @@ function loadTrack(item: PlaylistItem): Track {
       buffer: item.audioFile ? loadAudioFromFile(item.audioFile) : null,
       offset: item.start ? parseTimestampToSeconds(item.start) : 0,
       end: item.end ? parseTimestampToSeconds(item.end) : undefined,
+      fade: item.fade ? parseTimestampToSeconds(item.fade) : 0,
     },
   };
 }
@@ -252,7 +253,7 @@ async function downloadExamplePlaylistFile(files: File[] | any[]) {
   }
   const exampleContent =
     // header row, plus data
-    `lyrics	audio	start	end fade\r\n` + res.join("\r\n");
+    `lyrics	audio	start	end	fade\r\n` + res.join("\r\n");
   downloadFile(exampleContent, "_playlist.tsv");
 }
 

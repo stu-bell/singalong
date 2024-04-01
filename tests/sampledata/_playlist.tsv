@@ -1,4 +1,4 @@
-lyrics	audio	start	end fade
-c.lrc	voice1.m4a	0	0:6.21	1
-b.lrc	voice2.m4a	0	0:9.17	1
+lyrics	audio	start	end	fade
+Queen - Don't Stop Me Now.lrc	queen.m4a	0	0:35.63	1
+Talking Heads - Road To Nowhere.lrc	road to nowhere.m4a	0	0:35.52	1
 blank.txt

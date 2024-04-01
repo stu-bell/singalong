@@ -80,7 +80,7 @@ function fadeOut(graph: Graph, fadeDuration: number = 0) {
 function crossFade(
   graphCurrent: Graph | null,
   graphNext: Graph | null,
-  crossfadeDuration: number = 1,
+  crossfadeDuration: number = 0,
   offset?: number,
   duration?: number
 ) {
