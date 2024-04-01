@@ -1,3 +1,5 @@
+import { formatSecondsToTimestamp } from "./lrcFile";
+
 let acx: AudioContext;
 let currentlyPlaying: Graph;
 
@@ -93,9 +95,9 @@ function crossFade(
   }
 }
 
-async function audioFileDuration(file: File): Promise<number> {
+async function audioFileDuration(file: File): Promise<string> {
   if (file) {
-    return (await loadAudioFromFile(file)).duration
+    return formatSecondsToTimestamp((await loadAudioFromFile(file)).duration)
   } else {
     throw new Error('file not provided')
   }

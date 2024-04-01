@@ -11,10 +11,7 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 - empty lines at the top of the screen should be large height - what about replacing with a space?
 
 ## Later
-- in the sample _playlist.tsv downloaded, add 0 as the start time and the end as the duration of the track
 - offline usage with service worker
-- sample playlist.tsv downloaded, try fuzzy matching lyrics and audio names?
-- sample _playlist - could try to 'fuzzy match' tracks by splitting words by space, removing common words (the, a, -) and matching based on most number of matching words??
 - album cover. Column for album cover art. Column for time to display album in song, and duration (default to 2s?)
 - background gif on loop. Lyrics should have a fading border around them in case they overlap the background?
 - search feature for searching lyrics in a folder, when accompanying live music on request

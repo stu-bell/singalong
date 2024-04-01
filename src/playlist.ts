@@ -106,9 +106,14 @@ async function parsePlaylistFile(folderfiles: File[]) {
   );
   if (!playlistFile) {
     window.alert(
-      `Oops! We couldn't find a ${playlistFileName} file in that folder! Save one in that folder and edit it to make your playlist.`
+      `Oops! We couldn't find a ${playlistFileName} file in that folder! Save one in that folder and edit it to make your playlist. It may take a few seconds to check through your music files`
     );
-    downloadExamplePlaylistFile(folderfiles);
+    const userwait = document.createElement('p');
+      // TODO: busy spinner!
+    userwait.textContent = `One sec, we're preparing your playlist file. This may take a few seconds depending how many audio tracks you have... When it downloads, save it to the folder with your lyrics and music. Edit it to reorder your playlist then click Choose Folder again`;
+    document.body.prepend(userwait);
+    await downloadExamplePlaylistFile(folderfiles);
+    userwait.remove();
     window.alert(
       `We've just downloaded a ${playlistFileName} file for you, with the tracks we could find in the folder you chose. Open it in a spreadsheet and put the lyrics and audio files in the correct order. Then refresh the sing along app and retry.`
     );
@@ -192,46 +197,51 @@ function loadPlaylistFileHandles(playlist: Playlist, folderfiles: File[]) {
   return playlistWithFiles;
 }
 
-function downloadExamplePlaylistFile(files: File[]) {
-  console.log("hi");
+async function downloadExamplePlaylistFile(files: File[] | any[]) {
   // grab relevant files
-  const audioFiles = files.filter((file) => {
-    const ext = getFileExtension(file.name);
-    return ext === "mp3" || ext === "m4a";
-  });
+  const audioFiles = await Promise.all(
+    files
+      .filter((file) => {
+        const ext = getFileExtension(file.name);
+        return ext === "mp3" || ext === "m4a";
+      })
+      .map(async (f) => {
+        // add audio file duration
+        f.duration = await audioFileDuration(f);
+        return f;
+      })
+  );
   const lyricsFiles = files.filter((file) => {
     const ext = getFileExtension(file.name);
     return ext === "lrc" || ext === "txt";
   });
 
   let res = [];
-  let match: File | null = null;
+  let matchIndex: number = 0;
   // assume that the audio files list is shorter (or equal)
   for (let i = 0; i < audioFiles.length; i++) {
     let highest = 0;
     // find the lyircs file name that most closely mathches
     for (let j = 0; j < lyricsFiles.length; j++) {
-      console.log(audioFiles[i].name);
-      console.log(lyricsFiles[j].name);
       let score = ratio(audioFiles[i].name, lyricsFiles[j].name);
       if (score > highest) {
         highest = score;
-        match = lyricsFiles[j];
-        // remove the matched element from the list of available options
-        lyricsFiles.splice(j, 1);
-        console.log("remaining", lyricsFiles);
+        matchIndex = j;
       }
     }
 
     // add the row to the result playlist, format as .TSV
     res.push(
       [
-        match ? match.name : "",
+        lyricsFiles[matchIndex] ? lyricsFiles[matchIndex].name : "",
         audioFiles[i] ? audioFiles[i].name : "",
         audioFiles[i] ? "0" : "",
-        audioFiles[i] ? audioFileDuration(audioFiles[i]) : "",
+        audioFiles[i] ? audioFiles[i].duration : "",
       ].join("\t")
     );
+
+    // remove the matched element from the list of available options
+    lyricsFiles.splice(matchIndex, 1);
   }
   for (let k = 0; k < lyricsFiles.length; k++) {
     // add remaining lyrics files

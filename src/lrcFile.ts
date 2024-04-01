@@ -62,5 +62,11 @@ function parseTimestampToSeconds(timestamp: string): number {
   return result;
 }
 
-export { parseLyricsFile, parseTimestampToSeconds };export type { LyricLines };
+function formatSecondsToTimestamp(seconds:number):string {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = (seconds % 60).toFixed(2);
+  return `${minutes}:${remainingSeconds}`
+}
+
+export { parseLyricsFile, parseTimestampToSeconds, formatSecondsToTimestamp };export type { LyricLines };
 
