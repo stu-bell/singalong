@@ -109,14 +109,17 @@ function seekLyrics(lines:LyricLines, offsetSeconds: number = 0): {
   remainderSeconds: number
 }{
   // seekLyrics looks through timestamps to find the line the corresponds to the offset
-  // TODO ie the line before the first line that has a timestamp greater than the offset
+  // ie the line before the first line that has a timestamp greater than the offset
+  const firstIndex = lines.findIndex(l => (l.timestamp || 0) > offsetSeconds);
+  console.log(firstIndex)
+  // no lines come after offsetSeconds
+  const index = (firstIndex === -1) ? lines.length : firstIndex - 1;
+  // remainder is the difference between the offsetSeconds and the timestamp of the found line
+  const remainderSeconds = offsetSeconds - (lines[index]?.timestamp || 0);
   return {
-    index: 0,
-    remainderSeconds: 0
+    index,
+    remainderSeconds
   }
-
-  // TODO: remainder is the difference between the offsetSeconds and the timestamp of the current line
-  // remainder should be subtracted from the setTimeoutNextScroll
 }
 
 function renderLyrics(lines: LyricLines, htmlElement: HTMLElement, offsetSeconds = 0) {
@@ -126,6 +129,7 @@ function renderLyrics(lines: LyricLines, htmlElement: HTMLElement, offsetSeconds
   state.lines = lines;
 
   const seek = seekLyrics(lines, offsetSeconds)
+  console.log(seek)
   state.currentLineIndex = seek.index;
 
   // remove current lyrics
