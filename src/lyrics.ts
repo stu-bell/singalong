@@ -104,22 +104,13 @@ function setTimeoutNextScroll(from?:number) {
 const weJustAutoScrolled = (milliseconds = 500) =>
   Date.now() - lastAutoScrollTime < milliseconds;
 
-function seekLyrics(lines:LyricLines, offsetSeconds: number = 0): {
-  index: number,
-  remainderSeconds: number
-}{
+function seekLyrics(lines:LyricLines, offsetSeconds: number = 0): number {
   // seekLyrics looks through timestamps to find the line the corresponds to the offset
   // ie the line before the first line that has a timestamp greater than the offset
   const firstIndex = lines.findIndex(l => (l.timestamp || 0) > offsetSeconds);
-  console.log(firstIndex)
   // no lines come after offsetSeconds
   const index = (firstIndex === -1) ? lines.length : firstIndex - 1;
-  // remainder is the difference between the offsetSeconds and the timestamp of the found line
-  const remainderSeconds = offsetSeconds - (lines[index]?.timestamp || 0);
-  return {
-    index,
-    remainderSeconds
-  }
+  return index
 }
 
 function renderLyrics(lines: LyricLines, htmlElement: HTMLElement, offsetSeconds = 0) {
@@ -128,9 +119,8 @@ function renderLyrics(lines: LyricLines, htmlElement: HTMLElement, offsetSeconds
   // set lines for current track
   state.lines = lines;
 
-  const seek = seekLyrics(lines, offsetSeconds)
-  console.log(seek)
-  state.currentLineIndex = seek.index;
+  const seekIndex = seekLyrics(lines, offsetSeconds)
+  state.currentLineIndex = seekIndex;
 
   // remove current lyrics
   while (lyricsListElem.firstChild) {
@@ -148,7 +138,7 @@ function renderLyrics(lines: LyricLines, htmlElement: HTMLElement, offsetSeconds
   }
 
   // start the timer for auto scroll
-  setTimeoutNextScroll();
+  setTimeoutNextScroll(offsetSeconds);
 }
 
 function scrollNextLine() {

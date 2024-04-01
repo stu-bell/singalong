@@ -3,7 +3,7 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 # TODO
 
 ## Next
-- sync the start and end of lrc files with the start and end of the audio (ie remove lines before the audio start time, and after the audio end time)
+- remove lyrics lines after the end time?
 
 ## bugs
 - bug when scroll backwards, list items disappear from the bottom
