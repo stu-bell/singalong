@@ -113,13 +113,17 @@ function seekLyrics(lines:LyricLines, offsetSeconds: number = 0): number {
   return index
 }
 
-function renderLyrics(lines: LyricLines, htmlElement: HTMLElement, offsetSeconds = 0) {
+function renderLyrics(lines: LyricLines, htmlElement: HTMLElement, offsetSeconds = 0, endSeconds?: number) {
   // renderLyrics sets up initial lyrics in an HTML element. 
   lyricsListElem = htmlElement;
-  // set lines for current track
-  state.lines = lines;
+  
+  // filter out lines where timestamp is greater than the end timestamp
+  const filteredLines = (endSeconds) ? lines.filter(l => (l.timestamp || 0) <= endSeconds) : lines
 
-  const seekIndex = seekLyrics(lines, offsetSeconds)
+  // set lines for current track
+  state.lines = filteredLines;
+
+  const seekIndex = seekLyrics(state.lines, offsetSeconds)
   state.currentLineIndex = seekIndex;
 
   // remove current lyrics
@@ -136,6 +140,10 @@ function renderLyrics(lines: LyricLines, htmlElement: HTMLElement, offsetSeconds
     el.textContent = line;
     lyricsListElem.appendChild(el);
   }
+  // big up the first line
+  const first = lyricsListElem.firstElementChild as HTMLElement;
+  void first.offsetWidth; // reset transition
+  first.classList.add('large');
 
   // start the timer for auto scroll
   setTimeoutNextScroll(offsetSeconds);
@@ -148,6 +156,7 @@ function scrollNextLine() {
   }
 
   setTimeoutNextScroll();
+  // append a new line to the bottom of the visible list
   const appendLine =
     state.lines[state.currentLineIndex + state.numberOfLines - 1];
   const appendText = appendLine ? appendLine.text : "";
