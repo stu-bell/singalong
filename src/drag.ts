@@ -84,10 +84,16 @@ function makeDragable(elmnt: HTMLElement) {
     pos2 = pos4 - e.clientY;
     pos3 = e.clientX;
     pos4 = e.clientY;
-    elmnt.style.top = elmnt.offsetTop - pos2 + "px";
-    elmnt.style.left = elmnt.offsetLeft - pos1 + "px";
-    elmnt.style.height = elmnt.offsetHeight + pos2 + "px";
-    elmnt.style.width = elmnt.offsetWidth + pos1 + "px";
+
+    // don't scroll off the screen
+    if (e.clientX >= 0) {
+      elmnt.style.left = elmnt.offsetLeft - pos1 + "px";
+      elmnt.style.width = elmnt.offsetWidth + pos1 + "px";
+    }
+    if (e.clientY >= 0) {
+      elmnt.style.top = elmnt.offsetTop - pos2 + "px";
+      elmnt.style.height = elmnt.offsetHeight + pos2 + "px";
+    }
   }
 
   function elementDragTail(e: MouseEvent) {
