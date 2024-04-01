@@ -31,8 +31,9 @@ async function playSong(track:Track|null) {
     currentTrack = track;
 
     // wait until finished fading before rendering the new lyrics
-    // const lyricsTransitionDelay = fadeDuration * 2 / 3;
-    setTimeout(() => renderLyrics(lines, lyricsListElem, track.audio.offset + fadeDuration, track.audio.end), fadeDuration * 1000 );
+    // transition lyrics part of the way through the fade, otherwise it sounds like the audio has moved on but the lyrics haven't (for long fadeDurations)
+    const lyricsTransitionDelay = fadeDuration * 2/3;
+    setTimeout(() => renderLyrics(lines, lyricsListElem, track.audio.offset + lyricsTransitionDelay, track.audio.end), lyricsTransitionDelay * 1000 );
 
     const endpoint = (track.audio.end) ? track.audio.end : buffer?.duration
     if (endpoint){
