@@ -4,6 +4,7 @@ import { loadPlaylist, playlistNext, playlistPrev, Track } from "./playlist";
 import { connectAudioGraph, crossFade, getCurrentlyPlaying } from "./audio";
 
 let lyricsListElem: HTMLElement;
+let currentTrack: Track | null = null;
 
 async function handleFileInputChange(event: Event, listElem: HTMLElement) {
   // set global lyrcsListElem
@@ -20,11 +21,13 @@ async function handleFileInputChange(event: Event, listElem: HTMLElement) {
 let nextSongTimeout: number | null = null;
 async function playSong(track:Track|null) {
   if (track) {
-    console.log(track)
     const buffer = await track.audio.buffer
     const newAudio = buffer ? connectAudioGraph(buffer) : null;
     const lines = parseLyricsFile(await track.lyrics.text, track.lyrics.file);
-    crossFade(getCurrentlyPlaying(), newAudio, track.audio.fade, track.audio.offset);
+    // use the audio fade duration on the same playlist line as the currently playing track
+    const fadeDuration = currentTrack ? currentTrack.audio.fade : 0
+    crossFade(getCurrentlyPlaying(), newAudio, fadeDuration, track.audio.offset);
+    currentTrack = track;
     renderLyrics(lines, lyricsListElem);
     const endpoint = (track.audio.end) ? track.audio.end : buffer?.duration
     if (endpoint){
