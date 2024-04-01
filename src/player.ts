@@ -22,13 +22,17 @@ let nextSongTimeout: number | null = null;
 async function playSong(track:Track|null) {
   if (track) {
     const buffer = await track.audio.buffer
-    const newAudio = buffer ? connectAudioGraph(buffer) : null;
     const lines = parseLyricsFile(await track.lyrics.text, track.lyrics.file);
+
+    const newAudio = buffer ? connectAudioGraph(buffer) : null;
     // use the audio fade duration on the same playlist line as the currently playing track
     const fadeDuration = currentTrack ? currentTrack.audio.fade : 0
     crossFade(getCurrentlyPlaying(), newAudio, fadeDuration, track.audio.offset);
     currentTrack = track;
-    renderLyrics(lines, lyricsListElem);
+
+    // wait until finished fading before rendering the new lyrics
+    setTimeout(() => renderLyrics(lines, lyricsListElem), fadeDuration * 1000 );
+
     const endpoint = (track.audio.end) ? track.audio.end : buffer?.duration
     if (endpoint){
       // play the next song after this one finishes

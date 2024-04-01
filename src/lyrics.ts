@@ -104,14 +104,31 @@ function setTimeoutNextScroll(from?:number) {
 const weJustAutoScrolled = (milliseconds = 500) =>
   Date.now() - lastAutoScrollTime < milliseconds;
 
-function renderLyrics(lines: LyricLines, htmlElement: HTMLElement) {
+function seekLyrics(lines:LyricLines, offsetSeconds: number = 0): {
+  index: number,
+  remainderSeconds: number
+}{
+  // seekLyrics looks through timestamps to find the line the corresponds to the offset
+  // TODO ie the line before the first line that has a timestamp greater than the offset
+  return {
+    index: 0,
+    remainderSeconds: 0
+  }
+
+  // TODO: remainder is the difference between the offsetSeconds and the timestamp of the current line
+  // remainder should be subtracted from the setTimeoutNextScroll
+}
+
+function renderLyrics(lines: LyricLines, htmlElement: HTMLElement, offsetSeconds = 0) {
+  // renderLyrics sets up initial lyrics in an HTML element. 
   lyricsListElem = htmlElement;
   // set lines for current track
   state.lines = lines;
 
-    // calling renderLyrics goes back to the start of the song
-  state.currentLineIndex = 0;
+  const seek = seekLyrics(lines, offsetSeconds)
+  state.currentLineIndex = seek.index;
 
+  // remove current lyrics
   while (lyricsListElem.firstChild) {
     lyricsListElem.firstChild.remove();
   }

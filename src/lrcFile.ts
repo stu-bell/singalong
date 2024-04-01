@@ -3,16 +3,17 @@ import { getFileExtension } from "./files";
 type LyricLines = LyricLine[];
 type LyricLine = {
   text: string,
-  timestamp: number | null
+  timestamp: number | null // number in seconds
 }
 
 const alltimestamppattern = /\[\d?\d?:?\d?\d\.?\d?\d?\d?\]/g;
 function parseLrcLines(lrcFile: string) {
   // some lrc files have repeated lyrics on one line with multiple timetamps. This splits into multiple lines and sorts the result lines
-  // split file by newline and filter out blank lines
+  // split file by newline 
   const lines = lrcFile.replace('\r\n', '\n').replace('\r', '\n')
     .split('\n')
     .filter((line: string) => line.trim() !== "") 
+    // filter out lines which just have a tag?? This is filtering out blank lines but also filters out info tags
     .filter((line) => !(line.startsWith("[") && line.endsWith("]")));
   // initialise with empty line
   let result: LyricLine[] = [{ timestamp: 0, text: "" }];
@@ -20,11 +21,12 @@ function parseLrcLines(lrcFile: string) {
     const trimmedLine = line.trim();
     const matches = trimmedLine.match(alltimestamppattern);
     if (matches && matches.length > 0) {
+      // lyric is the text with the leading timestamps removed
       const lyric = trimmedLine.replace(alltimestamppattern, "").trim();
       matches.forEach((timestamp: any) => {
         result.push({
           timestamp: parseTimestampToSeconds(timestamp),
-          text: lyric
+          text: lyric || " " // insert a space if the lyric is blank
         });
       });
     }
