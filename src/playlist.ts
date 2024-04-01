@@ -24,8 +24,9 @@ type Playlist = PlaylistItem[];
 type PlaylistItem = {
   audio: string; // audio file name, from playlist file
   audioFile: File | null; // audio File handle, added during parsing
-  audio_start: string | null; // audio start timestamp, from playlist file
-  audio_end: string | null; // audio end timestamp, from playlist file
+  start: string | null; // start timestamp, from playlist file
+  end: string | null; // end timestamp, from playlist file
+  fade: string | null; // fade duration between two tracks, ie duration of overlap while fading from one to the next
   lyrics: string; // lyrics file name, from playlist file
   lyricsFile: File; // lyrics File handle, added during parsing
   // lyrics_offset:string|null; // offset for starting lyrics, from playlist file
@@ -41,6 +42,7 @@ type Track = {
     buffer: Promise<AudioBuffer> | null;
     offset: number; // offset to start playing track
     end: number | undefined; // time in the track we should move next. duration = end - offset
+    fade: number | undefined; // fade duration
   };
 };
 
@@ -94,8 +96,8 @@ function loadTrack(item: PlaylistItem): Track {
     audio: {
       file: item.audioFile,
       buffer: item.audioFile ? loadAudioFromFile(item.audioFile) : null,
-      offset: item.audio_start ? parseTimestampToSeconds(item.audio_start) : 0,
-      end: item.audio_end ? parseTimestampToSeconds(item.audio_end) : undefined,
+      offset: item.start ? parseTimestampToSeconds(item.start) : 0,
+      end: item.end ? parseTimestampToSeconds(item.end) : undefined,
     },
   };
 }
@@ -237,6 +239,7 @@ async function downloadExamplePlaylistFile(files: File[] | any[]) {
         audioFiles[i] ? audioFiles[i].name : "",
         audioFiles[i] ? "0" : "",
         audioFiles[i] ? audioFiles[i].duration : "",
+        audioFiles[i] ? "1" : ""
       ].join("\t")
     );
 
@@ -249,7 +252,7 @@ async function downloadExamplePlaylistFile(files: File[] | any[]) {
   }
   const exampleContent =
     // header row, plus data
-    `lyrics	audio	audio_start	audio_end\r\n` + res.join("\r\n");
+    `lyrics	audio	start	end fade\r\n` + res.join("\r\n");
   downloadFile(exampleContent, "_playlist.tsv");
 }
 

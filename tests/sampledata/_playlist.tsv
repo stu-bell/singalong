@@ -1,3 +1,4 @@
-lyrics	audio	audio_start	audio_end	lyrics_offset
-b.lrc				9
-c.lrc
+lyrics	audio	start	end fade
+c.lrc	voice1.m4a	0	0:6.21	1
+b.lrc	voice2.m4a	0	0:9.17	1
+blank.txt
