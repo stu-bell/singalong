@@ -1,7 +1,6 @@
 function makeDragable(elmnt: HTMLElement) {
   // makes an element dragable, when it has the class 'dragmode'
   // FIXME: prevent dragging off screen
-  const lableText = "Drag from bottom right first, then top left";
 
   // add a marker element in the top left
   addDragMarker(elmnt);
@@ -18,33 +17,43 @@ function makeDragable(elmnt: HTMLElement) {
           overflow: auto;
         }
         .dragmode {
-          border: 1px solid black;
-          resize: both;
+          border: 2px solid blue;
         }
         .drag-marker {
           display: none;
+          cursor: move;
+          position: absolute;
+          width: 0;
+          height: 0;
         }
         .dragmode>.drag-marker {
           display: block;
-          width: 0;
-          height: 0;
+        }
+        .drag-marker-top {
           border-right: 10px solid transparent;
-          border-top: 10px solid black;
-          position: absolute;
+          border-top: 10px solid blue;
           top: 0;
           left: 0;
-          cursor: move;
+        }
+        .drag-marker-tail {
+          border-left: 10px solid transparent;
+          border-bottom: 10px solid blue;
+          bottom: 0;
+          right: 0;
         }
   `;
   document.head.appendChild(styleElement);
 
   function addDragMarker(elmnt: HTMLElement) {
     // add top left marker
-    const marker = document.createElement("div");
-    marker.classList.add("drag-marker");
-    marker.onmousedown = dragMouseDown;
-    marker.innerText = lableText || "";
-    elmnt.prepend(marker);
+    const markerTop = document.createElement("div");
+    markerTop.classList.add("drag-marker", "drag-marker-top");
+    markerTop.onmousedown = dragMouseDown;
+    elmnt.prepend(markerTop);
+    const markerTail = document.createElement("div");
+    markerTail.classList.add("drag-marker", "drag-marker-tail");
+    markerTail.onmousedown = dragMouseDown;
+    elmnt.append(markerTail);
   }
 
   let pos1 = 0,
@@ -68,8 +77,15 @@ function makeDragable(elmnt: HTMLElement) {
     pos2 = pos4 - e.clientY;
     pos3 = e.clientX;
     pos4 = e.clientY;
-    elmnt.style.top = elmnt.offsetTop - pos2 + "px";
-    elmnt.style.left = elmnt.offsetLeft - pos1 + "px";
+    if ((e.target as HTMLElement)?.className.includes('drag-marker-top')) {
+      // drag the top left corner
+      elmnt.style.top = elmnt.offsetTop - pos2 + "px";
+      elmnt.style.left = elmnt.offsetLeft - pos1 + "px";
+    } else {
+      // drag bottom right corner
+      elmnt.style.height = elmnt.offsetHeight + pos2 + "px";
+      elmnt.style.width = elmnt.offsetWidth + pos1 + "px";
+    }
   }
 
   function closeDragElement() {
