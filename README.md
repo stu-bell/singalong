@@ -7,6 +7,8 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 - offline usage with service worker
 
 ## bugs
+- first line being promoted too soon? Maybe add a blank line 0 timestamp to teh beginning of each lines array?`
+- next/prev song commands jump to the start of the song - not the offset time??
 - bug when scroll backwards, list items disappear from the bottom. lyrics.ts forwards/backwards?
 - empty lines at the top of the screen should be large height - what about replacing with a space?
 
