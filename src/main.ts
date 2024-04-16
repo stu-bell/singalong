@@ -36,6 +36,7 @@ document.addEventListener("keydown", function (event) {
   if (event.key === "S" || // shift + S
       event.key === "Tab"
       ) { 
+    event.preventDefault();
     lyricsContainer.classList.toggle("hidden");
   }
 });
