@@ -1,3 +1,7 @@
 export default {
-  base: '/singalong/'
+  root: "src",
+  base: '/singalong/',
+  build: {
+      outDir: '../dist'
+  }
 }
