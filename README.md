@@ -35,3 +35,5 @@ Requires [node.js](https://nodejs.org)
 # Build (for running locally or deploying elsewhere)
 
 1. `npm run build`
+
+Build is output to the `singalong` folder. If using a local server, run from the parent folder of the singalong app and navigate to the path `/singalong` in the browser.
