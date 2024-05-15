@@ -33,9 +33,8 @@ assertElementById("fileInput").addEventListener("change", (e) => {
 
 // show hide lyrics
 document.addEventListener("keydown", function (event) {
-  if (event.key === "S" || // shift + S
-      event.key === "Tab"
-      ) { 
+  if (event.key === "S" ) {
+    // shift + S 
     event.preventDefault();
     lyricsContainer.classList.toggle("hidden");
   }
