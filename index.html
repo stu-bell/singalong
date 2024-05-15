@@ -1,128 +1,44 @@
+
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <link rel="icon" href="favicon.ico" type="image/png">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" type="text/css" href="src/styles.css">
-  <!-- <link rel="manifest" href="manifest.json" /> -->
-  <meta name="theme-color" content="#000000">
-  <title>Sing along</title>
+<style>
+#back {
+    margin:25px;
+    width:300px;
+    height:200px;
+    background-color:#555;
+    -webkit-perspective: 100px;
+}
+
+#fore {
+    width:300px;
+    height:200px;
+    background-color:#999;
+    -webkit-transform-origin: middle;
+    -webkit-transform: rotateX(10deg);
+}
+</style>
 </head>
+<body>
 
-<body id="body" class="font-arial h-screen flex flex-col overflow-hidden">
-  <div id="home" class="text-left px-4 max-h-screen overflow-y-auto">
-    <div>
-      <button id="fileInputButton" class="my-3 button">Choose Folder</button>
-      <input id="fileInput" type="file" webkitdirectory directory multiple class="hidden" />
-    </div>
-    <p>
-      Choose a folder containing .mp3, .m4a files, and .lrc or .txt files for lyrics.
-      <br /><br />.lrc files with timestamps will play automatically, for .txt files use the arrow keys or a USB
-      presentation remote.
-      <br /><br />Choose Folder above to download your playlist file</a> and save it in the same folder named <code
-        class="bg-gray-100">_playlist.tsv</code>
-      <br /><br /> The _playlist.tsv file is how you tell the app which order
-      to play the tracks, and which lyrics go with each audio file. Open the playlist file in a spreadsheet editor and
-      match the lyrics and audio files. The playlist should contain one row per song, in the sequence you want them to
-      be played. On each row you'll need to provide the exact file names for each lyric file (.txt or .lrc) and,
-      optionally the matching .mp3 file. Watch out for typos in the playlist file! If you get any errors, edit and save
-      your playlist file, refresh the page, and try again.
-      <br /><br />If there is no _playlist.tsv file in the folder you select, the app will make one based on the files
-      in that folder and download it for you. Save this file in the same folder as your lyrics and audio files.
-      <br /><br />Once you've got all your audio and lyrics files in a folder, and added your playlist file, hit the
-      `Choose Folder` button.
-      <br /><br /> You can include optional columns called 'start', 'end' and 'fade', which should show the times in
-      seconds the current audio track should start and finish. But if you just want to play the full songs, you can
-      leave these columns blank. Fade is the number of seconds overlap between two tracks. If fade = 0, the current song
-      will finish before the next song starts.
-      <br /><br />The last song currently loops. If you'd like to prevent this, add a blank or thankyou .txt file as the
-      last item in the _playlist.tsv
-      <br /><br />
-    </p>
-    <p> Keyboard commands:</p>
-    <table class="text-left table-auto my-2">
-      <thead class="bg-gray-500 text-white">
-        <tr>
-          <th class="px-4 py-2 border">Command</th>
-          <th class="px-4 py-2 border">Key</th>
-        </tr>
-      </thead>
-      <tbody class="text-gray-700">
-        <tr>
-          <td class="px-4 py-2 border">Next Line</td>
-          <td class="px-4 py-2 border">PageDown | Down Arrow | Right Arrow | Space</td>
-        </tr>
-        <tr class="bg-gray-100">
-          <td class="px-4 py-2 border">Restart Line (double tap for previous line)</td>
-          <td class="px-4 py-2 border">PageUp | Up Arrow | Left Arrow</td>
-        </tr>
-        <tr class="">
-          <td class="px-4 py-2 border">Next Song</td>
-          <td class="px-4 py-2 border">Shift N</td>
-        </tr>
-        <tr class="bg-gray-100">
-          <td class="px-4 py-2 border">Previous Song</td>
-          <td class="px-4 py-2 border">Shift P</td>
-        </tr>
-        <tr class="">
-          <td class="px-4 py-2 border">Show/hide lyrics</td>
-          <td class="px-4 py-2 border">Shift S | Tab </td>
-        </tr>
-        <tr>
-          <td class="px-4 py-2 border">Resize/Drag the lyrics area. Press again to hide drag area</td>
-          <td class="px-4 py-2 border"><code>Shift Z</code></td>
-        </tr>
-        <tr>
-          <td class="px-4 py-2 border">Text bigger</td>
-          <td class="px-4 py-2 border"><code>Ctrl +</code></td>
-        </tr>
-        <tr class="bg-gray-100">
-          <td class="px-4 py-2 border">Text smaller</td>
-          <td class="px-4 py-2 border"><code>Ctrl -</code></td>
-        </tr>
-        <tr>
-          <td class="px-4 py-2 border">Reset text size</td>
-          <td class="px-4 py-2 border"><code>Ctrl 0</code></td>
-        </tr>
-        <tr>
-          <td class="px-4 py-2 border">Fullscreen</td>
-          <td class="px-4 py-2 border"><code>F11</code></td>
-        </tr>
-        <tr>
-          <td class="px-4 py-2 border">Stop audio and come back to this screen (refresh)</td>
-          <td class="px-4 py-2 border"><code>Ctrl r</code></td>
-        </tr>
-      </tbody>
-    </table>
+<div id="back">
+  <div id="fore"></div>
+</div>
 
-    <p>Links to places to get lyrics:
-    <ul>
-      <li><a class="hyperlink text-sm" target="_blank" href="https://www.lyricsify.com/">lyricsify.com</a></li>
-      <li><a class="hyperlink text-sm" target="_blank" href="https://www.lrcgenerator.com/">lrcgenerator.com</a></li>
-      <li><a class="hyperlink text-sm" target="_blank" href="https://www.azlyrics.com/">azlyrics.com</a></li>
-    </ul>
-    </p>
-  </div>
+<label for="control">Control:</label>
+<input type="range" id="control" name="control" min="0" max="1000" value="500">
 
-  <div id="dragcontainer" class="dragcontainer hidden">
-    <!-- main container for song lyrics -->
-    <ul id="lyricsContainer" class="flex flex-col items-center list-none text-center mt-vh user-select-none">
-      <li></li>
-    </ul>
-    <!-- <div id="songTitleContainer" class="text-left fixed bottom-0 w-full box-border"> -->
-    <!--   <p id="songTitle" class="text-2 text-gray-600 m-2"></p> -->
-    <!-- </div> -->
-  </div>
+<script>
+document.getElementById('control').addEventListener('input', function() {
+    var value = this.value;
+    var perspective = value + 'px';
+    var rotation = (1000 - value) / 10 + 'deg';
 
-  <script type="module" src="/src/main.ts"></script>
-  <!-- <script> -->
-  <!--   // Registering Service Worker -->
-  <!--   if ('serviceWorker' in navigator) { -->
-  <!--     navigator.serviceWorker.register('service-worker.js'); -->
-  <!--   } -->
-  <!-- </script> -->
+    document.getElementById('back').style.webkitPerspective = perspective;
+    document.getElementById('fore').style.webkitTransform = 'rotateX(' + rotation + ')';
+});
+</script>
+
 </body>
-
 </html>

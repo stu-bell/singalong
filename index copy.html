@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#back {
+    margin:25px;
+    width:300px;
+    height:200px;
+    background-color:#555;
+    -webkit-perspective: 100px;
+}
+
+#fore {
+    width:300px;
+    height:200px;
+    background-color:#999;
+    -webkit-transform-origin: middle;
+    -webkit-transform: rotateX(10deg);
+}
+</style>
+</head>
+<body>
+
+<div id="back">
+  <div id="fore"></div>
+</div>
+
+<label for="perspective">Perspective:</label>
+<input type="range" id="perspective" name="perspective" min="0" max="1000" value="100">
+
+<label for="rotation">Rotation:</label>
+<input type="range" id="rotation" name="rotation" min="0" max="360" value="10">
+
+<script>
+document.getElementById('perspective').addEventListener('input', function() {
+    document.getElementById('back').style.webkitPerspective = this.value + 'px';
+});
+
+document.getElementById('rotation').addEventListener('input', function() {
+    document.getElementById('fore').style.webkitTransform = 'rotateX(' + this.value + 'deg)';
+});
+</script>
+
+</body>
+</html>
