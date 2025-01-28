@@ -14,6 +14,10 @@
 </head>
 
 <body id="body" class="font-arial h-screen flex flex-col overflow-hidden">
+  <div id="browser_not_supported" class="hidden px-4 py-4">
+    <h1>Sorry, this app won't work in this browser :(</h1>
+    <p>Check this <a class="hyperlink" href="https://developer.mozilla.org/en-US/docs/Web/API/Window/showOpenFilePicker#browser_compatibility">list of compatible browsers</a>, and make sure you have the latest browser updates.</p>
+  </div>
   <div id="home" class="text-left px-4 max-h-screen overflow-y-auto">
     <div>
       <button id="fileInputButton" class="my-3 button">Choose Folder</button>
@@ -119,6 +123,15 @@
     <!-- </div> -->
   </div>
 
+  <script>
+    // Browser support check
+    const isFileSystemApiSupport = 'showOpenFilePicker' in window || 'showSaveFilePicker' in window;
+    if (!isFileSystemApiSupport) {
+      document.getElementById('browser_not_supported').classList.remove('hidden')
+      document.getElementById('home').classList.add('hidden')
+    }
+
+  </script>
   
   <!-- <script> -->
   <!--   // Registering Service Worker -->
