@@ -32,6 +32,9 @@ Requires [node.js](https://nodejs.org)
 1. Update base repository url in `vite.config.js`
 1. `npm run deploy`
 
+Project will be built, the dist folder renamed as `singalong`, which is deployed to Github pages.
+If you encounter a permission denied error during the mv step, check you're not running any dev servers that are locking that folder.
+
 # Build (for running locally or deploying elsewhere)
 
 1. `npm run build`
