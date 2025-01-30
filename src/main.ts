@@ -81,11 +81,3 @@ document.addEventListener("keydown", function (event) {
     toggleDragMode();
   }
 });
-
-
-// Check compatibility with required APIs
-if (!window.FileReader || !window.FileList || !window.File || !window.Blob) {
-  alert(
-    "Your browser does not support the required APIs. Please use a modern browser."
-  );
-}
