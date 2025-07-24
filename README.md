@@ -3,7 +3,7 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 # TODO
 
 ## Next
-- don't show text on screen until next timestamp is only a few seconds away (so no text shown during instrumentals)
+- don't show text on screen until next timestamp is only a few seconds away (so no text shown during instrumentals). We should also respect timestamps with blank lines. maybe they aren't rendered, but indicate when to move the current line off screen?
 - plane rotation for scenarios where projector isn't in line with projector screen? toggle a slider on the X and Y axis to tilt the plan of the lyrics container?? Could show the sliders when in resize mode
 - offline usage with service worker
 
