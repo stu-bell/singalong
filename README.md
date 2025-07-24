@@ -18,8 +18,9 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 - search feature for searching lyrics in a folder, when accompanying live music on request
 - background gif. If lyrics are wide, they might overlay a background and not be clearly visible - put a translucent background over lyrics? _background.gif in the playlist folder? Should stay within the container, if resized - resizing is for aligning on a projector
 - pause audio/lrc?
-- touch controls? single tap moves forwards. What about double tap to move back? Or swipe? Or maybe just tap left / right halves of the screen to go back /forwards (probably easiest to implement)? What about preventing accidental touches if using the device wirelessly?
+- touch controls? single tap moves forwards. What about double tap to move back? Or swipe? Or maybe just tap left / right halves of the screen to go back /forwards (probably easiest to implement)? What about preventing accidental touches if using the device wirelessly (some kind of tap/long press to enable touch controls, subtle visual cue needed to show touch controls active...)?
 - Wouldn't work as static pwa, but could you serve lyrics over a local network hotspot, for use at festivals where people bring their own phones? Need to figure out hotspot limits, and how to sync lyrics timing. Useful if you have no projector/screen
+- 
 
 # Dev
 
