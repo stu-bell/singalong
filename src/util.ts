@@ -14,7 +14,17 @@ const propOrDefault =
   (obj: { [x: string]: any; hasOwnProperty: (arg0: any) => any }) =>
     obj.hasOwnProperty(propName) ? obj[propName] : defVal;
 
+const isFullScreen = () => !!( // doesn't work if F11 is used
+    document.fullscreenElement ||
+    document.webkitFullscreenElement ||
+    document.mozFullScreenElement ||
+    document.msFullscreenElement   );
+const toggleFullScreen = () => isFullScreen() ?
+	document.exitFullscreen() :
+	document.documentElement.requestFullscreen();
+
 export {
   assertElementById,
   propOrDefault,
+  toggleFullScreen
 };
