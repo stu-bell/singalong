@@ -9,10 +9,6 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 - when resizing drag area, scale font size so it's proportional to the width of the container
 - if font too big, do not show scroll bar, text will just have to overflow. 
 - Add media control, tie to next and previous control
-- don't show text on screen until next timestamp is only a few seconds away (so no text shown during instrumentals). Blank lines already move highlight off the current line. Multiple consecutive timestamps with blank lines display the next line, but also control when preview lines come on screen.  
-  - This is confusing - preview lines should be shown all together, or none at all? Test by playing with timestamps with no lyrics in an lrc file. 5x lines with no text but the same timestamp can give you the desired result. How does the user choose how far in advance preview lines should be shown if there's a long instrumental gap, if you bake this functionality in? Could build it so that user press next line to display the preview lines, if none are visible?
-  - to achieve this you'd need to calculate the time to the next line to add to the preview, and if greater than a threshold, set a timeout for when it should be added to preview
-  - if user presses next and no preview lines are visible, cancel the timeout and display the preview line
 
 ## bugs
 - .txt files not rendering? do they require audio?
@@ -21,6 +17,11 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 - empty lines at the top of the screen should be large height - what about replacing with a space?
 
 ## Later
+- don't show text on screen until next timestamp is only a few seconds away (so no text shown during instrumentals). Blank lines already move highlight off the current line. Multiple consecutive timestamps with blank lines display the next line, but also control when preview lines come on screen.  
+  - This is confusing - preview lines should be shown all together, or none at all? Test by playing with timestamps with no lyrics in an lrc file. 5x lines with no text but the same timestamp can give you the desired result. How does the user choose how far in advance preview lines should be shown if there's a long instrumental gap, if you bake this functionality in? Could build it so that user press next line to display the preview lines, if none are visible?
+  - to achieve this you'd need to calculate the time to the next line to add to the preview, and if greater than a threshold, set a timeout for when it should be added to preview
+  - if user presses next and no preview lines are visible, cancel the timeout and display the preview line
+
 - album cover. Column for album cover art. Column for time to display album in song, and duration (default to 2s?)
 - background gif on loop. Lyrics should have a fading border around them in case they overlap the background?
 - background gif. If lyrics are wide, they might overlay a background and not be clearly visible - put a translucent background over lyrics? _background.gif in the playlist folder? Should stay within the container, if resized - resizing is for aligning on a projector
