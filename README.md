@@ -3,11 +3,17 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 # TODO
 
 ## Next
-- don't show text on screen until next timestamp is only a few seconds away (so no text shown during instrumentals). Blank lines already move highlight off the current line. Multiple consecutive timestamps with blank lines display the next line, but also control when preview lines come on screen. This is confusing - preview lines should be shown all together, or none at all? Test by playing with timestamps with no lyrics in an lrc file. 5x lines with no text but the same timestamp can give you the desired result. How does the user choose how far in advance preview lines should be shown if there's a long instrumental gap, if you bake this functionality in? Could build it so that user press next line to display the preview lines, if none are visible?
+- document.documentElement.requestFullscreen(); when playing. Can also document.exitFullscreen(); at the end
+- Add media control, tie to next and previous control
+- don't show text on screen until next timestamp is only a few seconds away (so no text shown during instrumentals). Blank lines already move highlight off the current line. Multiple consecutive timestamps with blank lines display the next line, but also control when preview lines come on screen.  
+  - This is confusing - preview lines should be shown all together, or none at all? Test by playing with timestamps with no lyrics in an lrc file. 5x lines with no text but the same timestamp can give you the desired result. How does the user choose how far in advance preview lines should be shown if there's a long instrumental gap, if you bake this functionality in? Could build it so that user press next line to display the preview lines, if none are visible?
+  - to achieve this you'd need to calculate the time to the next line to add to the preview, and if greater than a threshold, set a timeout for when it should be added to preview
+  - if user presses next and no preview lines are visible, cancel the timeout and display the preview line
 - plane rotation for scenarios where projector isn't in line with projector screen? toggle a slider on the X and Y axis to tilt the plan of the lyrics container?? Could show the sliders when in resize mode
 - offline usage with service worker
 
 ## bugs
+- not working in brave desktop?
 - .txt files not rendering?
 - first line being promoted too soon? Maybe add a blank line 0 timestamp to teh beginning of each lines array?`
 - next/prev song commands jump to the start of the song - not the offset time??
