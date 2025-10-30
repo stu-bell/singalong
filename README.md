@@ -4,8 +4,10 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 
 ## Next
 - document.documentElement.requestFullscreen(); when playing. Can also document.exitFullscreen(); at the end
-- if font too big, do not show scroll bar, text will just have to overflow
 - button to trigger resizing area on mobile
+  - show the drag area with sample text, can do before loading a folder
+- when resizing drag area, scale font size so it's proportional to the width of the container
+- - if font too big, do not show scroll bar, text will just have to overflow. 
 - Add media control, tie to next and previous control
 - don't show text on screen until next timestamp is only a few seconds away (so no text shown during instrumentals). Blank lines already move highlight off the current line. Multiple consecutive timestamps with blank lines display the next line, but also control when preview lines come on screen.  
   - This is confusing - preview lines should be shown all together, or none at all? Test by playing with timestamps with no lyrics in an lrc file. 5x lines with no text but the same timestamp can give you the desired result. How does the user choose how far in advance preview lines should be shown if there's a long instrumental gap, if you bake this functionality in? Could build it so that user press next line to display the preview lines, if none are visible?
@@ -31,6 +33,12 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 - Wouldn't work as static pwa, but could you serve lyrics over a local network hotspot, for use at festivals where people bring their own phones? Need to figure out hotspot limits, and how to sync lyrics timing. Useful if you have no projector/screen
 - reading track lengths when creating initial playlist file requires loading audio buffers and happens in sequence (?), so takes ages
 - separate fade out and fade in durations? You want an overlap, but sometimes you want to fade out a song slowly, then bring the next one in with a steeper ramp? Ie fade out duration, time from end to start next track, fade in duration (fade in duration will be associated with the next track)? eg fade out 2s from end, start next track 1s from end, with a fade in of 0.5s?
+- split long lines
+  - is there a way to detect this and split into multiple lines, timestamps spread evenly between now and the next line?
+  - could start just based on average character length
+  - https://stackoverflow.com/questions/118241/calculate-text-width-with-javascript
+
+
 
 # Dev
 
