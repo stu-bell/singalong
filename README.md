@@ -9,6 +9,7 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 - when resizing drag area, scale font size so it's proportional to the width of the container
 - if font too big, do not show scroll bar, text will just have to overflow. 
 - Add media control, tie to next and previous control
+- request screen wake lock https://developer.mozilla.org/en-US/docs/Web/API/Screen_Wake_Lock_API
 
 ## bugs
 - .txt files not rendering? do they require audio?
