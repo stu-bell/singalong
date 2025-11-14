@@ -9,9 +9,21 @@ let currentTrack: Track | null = null;
 
 async function handleFileInputChange(event: Event, listElem: HTMLElement) {
 
-  requestWakeLock();
-  requestLandscape();
-  requestFullScreen();
+  try {
+    requestWakeLock();
+  } catch (e:any) {
+    alert('request wakelock ' + e.message)
+  }
+  try {
+    requestLandscape();
+  } catch (e:any) {
+    alert('request landscape' + e.message)
+  }
+  try {
+    requestFullScreen();
+  } catch (e:any) {
+    alert('request full screen' + e.message)
+  }
 
   // set global lyrcsListElem
   lyricsListElem = listElem;
