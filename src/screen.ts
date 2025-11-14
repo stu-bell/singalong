@@ -21,6 +21,7 @@ async function requestFullscreenAndLandscape(el: HTMLElement = document.document
         }
 
         // 2. Lock Orientation (Executes only if full-screen was successful)
+        // @ts-ignore
         await screen.orientation.lock('landscape'); 
         
     } catch (e) {

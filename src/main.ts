@@ -32,6 +32,11 @@ assertElementById("fileInputButton").addEventListener("click", () => {
     alert('request wakelock error:' + e.message)
   }
 
+  // select files
+  assertElementById("fileInput").click()
+}
+);
+
 assertElementById("fileInput").addEventListener("change", (e) => {
   handleFileInputChange(e, lyricsContainer);
   // Tab hides lyrics container - we want to make sure it's initially visible
