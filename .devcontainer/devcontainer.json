@@ -1,0 +1,13 @@
+{
+    "image": "mcr.microsoft.com/devcontainers/typescript-node",
+    "features": {
+        "ghcr.io/duduribeiro/devcontainer-features/neovim:1": {}
+    },
+    "mounts": [
+      // mount host nvim config to container
+      // on linux, replace ${localEnv:LOCALAPPDATA}/ with ${localEnv:HOME}/.config/
+      // Note: nvim may hang for a few minutes when initially loading plugins. Use `nvim --noplugin` or disable unneeded plugins
+      "source=${localEnv:LOCALAPPDATA}/nvim/,target=/tmp/.config/nvim,type=bind"
+    ],
+    "postCreateCommand": "ln -sf /tmp/.config/nvim ~/.config/nvim"
+}
