@@ -7,6 +7,7 @@ import {
   weJustAutoScrolled,
   setTimeoutNextScroll,
 } from "./lyrics";
+import { requestFullScreen, requestLandscape, requestWakeLock } from "./screen";
 
 // drag the lyrics container 
 const dragContainer = assertElementById('dragcontainer')
@@ -19,9 +20,29 @@ function toggleDragMode() {
 const lyricsContainer = assertElementById("lyricsContainer");
 
 // select folder event
-assertElementById("fileInputButton").addEventListener("click", () =>
+assertElementById("fileInputButton").addEventListener("click", () => {
+  // request screen modifications
+  try {
+    requestWakeLock();
+  } catch (e:any) {
+    alert('request wakelock ' + e.message)
+  }
+  try {
+    requestLandscape();
+  } catch (e:any) {
+    alert('request landscape' + e.message)
+  }
+  try {
+    requestFullScreen();
+  } catch (e:any) {
+    alert('request full screen' + e.message)
+  }
+
+  // select files
   assertElementById("fileInput").click()
+}
 );
+
 assertElementById("fileInput").addEventListener("change", (e) => {
   handleFileInputChange(e, lyricsContainer);
   // Tab hides lyrics container - we want to make sure it's initially visible

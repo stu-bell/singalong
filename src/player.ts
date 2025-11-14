@@ -2,28 +2,11 @@ import { parseLyricsFile } from "./lrcFile";
 import { renderLyrics } from "./lyrics";
 import { loadPlaylist, playlistNext, playlistPrev, Track } from "./playlist";
 import { connectAudioGraph, crossFade, getCurrentlyPlaying } from "./audio";
-import { requestFullScreen, requestLandscape, requestWakeLock } from "./screen";
 
 let lyricsListElem: HTMLElement;
 let currentTrack: Track | null = null;
 
 async function handleFileInputChange(event: Event, listElem: HTMLElement) {
-
-  try {
-    requestWakeLock();
-  } catch (e:any) {
-    alert('request wakelock ' + e.message)
-  }
-  try {
-    requestLandscape();
-  } catch (e:any) {
-    alert('request landscape' + e.message)
-  }
-  try {
-    requestFullScreen();
-  } catch (e:any) {
-    alert('request full screen' + e.message)
-  }
 
   // set global lyrcsListElem
   lyricsListElem = listElem;
