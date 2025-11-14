@@ -1,3 +1,34 @@
+/**
+ * Initiates full-screen mode and attempts to lock the screen orientation to landscape.
+ * * IMPORTANT: This function must be called synchronously inside a user gesture handler.
+ * Since the caller does NOT use 'await', all error handling is done internally.
+ * * @param el The HTMLElement to make full-screen (defaults to the document element).
+ */
+async function requestFullscreenAndLandscape(el: HTMLElement = document.documentElement): Promise<void> {
+    
+    //  handle all rejections (synchronous and asynchronous) internally 
+    // because the calling code will not be awaiting this Promise.
+    try {
+        // 1. Request Fullscreen
+        const request = el.requestFullscreen || (el as any).webkitRequestFullscreen || (el as any).msRequestFullscreen;
+        
+        if (request) {
+            // Await the full-screen request. This line pauses only this async function,
+            // but the calling code in main.ts has already moved on.
+            await request.call(el); 
+        } else {
+            throw new Error("Fullscreen API not supported by this browser.");
+        }
+
+        // 2. Lock Orientation (Executes only if full-screen was successful)
+        await screen.orientation.lock('landscape'); 
+        
+    } catch (e) {
+        // Log all failures (User denied, API not supported, gesture missing, etc.)
+        console.error('Fullscreen and orientation lock setup sequence failed:', (e as Error).message);
+    }
+}
+
 let wakeLock:any = null;
 async function requestWakeLock() {
     // Request the wake lock
@@ -63,6 +94,7 @@ const exitFullScreen = () => {
 
 export {
   requestWakeLock,
+  requestFullscreenAndLandscape,
   requestLandscape,
   isFullScreen,
   requestFullScreen,
