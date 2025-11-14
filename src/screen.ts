@@ -1,3 +1,25 @@
+let wakeLock = null;
+async function requestWakeLock() {
+  try {
+    // Request the wake lock
+    wakeLock = await navigator.wakeLock.request("screen");
+
+    // Re-activate if the tab becomes visible again
+    document.addEventListener("visibilitychange", async () => {
+      if (document.visibilityState === "visible" && wakeLock === null) {
+        wakeLock = await navigator.wakeLock.request("screen");
+        console.log("Wake lock restored");
+      }
+    });
+  } catch (err) {
+    console.error(`${err.name}: ${err.message}`);
+  }
+}
+
+async function requestLandscape() {
+  alert('landscape requested')
+    await screen.orientation.lock('landscape');
+}
 
 const isFullScreen = () => !!( // doesn't work if F11 is used
     // @ts-ignore
@@ -42,9 +64,10 @@ const exitFullScreen = () => {
   }
 }
 
-
 export {
+  requestWakeLock,
+  requestLandscape,
   isFullScreen,
   requestFullScreen,
-  exitFullScreen
+  exitFullScreen,
 }
