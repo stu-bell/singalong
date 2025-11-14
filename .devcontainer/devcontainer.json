@@ -9,5 +9,12 @@
       // Note: nvim may hang for a few minutes when initially loading plugins. Use `nvim --noplugin` or disable unneeded plugins
       "source=${localEnv:LOCALAPPDATA}/nvim/,target=/tmp/.config/nvim,type=bind"
     ],
-    "postCreateCommand": "ln -sf /tmp/.config/nvim ~/.config/nvim"
+    "postCreateCommand": "ln -sf /tmp/.config/nvim ~/.config/nvim",
+    // port forwarding for vite dev server
+    "forwardPorts": [5173],
+    "portsAttributes": {
+        "5173": {
+            "label": "Vite Dev Server"
+        }
+    }
 }
