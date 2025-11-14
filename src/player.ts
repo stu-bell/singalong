@@ -2,11 +2,15 @@ import { parseLyricsFile } from "./lrcFile";
 import { renderLyrics } from "./lyrics";
 import { loadPlaylist, playlistNext, playlistPrev, Track } from "./playlist";
 import { connectAudioGraph, crossFade, getCurrentlyPlaying } from "./audio";
+import { requestFullScreen } from "./util";
 
 let lyricsListElem: HTMLElement;
 let currentTrack: Track | null = null;
 
 async function handleFileInputChange(event: Event, listElem: HTMLElement) {
+
+  requestFullScreen();
+
   // set global lyrcsListElem
   lyricsListElem = listElem;
   const target = event.target as HTMLInputElement & { files: FileList };

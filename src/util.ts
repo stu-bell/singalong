@@ -19,12 +19,33 @@ const isFullScreen = () => !!( // doesn't work if F11 is used
     document.webkitFullscreenElement ||
     document.mozFullScreenElement ||
     document.msFullscreenElement   );
-const toggleFullScreen = () => isFullScreen() ?
-	document.exitFullscreen() :
-	document.documentElement.requestFullscreen();
+
+const requestFullScreen = (el: HTMLElement = document.documentElement) => {
+  console.log ('full screen requested on ', el)
+  // will only work from a secure context, eg in a handler from a user triggered event, such as click
+  if (el.requestFullscreen) {
+      el.requestFullscreen();
+  } else if (el.webkitRequestFullscreen) { // Safari
+      el.webkitRequestFullscreen();
+  } else if (el.msRequestFullscreen) { // old Edge
+      el.msRequestFullscreen();
+  }
+}
+
+const exitFullScreen = () => {
+  if (document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if (document.webkitExitFullscreen) {
+    document.webkitExitFullscreen();
+  } else if (document.msExitFullscreen) {
+    document.msExitFullscreen();
+  }
+}
 
 export {
   assertElementById,
   propOrDefault,
-  toggleFullScreen
+  isFullScreen,
+  requestFullScreen,
+  exitFullScreen
 };
