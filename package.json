@@ -6,7 +6,7 @@
   "description": "",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && mv dist singalong",
+    "build": "tsc && vite build && rm -rf singalong && mv dist singalong",
     "preview": "vite preview",
     "test": "echo \"Error: no test specified\" && exit 1",
     "predeploy": "npm run build",

@@ -1,6 +1,5 @@
-let wakeLock = null;
+let wakeLock:any = null;
 async function requestWakeLock() {
-  try {
     // Request the wake lock
     wakeLock = await navigator.wakeLock.request("screen");
 
@@ -11,13 +10,11 @@ async function requestWakeLock() {
         console.log("Wake lock restored");
       }
     });
-  } catch (err) {
-    console.error(`${err.name}: ${err.message}`);
-  }
 }
 
 async function requestLandscape() {
   alert('landscape requested')
+    // @ts-ignore
     await screen.orientation.lock('landscape');
 }
 
