@@ -2,7 +2,7 @@ import { parseLyricsFile } from "./lrcFile";
 import { renderLyrics } from "./lyrics";
 import { loadPlaylist, playlistNext, playlistPrev, Track } from "./playlist";
 import { connectAudioGraph, crossFade, getCurrentlyPlaying } from "./audio";
-import { requestFullScreen } from "./util";
+import { requestFullScreen } from "./fullscreen";
 
 let lyricsListElem: HTMLElement;
 let currentTrack: Track | null = null;
