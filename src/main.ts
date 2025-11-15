@@ -22,32 +22,29 @@ const fileInput = assertElementById("fileInput")
 
 // select folder event
 assertElementById("fileInputButton").addEventListener("click", () => assertElementById("fileInput").click() );
-assertElementById("fileInput").addEventListener("change", (e:any) => {
+assertElementById("fileInput").addEventListener("change", (e: any) => {
   if (e.target.files.length) {
     assertElementById("fileInputSuccess").classList.remove("hidden");
   }
 });
 
 assertElementById("goBtn").addEventListener("click", () => {
-  // request screen modifications
+  // screen modifications
   requestFullscreenAndLandscape();
-  // Tab hides lyrics container - we want to make sure it's initially visible
-  dragContainer.classList.remove('hidden')
-  lyricsContainer.classList.remove('hidden')
   assertElementById("home").classList.add("hidden");
   assertElementById('body').classList.add('cursor-none');
-  handleFileInputChange(fileInput as HTMLFileInputElement, lyricsContainer);
   // TODO: test wakelock from ./screen
   // requestWakeLock();
-});
 
-// show hide lyrics
-document.addEventListener("keydown", function (event) {
-  if (event.key === "S" ) {
-    // shift + S 
-    event.preventDefault();
-    lyricsContainer.classList.toggle("hidden");
-  }
+  // prevent tab (on mobile with presentation remotes, accidental tab press removes focus from the web app)
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Tab") {
+      event.preventDefault();
+    }
+  });
+
+  // main function
+  handleFileInputChange(fileInput as HTMLFileInputElement, lyricsContainer);
 });
 
 // scroll events
