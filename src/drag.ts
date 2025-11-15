@@ -18,6 +18,7 @@ function makeDragable(elmnt: HTMLElement, onExit: () => any = () => {}) {
           border: 2px solid blue;
         }
         .drag-marker {
+          display: none;
           cursor: se-resize;
           position: absolute;
           background-color: blue;
@@ -42,7 +43,6 @@ function makeDragable(elmnt: HTMLElement, onExit: () => any = () => {}) {
         .drag-exit {
           cursor: pointer;
           background-color: blue;
-          display: flex;
           justify-content: center;
           align-items: center;
           width: 30px;

@@ -55,10 +55,12 @@ assertElementById("fileInput").addEventListener("change", (e: any) => {
   }
 });
 
+// go event
 assertElementById("goBtn").addEventListener("click", () => {
   // screen modifications
   requestFullscreenAndLandscape();
   dragContainer.classList.remove('hidden');
+  dragContainer.classList.remove('dragmode');
   lyricsContainer.classList.remove('hidden');
   assertElementById("home").classList.add("hidden");
   assertElementById('body').classList.add('cursor-none');
