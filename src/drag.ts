@@ -56,20 +56,22 @@ function makeDragable(elmnt: HTMLElement, onExit: () => any = () => {}) {
   function addDragMarker(elmnt: HTMLElement) {
     // add top left marker
     const markerTop = document.createElement("div");
+    markerTop.textContent = "↘️";
     markerTop.classList.add("drag-marker", "drag-marker-top");
     markerTop.addEventListener("mousedown", dragMouseDown);
     markerTop.addEventListener("touchstart", dragMouseDown);
     elmnt.prepend(markerTop);
     // bottom right marker
     const markerTail = document.createElement("div");
+    markerTop.textContent = "↖️";
     markerTail.classList.add("drag-marker", "drag-marker-tail");
     markerTail.addEventListener("mousedown", dragMouseDown);
     markerTail.addEventListener("touchstart", dragMouseDown);
     elmnt.append(markerTail);
     // top right exit
     const exitBtn = document.createElement("div");
-    exitBtn.classList.add("drag-marker", "drag-exit");
     exitBtn.textContent = "❌";
+    exitBtn.classList.add("drag-marker", "drag-exit");
     exitBtn.onclick = onExit;
     elmnt.append(exitBtn);
   }
