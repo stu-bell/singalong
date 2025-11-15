@@ -18,17 +18,14 @@
     <p>If using a mobile browser, try Chrome version >132</p>
   </div>
 
-  <div id="dragcontainer" class="dragcontainer bg-white hidden">
+  <div id="dragcontainer" class="dragcontainer bg-white hidden overflow-y-hidden">
     <!-- main container for song lyrics -->
     <ul id="lyricsContainer" class="flex flex-col items-center list-none text-center mt-vh user-select-none">
       <li></li>
     </ul>
-    <!-- <div id="songTitleContainer" class="text-left fixed bottom-0 w-full box-border"> -->
-    <!--   <p id="songTitle" class="text-2 text-gray-600 m-2"></p> -->
-    <!-- </div> -->
   </div>
 
-  <div id="home" class="text-left px-4 max-h-screen overflow-y-auto">
+  <div id="home" class="text-left px-4 max-h-screen">
     <div class="flex items-center">
       <button id="fileInputButton" class="my-3 button">Choose Folder</button>
       <p id="fileInputSuccess" class="hidden"> ✅ Files Loaded </p>

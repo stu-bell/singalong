@@ -12,7 +12,6 @@ function makeDragable(elmnt: HTMLElement, onExit: () => any = () => {}) {
           top: 0vw;
           left: 1vh;
           position: absolute;
-          overflow: auto;
         }
         .dragmode {
           border: 2px solid blue;
@@ -69,6 +68,7 @@ function makeDragable(elmnt: HTMLElement, onExit: () => any = () => {}) {
     elmnt.append(markerTail);
     // top right exit
     const exitBtn = document.createElement("div");
+    exitBtn.textContent = '❌';
     exitBtn.classList.add("drag-marker", "drag-exit");
     exitBtn.onclick = onExit;
     elmnt.append(exitBtn);
