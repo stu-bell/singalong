@@ -14,18 +14,25 @@ export function updateFontSizes() {
 
     const style = document.createElement('style');
     /*important for animation for font size and width to stay in proportion*/
+    /* slow down the transition duration to troubleshoot */
     style.innerHTML = `
         li {
+          transition: 0.2s linear all;
+          margin: 0 10px;
+        }
+        li {
             font-size: ${0.5 * textSize}px !important;
-            width: 50%;
+            width: 50% !important;
+            opacity: 0.6;
         }
         li.large {
             font-size: ${textSize}px !important;
-            width: 100%;
+            width: 100% !important;
+            opacity: 1;
         }
         li.zero {
-          font-size: 0;
-          width: 0;
+          font-size: 0px !important;
+          width: 0% !important;
         }
     `;
     // update styles
