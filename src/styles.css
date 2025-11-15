@@ -8,16 +8,12 @@ li {
   margin: 0 10px;
 }
 
-/*important for animation for font size and width to stay in proportion*/
+/* see resizing.ts for text size and widths */
 li {
   opacity: 0.6;
 }
 li.large {
   opacity: 1;
-}
-li.zero {
-  font-size: 0;
-  width: 0;
 }
 
 /* previous version of list styles - not compatible with zoom?*/

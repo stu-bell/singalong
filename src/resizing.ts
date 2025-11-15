@@ -1,33 +1,30 @@
 import { assertElementById } from './util';
 
-const MIN_FONT_SIZE = 8;
-const NORMAL_SCALE_FACTOR = 0.05; // Adjust this factor to control the scaling
-const LARGE_SCALE_FACTOR = 0.1; // Adjust this factor to control the scaling
+const NORMAL_SCALE_FACTOR = 0.45;
 
 let resizeObserver: ResizeObserver | null = null;
-let dragContainer: HTMLElement | null = null;
 
-export function updateFontSizes() {
-    if (!dragContainer) {
-        dragContainer = assertElementById('dragcontainer');
-    }
-    if (!dragContainer) return;
-
-    const containerWidth = dragContainer.clientWidth;
-    const normalFontSize = Math.max(MIN_FONT_SIZE, containerWidth * NORMAL_SCALE_FACTOR);
-    const largeFontSize = Math.max(MIN_FONT_SIZE, containerWidth * LARGE_SCALE_FACTOR);
+export function updateFontSizes(elem: HTMLElement) {
+    const containerWidth = elem.clientWidth;
+    const textSize = containerWidth * NORMAL_SCALE_FACTOR;
 
     const style = document.createElement('style');
+    /*important for animation for font size and width to stay in proportion*/
     style.innerHTML = `
         li {
-            font-size: ${normalFontSize}px !important;
-            width: ${normalFontSize * 10}px !important;
+            font-size: ${0.5 * textSize}px !important;
+            width: 50%;
         }
         li.large {
-            font-size: ${largeFontSize}px !important;
-            width: ${largeFontSize * 10}px !important;
+            font-size: ${textSize}px !important;
+            width: 100%;
+        }
+        li.zero {
+          font-size: 0;
+          width: 0;
         }
     `;
+    // update styles
     const existingStyle = document.head.querySelector('style[data-dynamic-styles]');
     if (existingStyle) {
         document.head.removeChild(existingStyle);
@@ -36,6 +33,7 @@ export function updateFontSizes() {
     document.head.appendChild(style);
 }
 
+// resize observer to preview resizing functions
 export function initResizing() {
     dragContainer = assertElementById('dragcontainer');
     if (!dragContainer) return;
