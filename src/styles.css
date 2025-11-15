@@ -10,13 +10,9 @@ li {
 
 /*important for animation for font size and width to stay in proportion*/
 li {
-  font-size: 2rem;
-  width: 50%;
   opacity: 0.6;
 }
 li.large {
-  font-size: 4rem;
-  width: 100%;
   opacity: 1;
 }
 li.zero {

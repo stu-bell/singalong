@@ -8,6 +8,7 @@ import {
   setTimeoutNextScroll,
 } from "./lyrics";
 import { requestFullscreenAndLandscape } from "./screen";
+import { initResizing, startObservingResizing, stopObservingResizing, updateFontSizes } from "./resizing";
 
 // drag the lyrics container 
 const dragContainer = assertElementById('dragcontainer')
@@ -27,6 +28,7 @@ function enterScreenSetup() {
   // ensure container is visible
   dragContainer.classList.remove('hidden')
   dragContainer.classList.add('dragmode')
+  startObservingResizing();
 }
 
 function exitScreenSetup() {
@@ -37,6 +39,8 @@ function exitScreenSetup() {
   } else {
     dragContainer.classList.add('hidden');
   }
+  stopObservingResizing();
+  updateFontSizes(); // Update font sizes one last time after exiting drag mode
 }
 
 // Toggle screensetup
@@ -115,3 +119,6 @@ document.addEventListener("keydown", function (event) {
     toggleScreenSetup();
   }
 });
+
+initResizing();
+
