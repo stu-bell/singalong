@@ -1,3 +1,15 @@
+async function requestFullscreen(el: HTMLElement = document.documentElement): Promise<void> {
+    const request = el.requestFullscreen || (el as any).webkitRequestFullscreen || (el as any).msRequestFullscreen;
+    if (request) {
+        // Await the full-screen request. This line pauses only this async function,
+        // but the calling code in main.ts has already moved on.
+        await request.call(el); 
+    } else {
+        console.warn("Fullscreen API not supported by this browser.");
+    }
+}
+
+
 /**
  * Initiates full-screen mode and attempts to lock the screen orientation to landscape.
  * * IMPORTANT: This function must be called synchronously inside a user gesture handler.
@@ -5,7 +17,6 @@
  * * @param el The HTMLElement to make full-screen (defaults to the document element).
  */
 async function requestFullscreenAndLandscape(el: HTMLElement = document.documentElement): Promise<void> {
-    
     //  handle all rejections (synchronous and asynchronous) internally 
     // because the calling code will not be awaiting this Promise.
     try {
@@ -26,6 +37,7 @@ async function requestFullscreenAndLandscape(el: HTMLElement = document.document
         console.error('requestFullscreenAndLandscape error: ', (e as Error).message);
     }
 }
+
 
 let wakeLock:any = null;
 async function requestWakeLock() {
@@ -53,23 +65,6 @@ const isFullScreen = () => !!( // doesn't work if F11 is used
     // @ts-ignore
     document.msFullscreenElement   );
 
-const requestFullScreen = (el: HTMLElement = document.documentElement) => {
-  // will only work from a secure context, eg in a handler from a user triggered event, such as click
-    // @ts-ignore
-  if (el.requestFullscreen) {
-    // @ts-ignore
-      el.requestFullscreen();
-    // @ts-ignore
-  } else if (el.webkitRequestFullscreen) { // Safari
-    // @ts-ignore
-      el.webkitRequestFullscreen();
-    // @ts-ignore
-  } else if (el.msRequestFullscreen) { // old Edge
-    // @ts-ignore
-      el.msRequestFullscreen();
-  }
-}
-
 const exitFullScreen = () => {
     // @ts-ignore
   if (document.exitFullscreen) {
@@ -90,6 +85,6 @@ export {
   requestWakeLock,
   requestFullscreenAndLandscape,
   isFullScreen,
-  requestFullScreen,
+  requestFullscreen,
   exitFullScreen,
 }

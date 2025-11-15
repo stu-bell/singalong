@@ -6,7 +6,7 @@ import {
   scrollPreviousLine,
   weJustAutoScrolled,
 } from "./lyrics";
-import { requestFullscreenAndLandscape } from "./screen";
+import { requestFullscreen } from "./screen";
 import { initResizing, startObservingResizing, stopObservingResizing, updateFontSizes } from "./resizing";
 
 // resize the lyrics container 
@@ -22,7 +22,7 @@ function toggleScreenSetup() {
 }
 
 function enterScreenSetup() {
-  requestFullscreenAndLandscape();
+  requestFullscreen();
   assertElementById('body').classList.remove('cursor-none')
   // ensure container is visible
   dragContainer.classList.remove('hidden')
@@ -61,7 +61,7 @@ assertElementById("fileInput").addEventListener("change", (e: any) => {
 // go event
 assertElementById("goBtn").addEventListener("click", () => {
   // screen modifications
-  requestFullscreenAndLandscape();
+  requestFullscreen();
   dragContainer.classList.remove('hidden');
   dragContainer.classList.remove('dragmode');
   lyricsContainer.classList.remove('hidden');
@@ -98,7 +98,7 @@ function triggerScrollPrevious () {
 let lastTouchTime: number;
 document.addEventListener("touchstart", (event: TouchEvent) => {
     const touch = event.touches[0];
-    // is there a double touch event
+    // is there a double touch event - prevents accidental touching of screen
     const doubleClickDuration = 800;
     if (touch && (Date.now() - lastTouchTime) < doubleClickDuration) {
       if (touch.clientX > window.innerWidth / 2) {
