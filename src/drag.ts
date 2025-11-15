@@ -42,6 +42,7 @@ function makeDragable(elmnt: HTMLElement, onExit: () => any = () => {}) {
         .drag-exit {
           cursor: pointer;
           background-color: blue;
+          border: 10px solid blue;
           display: flex;
           justify-content: center;
           align-items: center;
@@ -56,21 +57,19 @@ function makeDragable(elmnt: HTMLElement, onExit: () => any = () => {}) {
   function addDragMarker(elmnt: HTMLElement) {
     // add top left marker
     const markerTop = document.createElement("div");
-    markerTop.textContent = "↘️";
     markerTop.classList.add("drag-marker", "drag-marker-top");
     markerTop.addEventListener("mousedown", dragMouseDown);
     markerTop.addEventListener("touchstart", dragMouseDown);
     elmnt.prepend(markerTop);
     // bottom right marker
     const markerTail = document.createElement("div");
-    markerTop.textContent = "↖️";
+    markerTop.textContent = "";
     markerTail.classList.add("drag-marker", "drag-marker-tail");
     markerTail.addEventListener("mousedown", dragMouseDown);
     markerTail.addEventListener("touchstart", dragMouseDown);
     elmnt.append(markerTail);
     // top right exit
     const exitBtn = document.createElement("div");
-    exitBtn.textContent = "❌";
     exitBtn.classList.add("drag-marker", "drag-exit");
     exitBtn.onclick = onExit;
     elmnt.append(exitBtn);
@@ -79,7 +78,9 @@ function makeDragable(elmnt: HTMLElement, onExit: () => any = () => {}) {
   let initialX = 0,
     initialY = 0,
     initialWidth = 0,
-    initialHeight = 0;
+    initialHeight = 0,
+    initialOffsetLeft = 0,
+    initialOffsetTop = 0;
 
   function dragMouseDown(e: MouseEvent | TouchEvent) {
     e.preventDefault();
@@ -89,6 +90,8 @@ function makeDragable(elmnt: HTMLElement, onExit: () => any = () => {}) {
     initialY = clientY;
     initialWidth = elmnt.offsetWidth;
     initialHeight = elmnt.offsetHeight;
+    initialOffsetLeft = elmnt.offsetLeft;
+    initialOffsetTop = elmnt.offsetTop;
     document.addEventListener("mouseup", closeDragElement);
     document.addEventListener("touchend", closeDragElement);
     if ((e.target as HTMLElement)?.className.includes("drag-marker-top")) {
@@ -112,11 +115,11 @@ function makeDragable(elmnt: HTMLElement, onExit: () => any = () => {}) {
 
     // don't scroll off the screen
     if (clientX > 0) {
-      elmnt.style.left = initialX + dx + "px";
+      elmnt.style.left = initialOffsetLeft + dx + "px";
       elmnt.style.width = initialWidth - dx + "px";
     }
     if (clientY > 0) {
-      elmnt.style.top = initialY + dy + "px";
+      elmnt.style.top = initialOffsetTop + dy + "px";
       elmnt.style.height = initialHeight - dy + "px";
     }
   }
