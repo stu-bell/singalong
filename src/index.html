@@ -18,12 +18,23 @@
     <p>If using a mobile browser, try Chrome version >132</p>
   </div>
 
+  <div id="dragcontainer" class="dragcontainer bg-white hidden">
+    <!-- main container for song lyrics -->
+    <ul id="lyricsContainer" class="flex flex-col items-center list-none text-center mt-vh user-select-none">
+      <li></li>
+    </ul>
+    <!-- <div id="songTitleContainer" class="text-left fixed bottom-0 w-full box-border"> -->
+    <!--   <p id="songTitle" class="text-2 text-gray-600 m-2"></p> -->
+    <!-- </div> -->
+  </div>
+
   <div id="home" class="text-left px-4 max-h-screen overflow-y-auto">
     <div class="flex items-center">
       <button id="fileInputButton" class="my-3 button">Choose Folder</button>
       <p id="fileInputSuccess" class="hidden"> ✅ Files Loaded </p>
       <input id="fileInput" type="file" webkitdirectory directory multiple class="hidden" />
     </div>
+    <button id="screenBtn" class="button">Screen setup</button>
     <button id="goBtn" class="my-3 button disabled:opacity-25" disabled>Go!</button>
     <p> Keyboard commands:</p>
     <table class="text-left table-auto my-2">
@@ -51,7 +62,7 @@
           <td class="px-4 py-2 border"><code>Shift P</code></td>
         </tr>
         <tr>
-          <td class="px-4 py-2 border">Resize/Drag the lyrics area. Press again to hide drag area</td>
+          <td class="px-4 py-2 border">Toggle screensetup</td>
           <td class="px-4 py-2 border"><code>Shift Z</code></td>
         </tr>
         <tr>
@@ -105,16 +116,6 @@
       <li><a class="hyperlink text-sm" target="_blank" href="https://www.azlyrics.com/">azlyrics.com</a></li>
     </ul>
     </p>
-  </div>
-
-  <div id="dragcontainer" class="dragcontainer hidden">
-    <!-- main container for song lyrics -->
-    <ul id="lyricsContainer" class="flex flex-col items-center list-none text-center mt-vh user-select-none">
-      <li></li>
-    </ul>
-    <!-- <div id="songTitleContainer" class="text-left fixed bottom-0 w-full box-border"> -->
-    <!--   <p id="songTitle" class="text-2 text-gray-600 m-2"></p> -->
-    <!-- </div> -->
   </div>
 
   <script>

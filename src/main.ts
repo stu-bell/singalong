@@ -11,11 +11,35 @@ import { requestFullscreenAndLandscape } from "./screen";
 
 // drag the lyrics container 
 const dragContainer = assertElementById('dragcontainer')
-makeDragable(dragContainer);
-function toggleDragMode() {
-  assertElementById('body').classList.toggle('cursor-none')
-  dragContainer.classList.toggle('dragmode')
+makeDragable(dragContainer, exitScreenSetup);
+
+function toggleScreenSetup() {
+  if (dragContainer.classList.contains('dragmode')) {
+    exitScreenSetup();
+  } else {
+    enterScreenSetup();
+  }
 }
+
+function enterScreenSetup() {
+  assertElementById('body').classList.remove('cursor-none')
+  // ensure container is visible
+  dragContainer.classList.remove('hidden')
+  dragContainer.classList.add('dragmode')
+}
+
+function exitScreenSetup() {
+  dragContainer.classList.remove('dragmode');
+  // depends if we're on the home screen or not...
+  if (assertElementById("home").classList.contains("hidden")) {
+    assertElementById('body').classList.add('cursor-none');
+  } else {
+    dragContainer.classList.add('hidden');
+  }
+}
+
+// Toggle screensetup
+assertElementById("screenBtn").addEventListener("click", () => enterScreenSetup());
 
 const lyricsContainer = assertElementById("lyricsContainer");
 const fileInput = assertElementById("fileInput")
@@ -73,10 +97,6 @@ document.addEventListener("keydown", function (event) {
   }
 });
 
-document.addEventListener("touchstart", function () {
-  scrollNextLine();
-});
-
 // next prev song events
 document.addEventListener("keydown", function (event) {
   if (event.key === "N") { // shift+ n
@@ -89,6 +109,6 @@ document.addEventListener("keydown", function (event) {
 // drag/ resize
 document.addEventListener("keydown", function (event) {
   if (event.key === "Z") { // shift+ z
-    toggleDragMode();
+    toggleScreenSetup();
   }
 });

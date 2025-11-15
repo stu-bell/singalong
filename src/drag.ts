@@ -1,4 +1,4 @@
-function makeDragable(elmnt: HTMLElement) {
+function makeDragable(elmnt: HTMLElement, onExit: () => any = () => {}) {
   // makes an element dragable, when it has the class 'dragmode'
   // add a marker element in the top left and bottom right
   addDragMarker(elmnt);
@@ -18,11 +18,11 @@ function makeDragable(elmnt: HTMLElement) {
           border: 2px solid blue;
         }
         .drag-marker {
-          display: none;
           cursor: se-resize;
           position: absolute;
-          width: 0;
-          height: 0;
+          background-color: blue;
+          width: 40px;
+          height: 40px;
         }
         .dragmode>.drag-marker {
           display: block;
@@ -39,6 +39,17 @@ function makeDragable(elmnt: HTMLElement) {
           bottom: 0;
           right: 0;
         }
+        .drag-exit {
+          cursor: pointer;
+          background-color: blue;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 30px;
+          height: 30px;
+          top: 0;
+          right: 0;
+        }
   `;
   document.head.appendChild(styleElement);
 
@@ -46,74 +57,91 @@ function makeDragable(elmnt: HTMLElement) {
     // add top left marker
     const markerTop = document.createElement("div");
     markerTop.classList.add("drag-marker", "drag-marker-top");
-    markerTop.onmousedown = dragMouseDown;
+    markerTop.addEventListener("mousedown", dragMouseDown);
+    markerTop.addEventListener("touchstart", dragMouseDown);
     elmnt.prepend(markerTop);
+    // bottom right marker
     const markerTail = document.createElement("div");
     markerTail.classList.add("drag-marker", "drag-marker-tail");
-    markerTail.onmousedown = dragMouseDown;
+    markerTail.addEventListener("mousedown", dragMouseDown);
+    markerTail.addEventListener("touchstart", dragMouseDown);
     elmnt.append(markerTail);
+    // top right exit
+    const exitBtn = document.createElement("div");
+    exitBtn.classList.add("drag-marker", "drag-exit");
+    exitBtn.textContent = "❌";
+    exitBtn.onclick = onExit;
+    elmnt.append(exitBtn);
   }
 
-  let pos1 = 0,
-    pos2 = 0,
-    pos3 = 0,
-    pos4 = 0;
+  let initialX = 0,
+    initialY = 0,
+    initialWidth = 0,
+    initialHeight = 0;
 
-  function dragMouseDown(e: MouseEvent) {
-    e = e || window.event;
+  function dragMouseDown(e: MouseEvent | TouchEvent) {
     e.preventDefault();
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    document.onmouseup = closeDragElement;
+    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+    const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
+    initialX = clientX;
+    initialY = clientY;
+    initialWidth = elmnt.offsetWidth;
+    initialHeight = elmnt.offsetHeight;
+    document.addEventListener("mouseup", closeDragElement);
+    document.addEventListener("touchend", closeDragElement);
     if ((e.target as HTMLElement)?.className.includes("drag-marker-top")) {
-      document.onmousemove = elementDragTop;
+      document.addEventListener("mousemove", elementDragTop);
+      document.addEventListener("touchmove", elementDragTop);
     } else if (
       (e.target as HTMLElement)?.className.includes("drag-marker-tail")
     ) {
-      document.onmousemove = elementDragTail;
+      document.addEventListener("mousemove", elementDragTail);
+      document.addEventListener("touchmove", elementDragTail);
     }
   }
 
-  function elementDragTop(e: MouseEvent) {
+  function elementDragTop(e: MouseEvent | TouchEvent) {
     // drag the top left corner
-    e = e || window.event;
     e.preventDefault();
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
+    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+    const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
+    const dx = clientX - initialX;
+    const dy = clientY - initialY;
 
     // don't scroll off the screen
-    if (e.clientX > 0) {
-      elmnt.style.left = elmnt.offsetLeft - pos1 + "px";
-      elmnt.style.width = elmnt.offsetWidth + pos1 + "px";
+    if (clientX > 0) {
+      elmnt.style.left = initialX + dx + "px";
+      elmnt.style.width = initialWidth - dx + "px";
     }
-    if (e.clientY > 0) {
-      elmnt.style.top = elmnt.offsetTop - pos2 + "px";
-      elmnt.style.height = elmnt.offsetHeight + pos2 + "px";
+    if (clientY > 0) {
+      elmnt.style.top = initialY + dy + "px";
+      elmnt.style.height = initialHeight - dy + "px";
     }
   }
 
-  function elementDragTail(e: MouseEvent) {
+  function elementDragTail(e: MouseEvent | TouchEvent) {
     // drag bottom right corner
-    e = e || window.event;
     e.preventDefault();
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
+    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+    const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
+    const dx = clientX - initialX;
+    const dy = clientY - initialY;
     // only resize if we're within the window
-    if (e.clientX < window.innerWidth) {
-      elmnt.style.width = elmnt.offsetWidth - pos1 + "px";
+    if (clientX < window.innerWidth) {
+      elmnt.style.width = initialWidth + dx + "px";
     }
-    if (e.clientY < window.innerHeight) {
-      elmnt.style.height = elmnt.offsetHeight - pos2 + "px";
+    if (clientY < window.innerHeight) {
+      elmnt.style.height = initialHeight + dy + "px";
     }
   }
 
   function closeDragElement() {
-    document.onmouseup = null;
-    document.onmousemove = null;
+    document.removeEventListener("mouseup", closeDragElement);
+    document.removeEventListener("mousemove", elementDragTop);
+    document.removeEventListener("mousemove", elementDragTail);
+    document.removeEventListener("touchend", closeDragElement);
+    document.removeEventListener("touchmove", elementDragTop);
+    document.removeEventListener("touchmove", elementDragTail);
   }
 }
 
