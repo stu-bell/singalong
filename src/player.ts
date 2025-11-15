@@ -1,7 +1,8 @@
 import { parseLyricsFile } from "./lrcFile";
 import { renderLyrics } from "./lyrics";
 import { loadPlaylist, playlistNext, playlistPrev, Track } from "./playlist";
-import { connectAudioGraph, crossFade, getCurrentlyPlaying } from "./audio";
+import { connectAudioGraph, crossFade, getCurrentlyPlaying, pauseAudioContext, resumeAudioContext } from "./audio";
+import { initMediaSession, updateMediaSession, playSilentAudio, pauseSilentAudio } from "./mediaSession";
 
 export type HTMLFileInputElement = HTMLInputElement & {files: FileList};
 
@@ -14,6 +15,7 @@ async function handleFileInputChange(filesInputElem: HTMLFileInputElement, listE
   lyricsListElem = listElem;
   const folderFiles = Array.from(filesInputElem.files);
 
+  initMediaSession();
   await loadPlaylist(folderFiles);
   // start playing the first song
   nextSong();
@@ -22,6 +24,9 @@ async function handleFileInputChange(filesInputElem: HTMLFileInputElement, listE
 let nextSongTimeout: number | null = null;
 async function playSong(track:Track|null) {
   if (track) {
+    updateMediaSession(track);
+    playSilentAudio();
+
     const buffer = await track.audio.buffer
     const lines = parseLyricsFile(await track.lyrics.text, track.lyrics.file);
 
@@ -58,4 +63,14 @@ async function prevSong() {
     playSong(playlistPrev())
 }
 
-export { prevSong, nextSong, handleFileInputChange };
+function pauseSong() {
+  pauseAudioContext();
+  pauseSilentAudio();
+}
+
+function resumeSong() {
+  resumeAudioContext();
+  playSilentAudio();
+}
+
+export { prevSong, nextSong, handleFileInputChange, pauseSong, resumeSong };

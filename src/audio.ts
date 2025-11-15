@@ -14,6 +14,14 @@ function getAudioContext() {
   return acx;
 }
 
+function pauseAudioContext() {
+  getAudioContext().suspend();
+}
+
+function resumeAudioContext() {
+  getAudioContext().resume();
+}
+
 type Graph = {
   source: AudioBufferSourceNode;
   gain: GainNode;
@@ -133,5 +141,7 @@ export {
   crossFade,
   connectAudioGraph,
   getCurrentlyPlaying,
-  audioFileDuration
+  audioFileDuration,
+  pauseAudioContext,
+  resumeAudioContext,
 };
