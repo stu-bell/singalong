@@ -24,7 +24,7 @@ async function handleFileInputChange(filesInputElem: HTMLFileInputElement, listE
 let nextSongTimeout: number | null = null;
 async function playSong(track:Track|null) {
   if (track) {
-    updateMediaSession(track);
+    updateMediaSession();
     playSilentAudio();
 
     const buffer = await track.audio.buffer

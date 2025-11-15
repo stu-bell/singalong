@@ -1,5 +1,4 @@
 import { nextSong, prevSong, pauseSong, resumeSong } from "./player";
-import { Track } from "./playlist";
 
 let audio: HTMLAudioElement;
 
