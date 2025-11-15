@@ -108,7 +108,7 @@ async function parsePlaylistFile(folderfiles: File[]) {
     (file: File) => file.name.toLowerCase() === playlistFileName
   );
   if (!playlistFile) {
-    window.alert(
+    console.error(
       `Oops! We couldn't find a ${playlistFileName} file in that folder! Save one in that folder and edit it to make your playlist. It may take a few seconds to check through your music files`
     );
     const userwait = document.createElement('p');
@@ -117,7 +117,7 @@ async function parsePlaylistFile(folderfiles: File[]) {
     document.body.prepend(userwait);
     await downloadExamplePlaylistFile(folderfiles);
     userwait.remove();
-    window.alert(
+    console.warn(
       `We've just downloaded a ${playlistFileName} file for you, with the tracks we could find in the folder you chose. Open it in a spreadsheet and put the lyrics and audio files in the correct order. Then refresh the sing along app and retry.`
     );
     // refresh the page so we don't navigate
@@ -128,12 +128,12 @@ async function parsePlaylistFile(folderfiles: File[]) {
   ) as Playlist;
   const playlist = loadPlaylistFileHandles(playlistFileContents, folderfiles);
   if (!playlist.length) {
-    window.alert(`Error: ${playlistFileName} empty`);
+    console.error(`Error: ${playlistFileName} empty`);
   }
   return playlist;
 }
 
-// loadPlaylistFileHandles attaches File handles to each playlist item. alerts of missing files
+// loadPlaylistFileHandles attaches File handles to each playlist item. warns of missing files
 function loadPlaylistFileHandles(playlist: Playlist, folderfiles: File[]) {
   let missingAudioWarning: string[] = [];
   let errors: string[] = [];
@@ -183,17 +183,17 @@ function loadPlaylistFileHandles(playlist: Playlist, folderfiles: File[]) {
     .map(attachFiles)
     .filter((x) => x !== null) as Playlist;
   if (!playlistWithFiles.length) {
-    window.alert(
+    console.error(
       `Error: the ${playlistFileName} file contained no valid rows, or we couldn't find any corresponding files.`
     );
   }
   const validationErrors = errors.join("\n");
   if (validationErrors) {
-    window.alert(`Error: ${validationErrors}`);
+    console.error(`Error: ${validationErrors}`);
   }
   const validationWarnings = missingAudioWarning.join("\n");
   if (validationWarnings) {
-    window.alert(
+    console.error(
       `Warning: the following tracks don't have audio: ${validationWarnings}`
     );
   }

@@ -14,6 +14,7 @@ async function requestFullscreenAndLandscape(el: HTMLElement = document.document
         if (request) {
             // Await the full-screen request. This line pauses only this async function,
             // but the calling code in main.ts has already moved on.
+            console.log('requesting fullscreen')
             await request.call(el); 
         } else {
             throw new Error("Fullscreen API not supported by this browser.");

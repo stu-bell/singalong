@@ -3,16 +3,16 @@ import { renderLyrics } from "./lyrics";
 import { loadPlaylist, playlistNext, playlistPrev, Track } from "./playlist";
 import { connectAudioGraph, crossFade, getCurrentlyPlaying } from "./audio";
 
+export type HTMLFileInputElement = HTMLInputElement & {files: FileList};
+
 let lyricsListElem: HTMLElement;
 let currentTrack: Track | null = null;
 
-async function handleFileInputChange(event: Event, listElem: HTMLElement) {
+async function handleFileInputChange(filesInputElem: HTMLFileInputElement, listElem: HTMLElement) {
 
   // set global lyrcsListElem
   lyricsListElem = listElem;
-  const target = event.target as HTMLInputElement & { files: FileList };
-  const files: FileList = target.files;
-  const folderFiles = Array.from(files);
+  const folderFiles = Array.from(filesInputElem.files);
 
   await loadPlaylist(folderFiles);
   // start playing the first song

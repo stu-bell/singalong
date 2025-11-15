@@ -1,6 +1,6 @@
 import { makeDragable } from "./drag";
 import { assertElementById } from "./util";
-import { prevSong, nextSong, handleFileInputChange } from "./player";
+import { prevSong, nextSong, handleFileInputChange, HTMLFileInputElement } from "./player";
 import {
   scrollNextLine,
   scrollPreviousLine,
@@ -18,28 +18,22 @@ function toggleDragMode() {
 }
 
 const lyricsContainer = assertElementById("lyricsContainer");
+const fileInput = assertElementById("fileInput")
 
 // select folder event
-assertElementById("fileInputButton").addEventListener("click", () => {
+assertElementById("fileInputButton").addEventListener("click", () => assertElementById("fileInput").click() );
 
+assertElementById("goBtn").addEventListener("click", () => {
   // request screen modifications
-  requestFullscreenAndLandscape().catch(err => alert(err.message));
-
-  // TODO: test wakelock from ./screen
-  // requestWakeLock();
-
-  // select files
-  assertElementById("fileInput").click()
-}
-);
-
-assertElementById("fileInput").addEventListener("change", (e) => {
-  handleFileInputChange(e, lyricsContainer);
+  requestFullscreenAndLandscape();
   // Tab hides lyrics container - we want to make sure it's initially visible
   dragContainer.classList.remove('hidden')
   lyricsContainer.classList.remove('hidden')
   assertElementById("home").classList.add("hidden");
   assertElementById('body').classList.add('cursor-none');
+  handleFileInputChange(fileInput as HTMLFileInputElement, lyricsContainer);
+  // TODO: test wakelock from ./screen
+  // requestWakeLock();
 });
 
 // show hide lyrics
