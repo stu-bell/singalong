@@ -25,12 +25,8 @@ assertElementById("fileInputButton").addEventListener("click", () => {
   // request screen modifications
   requestFullscreenAndLandscape().catch(err => alert(err.message));
 
-  try {
-    requestWakeLock();
-    alert('wakelock requested')
-  } catch (e:any) {
-    alert('request wakelock error:' + e.message)
-  }
+  // TODO: test wakelock
+  // requestWakeLock();
 
   // select files
   assertElementById("fileInput").click()

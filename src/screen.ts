@@ -32,9 +32,11 @@ async function requestFullscreenAndLandscape(el: HTMLElement = document.document
 
 let wakeLock:any = null;
 async function requestWakeLock() {
-    // Request the wake lock
+    // Request the wake lock to keep screen from sleeping
+    // TODO: test this
+    console.log('requesting wakelock')
     wakeLock = await navigator.wakeLock.request("screen");
-
+    console.log('wakelock complete')
     // Re-activate if the tab becomes visible again
     document.addEventListener("visibilitychange", async () => {
       if (document.visibilityState === "visible" && wakeLock === null) {
@@ -42,12 +44,6 @@ async function requestWakeLock() {
         console.log("Wake lock restored");
       }
     });
-}
-
-async function requestLandscape() {
-  alert('landscape requested')
-    // @ts-ignore
-    await screen.orientation.lock('landscape');
 }
 
 const isFullScreen = () => !!( // doesn't work if F11 is used
