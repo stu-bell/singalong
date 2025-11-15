@@ -5,12 +5,11 @@ import {
   scrollNextLine,
   scrollPreviousLine,
   weJustAutoScrolled,
-  setTimeoutNextScroll,
 } from "./lyrics";
 import { requestFullscreenAndLandscape } from "./screen";
 import { initResizing, startObservingResizing, stopObservingResizing, updateFontSizes } from "./resizing";
 
-// drag the lyrics container 
+// resize the lyrics container 
 const dragContainer = assertElementById('dragcontainer')
 makeDragable(dragContainer, exitScreenSetup);
 
@@ -79,7 +78,6 @@ assertElementById("goBtn").addEventListener("click", () => {
   });
 
   // initial font size
-  console.log('updating initial font size')
   updateFontSizes();
 
   // main function
@@ -87,24 +85,44 @@ assertElementById("goBtn").addEventListener("click", () => {
 });
 
 // scroll events
+function triggerScrollNext () {
+    // don't scroll next if we've just followed an auto scroll
+    if (!weJustAutoScrolled(500)){
+      scrollNextLine();
+    }
+};
+function triggerScrollPrevious () {
+    scrollPreviousLine();
+};
+
+let lastTouchTime: number;
+document.addEventListener("touchstart", (event: TouchEvent) => {
+    const touch = event.touches[0];
+    // is there a double touch event
+    const doubleClickDuration = 800;
+    if (touch && (Date.now() - lastTouchTime) < doubleClickDuration) {
+      if (touch.clientX > window.innerWidth / 2) {
+        // right half of the screen
+        triggerScrollNext();
+      } else {
+        // left half of the screen
+        triggerScrollPrevious();
+      }
+    }
+    lastTouchTime = Date.now();
+});
+
 document.addEventListener("keydown", function (event) {
-  if (
-    (event.key === " " ||
+  if (event.key === " " ||
       event.key === "ArrowDown" ||
       event.key === "PageDown" ||
-      event.key === "ArrowRight") &&
-    // don't scroll next if we've just followed an auto scroll
-    !weJustAutoScrolled(500)
+      event.key === "ArrowRight"
   ) {
-    scrollNextLine();
+    triggerScrollNext();
   } else if (event.key === "ArrowUp" ||
-              event.key === "PageUp" ||
+             event.key === "PageUp" ||
              event.key === "ArrowLeft") {
-    scrollPreviousLine();
-  } else if (event.key === "0") {
-    // resset the timeout until the next autoscroll. Useful if the lyrics are going too fast
-    console.log("reset");
-    setTimeoutNextScroll();
+    triggerScrollPrevious();
   }
 });
 

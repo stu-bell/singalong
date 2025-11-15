@@ -164,9 +164,10 @@ function scrollNextLine() {
 }
 
 let lastPrevScollTime: number;
+const doubleClickDuration = 800;
 function scrollPreviousLine() {
-  if ((Date.now() - lastPrevScollTime) < 800 ) {
-    // double scroll back command
+  // double scroll back command in close succession
+  if ((Date.now() - lastPrevScollTime) < doubleClickDuration ) {
     state.currentLineIndex--;
     setTimeoutNextScroll();
     const prependLine = state.lines[state.currentLineIndex];
