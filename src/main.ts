@@ -78,6 +78,10 @@ assertElementById("goBtn").addEventListener("click", () => {
     }
   });
 
+  // initial font size
+  console.log('updating initial font size')
+  updateFontSizes();
+
   // main function
   handleFileInputChange(fileInput as HTMLFileInputElement, lyricsContainer);
 });
@@ -120,5 +124,5 @@ document.addEventListener("keydown", function (event) {
   }
 });
 
-initResizing();
 
+initResizing();

@@ -1,11 +1,15 @@
 import { assertElementById } from './util';
 
-const NORMAL_SCALE_FACTOR = 0.45;
+const NORMAL_SCALE_FACTOR = 0.05;
 
 let resizeObserver: ResizeObserver | null = null;
+let resizeContainer: HTMLElement | null = null;
 
-export function updateFontSizes(elem: HTMLElement) {
-    const containerWidth = elem.clientWidth;
+export function updateFontSizes() {
+    resizeContainer = assertElementById('dragcontainer');
+    if (!resizeContainer) return;
+
+    const containerWidth = resizeContainer.clientWidth;
     const textSize = containerWidth * NORMAL_SCALE_FACTOR;
 
     const style = document.createElement('style');
@@ -35,20 +39,19 @@ export function updateFontSizes(elem: HTMLElement) {
 
 // resize observer to preview resizing functions
 export function initResizing() {
-    dragContainer = assertElementById('dragcontainer');
-    if (!dragContainer) return;
-
+    resizeContainer = assertElementById('dragcontainer');
+    if (!resizeContainer) return;
     resizeObserver = new ResizeObserver(updateFontSizes);
 }
 
 export function startObservingResizing() {
-    if (resizeObserver && dragContainer) {
-        resizeObserver.observe(dragContainer);
+    if (resizeObserver && resizeContainer) {
+        resizeObserver.observe(resizeContainer);
     }
 }
 
 export function stopObservingResizing() {
-    if (resizeObserver && dragContainer) {
-        resizeObserver.unobserve(dragContainer);
+    if (resizeObserver && resizeContainer) {
+        resizeObserver.unobserve(resizeContainer);
     }
 }
