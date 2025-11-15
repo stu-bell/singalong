@@ -19,8 +19,9 @@
   </div>
 
   <div id="home" class="text-left px-4 max-h-screen overflow-y-auto">
-    <div>
+    <div class="flex items-center">
       <button id="fileInputButton" class="my-3 button">Choose Folder</button>
+      <p id="fileInputSuccess" class="hidden"> ✅ Files Loaded </p>
       <input id="fileInput" type="file" webkitdirectory directory multiple class="hidden" />
     </div>
     <button id="goBtn" class="my-3 button">Go!</button>

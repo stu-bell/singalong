@@ -22,6 +22,11 @@ const fileInput = assertElementById("fileInput")
 
 // select folder event
 assertElementById("fileInputButton").addEventListener("click", () => assertElementById("fileInput").click() );
+assertElementById("fileInput").addEventListener("change", (e:any) => {
+  if (e.target.files.length) {
+    assertElementById("fileInputSuccess").classList.remove("hidden");
+  }
+});
 
 assertElementById("goBtn").addEventListener("click", () => {
   // request screen modifications

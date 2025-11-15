@@ -1,7 +1,7 @@
 /**
  * Initiates full-screen mode and attempts to lock the screen orientation to landscape.
  * * IMPORTANT: This function must be called synchronously inside a user gesture handler.
- * Since the caller does NOT use 'await', all error handling is done internally.
+ * Events such as window.alert and file input changes remove full screen
  * * @param el The HTMLElement to make full-screen (defaults to the document element).
  */
 async function requestFullscreenAndLandscape(el: HTMLElement = document.documentElement): Promise<void> {
@@ -14,7 +14,6 @@ async function requestFullscreenAndLandscape(el: HTMLElement = document.document
         if (request) {
             // Await the full-screen request. This line pauses only this async function,
             // but the calling code in main.ts has already moved on.
-            console.log('requesting fullscreen')
             await request.call(el); 
         } else {
             throw new Error("Fullscreen API not supported by this browser.");
