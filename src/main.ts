@@ -24,6 +24,8 @@ const fileInput = assertElementById("fileInput")
 assertElementById("fileInputButton").addEventListener("click", () => assertElementById("fileInput").click() );
 assertElementById("fileInput").addEventListener("change", (e: any) => {
   if (e.target.files.length) {
+    assertElementById("goBtn").classList.remove("disabled");
+    (assertElementById("goBtn") as HTMLButtonElement).disabled = false;
     assertElementById("fileInputSuccess").classList.remove("hidden");
   }
 });

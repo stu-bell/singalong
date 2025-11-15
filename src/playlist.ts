@@ -117,7 +117,7 @@ async function parsePlaylistFile(folderfiles: File[]) {
     document.body.prepend(userwait);
     await downloadExamplePlaylistFile(folderfiles);
     userwait.remove();
-    console.warn(
+    window.alert(
       `We've just downloaded a ${playlistFileName} file for you, with the tracks we could find in the folder you chose. Open it in a spreadsheet and put the lyrics and audio files in the correct order. Then refresh the sing along app and retry.`
     );
     // refresh the page so we don't navigate
