@@ -8,7 +8,7 @@
   <!-- <link rel="manifest" href="manifest.json" /> -->
   <meta name="theme-color" content="#000000">
   <title>Sing along</title>
-  <script type="module" crossorigin src="/singalong/assets/index-BSDSSQiH.js"></script>
+  <script type="module" crossorigin src="/singalong/assets/index-rLcTG7JX.js"></script>
   <link rel="stylesheet" crossorigin href="/singalong/assets/index-C7OoyeHw.css">
 </head>
 
@@ -20,10 +20,12 @@
   </div>
 
   <div id="home" class="text-left px-4 max-h-screen overflow-y-auto">
-    <div>
+    <div class="flex items-center">
       <button id="fileInputButton" class="my-3 button">Choose Folder</button>
+      <p id="fileInputSuccess" class="hidden"> ✅ Files Loaded </p>
       <input id="fileInput" type="file" webkitdirectory directory multiple class="hidden" />
     </div>
+    <button id="goBtn" class="my-3 button">Go!</button>
     <p> Keyboard commands:</p>
     <table class="text-left table-auto my-2">
       <thead class="bg-gray-500 text-white">
