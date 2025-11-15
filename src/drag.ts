@@ -42,7 +42,6 @@ function makeDragable(elmnt: HTMLElement, onExit: () => any = () => {}) {
         .drag-exit {
           cursor: pointer;
           background-color: blue;
-          border: 10px solid blue;
           display: flex;
           justify-content: center;
           align-items: center;

@@ -22,6 +22,7 @@ function toggleScreenSetup() {
 }
 
 function enterScreenSetup() {
+  requestFullscreenAndLandscape();
   assertElementById('body').classList.remove('cursor-none')
   // ensure container is visible
   dragContainer.classList.remove('hidden')
