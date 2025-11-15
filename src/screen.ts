@@ -11,7 +11,6 @@ async function requestFullscreenAndLandscape(el: HTMLElement = document.document
     try {
         // 1. Request Fullscreen
         const request = el.requestFullscreen || (el as any).webkitRequestFullscreen || (el as any).msRequestFullscreen;
-        
         if (request) {
             // Await the full-screen request. This line pauses only this async function,
             // but the calling code in main.ts has already moved on.
@@ -21,12 +20,10 @@ async function requestFullscreenAndLandscape(el: HTMLElement = document.document
         }
 
         // 2. Lock Orientation (Executes only if full-screen was successful)
-        // @ts-ignore
+        // @ts-ignore orientation.lock
         await screen.orientation.lock('landscape'); 
-        
     } catch (e) {
-        // Log all failures (User denied, API not supported, gesture missing, etc.)
-        console.error('Fullscreen and orientation lock setup sequence failed:', (e as Error).message);
+        console.error('requestFullscreenAndLandscape error: ', (e as Error).message);
     }
 }
 
@@ -92,7 +89,6 @@ const exitFullScreen = () => {
 export {
   requestWakeLock,
   requestFullscreenAndLandscape,
-  requestLandscape,
   isFullScreen,
   requestFullScreen,
   exitFullScreen,

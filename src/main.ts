@@ -7,7 +7,7 @@ import {
   weJustAutoScrolled,
   setTimeoutNextScroll,
 } from "./lyrics";
-import { requestFullscreenAndLandscape, requestWakeLock } from "./screen";
+import { requestFullscreenAndLandscape } from "./screen";
 
 // drag the lyrics container 
 const dragContainer = assertElementById('dragcontainer')
@@ -25,7 +25,7 @@ assertElementById("fileInputButton").addEventListener("click", () => {
   // request screen modifications
   requestFullscreenAndLandscape().catch(err => alert(err.message));
 
-  // TODO: test wakelock
+  // TODO: test wakelock from ./screen
   // requestWakeLock();
 
   // select files
