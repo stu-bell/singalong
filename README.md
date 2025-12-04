@@ -3,15 +3,14 @@ Sing-along/karaoke app for playing local mp3 files and displaying lyrics from lo
 # TODO
 
 ## Next
-- document.documentElement.requestFullscreen(); when playing. Can also document.exitFullscreen(); at the end
-- button to trigger resizing area on mobile
-  - show the drag area with sample text, can do before loading a folder
-- when resizing drag area, scale font size so it's proportional to the width of the container
-- if font too big, do not show scroll bar, text will just have to overflow. 
-- Add media control, tie to next and previous control
+- touch controls - double tap for touch activation should be longer
 - request screen wake lock https://developer.mozilla.org/en-US/docs/Web/API/Screen_Wake_Lock_API
+- black background for area outside of resize container? 
 
 ## bugs
+- home scroll broken (make modal)?
+- media controls play/resume broken
+- svg arrows for resize
 - .txt files not rendering? do they require audio?
 - first line being promoted too soon? Maybe add a blank line 0 timestamp to teh beginning of each lines array?`
 - bug when scroll backwards, list items disappear from the bottom. lyrics.ts forwards/backwards?
