@@ -1,0 +1,22 @@
+[tools]
+node = "lts"
+
+# --no-bin-links and direct node paths keep these tasks working on mounts
+# that don't allow symlinks. They work fine on normal filesystems too.
+[tasks.install]
+description = "Install npm dependencies"
+run = "npm install --no-bin-links"
+
+[tasks.dev]
+description = "Start the Vite dev server (bound to 0.0.0.0 for port publishing)"
+depends = ["install"]
+run = "node node_modules/vite/bin/vite.js --host"
+
+[tasks.build]
+description = "Type-check and build into ./singalong"
+depends = ["install"]
+run = """
+node node_modules/typescript/bin/tsc
+node node_modules/vite/bin/vite.js build
+rm -rf singalong && mv dist singalong
+"""
