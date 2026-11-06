@@ -10,6 +10,8 @@ Install [mise](https://mise.jdx.dev/).
 
 `mise run dev`
 
+The default vite dev server port is 5173
+
 See ./mise.toml for tasks
 
 # Deploy to github pages
