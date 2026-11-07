@@ -1,3 +1,7 @@
+---
+status: done
+---
+
 # Video (mp4) support: implementation plan
 
 Implements the approved spec in `spec/_spec.md` on the `video` branch. No spec changes are needed.
