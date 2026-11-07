@@ -39,6 +39,12 @@ body:has(#dragcontainer:not(.hidden)) {
   background-color: var(--theme-page, #000000);
 }
 
+/* the lyrics area no longer covers the screen once its corners are moved (SCR-3), so hide the home screen behind it
+   during screen setup. visibility keeps the home layout, so nothing shifts when setup ends. */
+body:has(#dragcontainer:not(.hidden)) #home {
+  visibility: hidden;
+}
+
 .video-layer,
 .video-filter {
   position: absolute;
@@ -63,6 +69,23 @@ body:has(#dragcontainer:not(.hidden)) {
 /* the filter is only shown while a video is playing */
 .video-filter.active {
   opacity: var(--theme-filter-opacity, 0.45);
+}
+
+/* sample lyric for screen setup (SCR-13), in the same place as the current line. Only shown when setup is opened
+   from the home screen: during the show the real lyrics are on screen, and the sample would cover them. */
+.setup-sample {
+  display: none;
+  position: absolute;
+  top: 10vh;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  text-align: center;
+  z-index: 1;
+}
+
+body:has(#home:not(.hidden)) .dragmode .setup-sample {
+  display: block;
 }
 
 /* lyrics sit above the video and filter */
