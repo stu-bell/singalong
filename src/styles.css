@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* the home screen is dark (SCR-14), so ask the browser for dark scrollbars and form controls too */
+:root {
+  color-scheme: dark;
+}
+
 
 li {
   transition: 3s linear all;
@@ -34,7 +39,7 @@ li {
 }
 
 /* page around the lyrics area is black whenever the area is shown (show and screen setup), so no white border
-   lights up on the projector (SCR-9). The home screen keeps its normal background. */
+   lights up on the projector (SCR-9). The home screen has its own dark background (SCR-14, body classes in index.html). */
 body:has(#dragcontainer:not(.hidden)) {
   background-color: var(--theme-page, #000000);
 }
@@ -120,10 +125,10 @@ body:has(#home:not(.hidden)) .dragmode .setup-sample {
 
 @layer components {
   .hyperlink {
-      @apply text-blue-500 underline cursor-pointer;
+      @apply text-blue-400 underline cursor-pointer;
     }
     .hyperlink:hover {
-      @apply text-blue-800;
+      @apply text-blue-300;
     }
     .button {
       @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded
