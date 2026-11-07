@@ -21,7 +21,8 @@ export function updateFontSizes() {
           transition: 0.2s linear all;
           margin: 0 10px;
         }
-        #lyricsContainer li {
+        #lyricsContainer li,
+        #setupSample {
             font-family: ${theme.fontFamily};
             font-weight: ${theme.fontWeight};
             color: ${theme.previewTextColor};
@@ -31,7 +32,9 @@ export function updateFontSizes() {
             width: ${theme.previewScale * 100}% !important;
             opacity: 1;
         }
-        #lyricsContainer li.large {
+        /* the screen setup sample (SCR-13) looks like the current line */
+        #lyricsContainer li.large,
+        #setupSample {
             color: ${theme.textColor};
             font-size: ${textSize}px !important;
             -webkit-text-stroke-width: ${textSize * theme.outlineRatio}px;

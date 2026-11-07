@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* the home screen is dark (SCR-14), so ask the browser for dark scrollbars and form controls too */
+:root {
+  color-scheme: dark;
+}
+
 
 li {
   transition: 3s linear all;
@@ -34,9 +39,15 @@ li {
 }
 
 /* page around the lyrics area is black whenever the area is shown (show and screen setup), so no white border
-   lights up on the projector (SCR-9). The home screen keeps its normal background. */
+   lights up on the projector (SCR-9). The home screen has its own dark background (SCR-14, body classes in index.html). */
 body:has(#dragcontainer:not(.hidden)) {
   background-color: var(--theme-page, #000000);
+}
+
+/* the lyrics area no longer covers the screen once its corners are moved (SCR-3), so hide the home screen behind it
+   during screen setup. visibility keeps the home layout, so nothing shifts when setup ends. */
+body:has(#dragcontainer:not(.hidden)) #home {
+  visibility: hidden;
 }
 
 .video-layer,
@@ -63,6 +74,23 @@ body:has(#dragcontainer:not(.hidden)) {
 /* the filter is only shown while a video is playing */
 .video-filter.active {
   opacity: var(--theme-filter-opacity, 0.45);
+}
+
+/* sample lyric for screen setup (SCR-13), in the same place as the current line. Only shown when setup is opened
+   from the home screen: during the show the real lyrics are on screen, and the sample would cover them. */
+.setup-sample {
+  display: none;
+  position: absolute;
+  top: 10vh;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  text-align: center;
+  z-index: 1;
+}
+
+body:has(#home:not(.hidden)) .dragmode .setup-sample {
+  display: block;
 }
 
 /* lyrics sit above the video and filter */
@@ -97,10 +125,10 @@ body:has(#dragcontainer:not(.hidden)) {
 
 @layer components {
   .hyperlink {
-      @apply text-blue-500 underline cursor-pointer;
+      @apply text-blue-400 underline cursor-pointer;
     }
     .hyperlink:hover {
-      @apply text-blue-800;
+      @apply text-blue-300;
     }
     .button {
       @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded
