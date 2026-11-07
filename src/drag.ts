@@ -17,6 +17,7 @@ function makeDragable(elmnt: HTMLElement, onExit: () => any = () => {}) {
           border: 2px solid blue;
         }
         .drag-marker {
+          z-index: 2;
           display: none;
           cursor: se-resize;
           position: absolute;

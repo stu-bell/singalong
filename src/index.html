@@ -18,7 +18,10 @@
     <p>If using a mobile browser, try Chrome version >132</p>
   </div>
 
-  <div id="dragcontainer" class="dragcontainer bg-white hidden overflow-hidden">
+  <div id="dragcontainer" class="dragcontainer hidden overflow-hidden">
+    <!-- video plays behind the lyrics, with a translucent filter between the video and the text -->
+    <div id="videoLayer" class="video-layer"></div>
+    <div id="videoFilter" class="video-filter"></div>
     <!-- main container for song lyrics -->
     <ul id="lyricsContainer" class="flex flex-col items-center list-none text-center mt-vh user-select-none">
       <li></li>
