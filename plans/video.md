@@ -92,3 +92,21 @@ Files: `video.ts`, `player.ts`
 - **Codecs:** only H.264 and AAC are reliable. Playwright's bundled Chromium may lack them, so automated checks may need a VP9/Opus mp4 as a stand-in. Confirm this early.
 - **Wrapping:** a wider display font changes where long lyric lines wrap. Check the longest lyrics when choosing the font.
 - **Projectors** wash out contrast. Check the white text with a dark grey outline on a real projector, with video behind it.
+
+## Revision: play video audio through the video element
+
+Branch: `video-element-audio` (from `video`).
+
+Testing a 4-minute, 61MB H.264/AAC music video showed the decode-up-front approach is costly: the audio decode took 4 to 11 seconds before playback could start, and holds about 80MB of decoded audio plus a full read of the file per video track. On Windows Chrome the page's main thread also became unresponsive (lyrics stalled, keys ignored) after a few minutes, which this change aims to remove from the picture.
+
+Change, for `.mp4` tracks only (audio files keep the decoded path):
+
+- The video element plays unmuted, and its sound is routed through a `MediaElementAudioSourceNode` into the same gain node, so fade in and out are unchanged.
+- `start` is a seek on the element (already done when the video is prepared). `end` is the existing track-end timer.
+- The audio is not decoded up front. The decoded path is kept as a fallback when the video can't be played (PLY-11).
+- Sound and picture come from one element, so the drift-correction loop and the output-latency compensation are removed.
+- Pause and resume pause and resume the element as well as the audio context, as before.
+
+Checks: start delay after Go, memory over a full track, long tasks on the main thread during playback, crossfade between two video tracks, and pause.
+
+The spec is unchanged: PLY-9 to PLY-11 still describe the behaviour.

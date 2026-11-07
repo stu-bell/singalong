@@ -2,7 +2,8 @@ import { parseLyricsFile } from "./lrcFile";
 import { renderLyrics, pauseLyrics, resumeLyrics } from "./lyrics";
 import { loadPlaylist, playlistNext, playlistPrev, playlistPeekNext, Track } from "./playlist";
 import { prepareVideo, startVideo, stopVideo, disposeVideo, pauseVideos, resumeVideos, VideoHandle } from "./video";
-import { connectAudioGraph, crossFade, getCurrentlyPlaying, pauseAudioContext, resumeAudioContext } from "./audio";
+import { connectAudioGraph, connectMediaElementGraph, crossFade, getCurrentlyPlaying, loadAudioFromFile, pauseAudioContext, resumeAudioContext } from "./audio";
+import { isVideoFile } from "./files";
 import { initMediaSession, updateMediaSession, setMediaSessionPlaying, playSilentAudio, pauseSilentAudio } from "./mediaSession";
 
 export type HTMLFileInputElement = HTMLInputElement & {files: FileList};
@@ -82,20 +83,25 @@ async function playSong(track:Track|null) {
     playSilentAudio();
 
     const videoPromise = takeVideo(track);
-    // a media file whose audio can't be decoded plays without sound
-    const buffer = await track.audio.buffer?.catch((e) => {
-      console.error(`Can't decode the audio in ${track.audio.file?.name}, playing without sound:`, e);
-      return null;
-    });
     const lines = parseLyricsFile(await track.lyrics.text, track.lyrics.file);
     const video = await videoPromise;
+    // audio files are decoded up front. A video file plays its sound through its video element, unless the video
+    // can't be played, in which case its audio is decoded instead (PLY-11)
+    const file = track.audio.file;
+    const bufferPromise = track.audio.buffer ??
+      (file && !video && isVideoFile(file.name) ? loadAudioFromFile(file) : null);
+    // a media file whose audio can't be decoded plays without sound
+    const buffer = await bufferPromise?.catch((e) => {
+      console.error(`Can't decode the audio in ${file?.name}, playing without sound:`, e);
+      return null;
+    });
     if (token !== playToken) {
       // the user skipped to another song while this one was loading
       disposeVideo(video);
       return;
     }
 
-    const newAudio = buffer ? connectAudioGraph(buffer) : null;
+    const newAudio = video ? connectMediaElementGraph(video.element) : buffer ? connectAudioGraph(buffer) : null;
     // use the audio fade duration on the same playlist line as the currently playing track
     const fadeDuration = currentTrack ? currentTrack.audio.fade : 0
     crossFade(getCurrentlyPlaying(), newAudio, fadeDuration, track.audio.offset);

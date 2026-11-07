@@ -1,28 +1,17 @@
-// video.ts shows a muted video behind the lyrics, following the audio clock.
-// The audio of the file is played separately through the audio graph (see audio.ts), so the audio's start, end and fade
-// behave exactly as for audio files. The video is only the picture.
+// video.ts shows a video behind the lyrics.
+// The element plays its own sound, which the player routes through the audio graph's gain node (see audio.ts
+// connectMediaElementGraph), so fades behave as for audio files. Sound and picture come from the same element, so they stay in sync.
 import { assertElementById } from "./util";
-import { getAudioContext } from "./audio";
-import { getFileExtension } from "./files";
+import { isVideoFile as isVideoFileName } from "./files";
 
 export type VideoHandle = {
   element: HTMLVideoElement;
   url: string;
-  offset: number; // position in the video, in seconds, that corresponds to the start of playback
-  startedAt: number; // audio context time at which playback started
-  syncTimer: number | null;
+  offset: number; // position in the video, in seconds, that playback starts from
   disposeTimer: number | null;
 };
 
 const MAX_LOAD_WAIT_MS = 10000;
-// how often to compare the video with the audio clock
-const SYNC_INTERVAL_MS = 1000;
-const FIRST_SYNC_DELAY_MS = 300;
-// beyond this much drift (seconds), jump to the right position. Below it, nudge the playback rate
-const JUMP_DRIFT = 0.3;
-// below this much drift (seconds), leave the video alone
-const IGNORE_DRIFT = 0.04;
-const NUDGE_RATE = 0.05;
 
 // videos currently showing (not fading out)
 const live = new Set<VideoHandle>();
@@ -30,7 +19,7 @@ const live = new Set<VideoHandle>();
 const fadingOut = new Set<VideoHandle>();
 
 const isVideoFile = (file: File | null): file is File =>
-  !!file && getFileExtension(file.name) === "mp4";
+  !!file && isVideoFileName(file.name);
 
 function waitForEvent(el: HTMLMediaElement, event: string): Promise<void> {
   return new Promise<void>((resolve, reject) => {
@@ -49,17 +38,16 @@ function waitForEvent(el: HTMLMediaElement, event: string): Promise<void> {
 }
 
 // prepareVideo loads a video file and seeks it to `offset`, ready to start instantly.
-// Resolves null (and logs to the console) if the file has no playable video, in which case the track plays audio only (PLY-11).
+// Resolves null (and logs to the console) if the file has no playable video. The player then falls back to decoding the
+// file's audio, so the track plays audio only (PLY-11).
 async function prepareVideo(file: File | null, offset: number): Promise<VideoHandle | null> {
   if (!isVideoFile(file)) {
     return null;
   }
   const element = document.createElement("video");
   const url = URL.createObjectURL(file);
-  const handle: VideoHandle = { element, url, offset, startedAt: 0, syncTimer: null, disposeTimer: null };
+  const handle: VideoHandle = { element, url, offset, disposeTimer: null };
   try {
-    element.muted = true;
-    element.defaultMuted = true;
     element.playsInline = true;
     element.preload = "auto";
     element.style.opacity = "0";
@@ -88,11 +76,10 @@ function updateFilter(fadeSeconds: number) {
   filter.classList.toggle("active", live.size > 0);
 }
 
-// startVideo shows a prepared video and plays it from its offset, fading it in over `fadeSeconds`.
-// Call this at the same moment the audio starts.
+// startVideo shows a prepared video and plays it from its offset, fading the picture in over `fadeSeconds`.
+// Route its sound through the audio graph before calling this.
 function startVideo(handle: VideoHandle, fadeSeconds: number) {
   const { element } = handle;
-  handle.startedAt = getAudioContext().currentTime;
   element.style.transition = `opacity ${fadeSeconds}s linear`;
   assertElementById("videoLayer").appendChild(element);
   void element.offsetWidth; // reset transition
@@ -100,7 +87,6 @@ function startVideo(handle: VideoHandle, fadeSeconds: number) {
   element.play().catch((e) => console.error("video play failed", e));
   live.add(handle);
   updateFilter(fadeSeconds);
-  handle.syncTimer = setTimeout(() => syncVideo(handle), FIRST_SYNC_DELAY_MS);
 }
 
 // stopVideo fades a video out over `fadeSeconds`, then releases it.
@@ -110,10 +96,6 @@ function stopVideo(handle: VideoHandle | null, fadeSeconds: number) {
   }
   live.delete(handle);
   updateFilter(fadeSeconds);
-  if (handle.syncTimer) {
-    clearTimeout(handle.syncTimer);
-    handle.syncTimer = null;
-  }
   if (fadeSeconds <= 0) {
     disposeVideo(handle);
     return;
@@ -131,9 +113,6 @@ function disposeVideo(handle: VideoHandle | null) {
   }
   live.delete(handle);
   fadingOut.delete(handle);
-  if (handle.syncTimer) {
-    clearTimeout(handle.syncTimer);
-  }
   if (handle.disposeTimer) {
     clearTimeout(handle.disposeTimer);
   }
@@ -142,34 +121,6 @@ function disposeVideo(handle: VideoHandle | null) {
   handle.element.load();
   handle.element.remove();
   URL.revokeObjectURL(handle.url);
-}
-
-// expectedPosition is where the video should be, given the audio clock. The audio clock stops while the audio context is
-// suspended (paused), so this stays correct across pause and resume. Audio is heard outputLatency after the clock reaches it.
-function expectedPosition(handle: VideoHandle): number {
-  const acx = getAudioContext();
-  const latency = (acx as any).outputLatency || acx.baseLatency || 0;
-  return handle.offset + (acx.currentTime - handle.startedAt) - latency;
-}
-
-// syncVideo keeps the video in step with the audio, which is on a different clock
-function syncVideo(handle: VideoHandle) {
-  const { element } = handle;
-  const acx = getAudioContext();
-  if (acx.state === "running" && !element.paused && element.readyState >= 2) {
-    const drift = element.currentTime - expectedPosition(handle);
-    const target = expectedPosition(handle);
-    if (Math.abs(drift) > JUMP_DRIFT && target >= 0 && target < element.duration) {
-      element.currentTime = target;
-      element.playbackRate = 1;
-    } else if (Math.abs(drift) > IGNORE_DRIFT) {
-      // ahead of the audio: slow down. behind: speed up
-      element.playbackRate = drift > 0 ? 1 - NUDGE_RATE : 1 + NUDGE_RATE;
-    } else {
-      element.playbackRate = 1;
-    }
-  }
-  handle.syncTimer = setTimeout(() => syncVideo(handle), SYNC_INTERVAL_MS);
 }
 
 function pauseVideos() {

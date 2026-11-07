@@ -8,6 +8,7 @@ import {
   getFileExtension,
   parseTsv,
   downloadFile,
+  isVideoFile,
 } from "./files";
 import { loadAudioFromFile, mediaFileDuration } from "./audio";
 import { parseTimestampToSeconds } from "./lrcFile";
@@ -104,7 +105,8 @@ function loadTrack(item: PlaylistItem): Track {
     },
     audio: {
       file: item.mediaFile,
-      buffer: item.mediaFile ? loadAudioFromFile(item.mediaFile) : null,
+      // video files play their sound through the video element (see video.ts), so only audio files are decoded up front
+      buffer: item.mediaFile && !isVideoFile(item.mediaFile.name) ? loadAudioFromFile(item.mediaFile) : null,
       offset: item.start ? parseTimestampToSeconds(item.start) : 0,
       end: item.end ? parseTimestampToSeconds(item.end) : undefined,
       fade: item.fade ? parseTimestampToSeconds(item.fade) : 0,
