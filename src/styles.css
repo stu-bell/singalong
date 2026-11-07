@@ -8,13 +8,7 @@ li {
   margin: 0 10px;
 }
 
-/* see resizing.ts for text size and widths */
-li {
-  opacity: 0.6;
-}
-li.large {
-  opacity: 1;
-}
+/* see resizing.ts for lyric text size, widths and colours */
 
 /* previous version of list styles - not compatible with zoom?*/
 /* li { */

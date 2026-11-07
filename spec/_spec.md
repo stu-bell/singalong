@@ -39,10 +39,10 @@ A bug is a deviation from a requirement. Fixing a bug covered by an existing req
 # Lyrics (LYR)
 
 - LYR-1. `.lrc`: each `[mm:ss.xx]text` line is a lyric line shown at that time. A line with several timestamps becomes several lines. Lines are ordered by timestamp.
-- LYR-2. `.lrc`: metadata tags such as `[ar:…]` and `[ti:…]` are never displayed. A timestamp with no text is a blank line, which moves the highlight off the previous line.
+- LYR-2. `.lrc`: metadata tags such as `[ar:…]` and `[ti:…]` are never displayed. A timestamp with no text is a blank line, which moves the highlight off the previous line. Blank lines are how the LRC author clears lyrics from the screen, e.g. for an instrumental (see LYR-13). They behave the same whatever line endings the file uses (Windows or Unix).
 - LYR-3. `.txt`: each line of the file is a lyric line with no timestamps. The user advances manually.
 - LYR-4. A blank line is added at the start of every track, so the first lyric starts as a preview rather than the active line.
-- LYR-5. A fixed number of lines is visible (the visible line count; currently 4, and it may change or become user-configurable). The first is the current line, shown large. The rest are shown smaller as a preview. Requirements refer to the visible line count, never to a specific number.
+- LYR-5. A fixed number of lines is visible (the visible line count; currently 3, and it may change or become user-configurable). The first is the current line, shown large. The rest are shown smaller as a preview. Requirements refer to the visible line count, never to a specific number.
 - LYR-6. In an `.lrc` file, the next line advances automatically after the delay between the current and next timestamps.
 - LYR-7. "Next line" moves forward immediately. The following automatic advance is rescheduled relative to the line the user moved to. This is how the user nudges timing to follow live musicians.
 - LYR-8. "Previous line" restarts the current line's timer. Two presses within 0.8s move back one line. Stepping back brings the previous line in at the top as the current line, and the bottom line leaves, so the visible line count stays the same (see LYR-5).
@@ -50,6 +50,8 @@ A bug is a deviation from a requirement. Fixing a bug covered by an existing req
 - LYR-10. `.txt` files must render, with or without audio, starting at their first line.
 - LYR-11. ⚠ Empty lines at the top of the screen must not take up large vertical space.
 - LYR-12. When a track has `start`/`end`, lyrics begin at the line matching `start`, and lines after `end` are dropped.
+- LYR-13. While the current line is blank (including the starting blank line, LYR-4) and the next line is more than the preview lead time away, the preview lines are hidden, so no text is on screen during intros and instrumentals. The preview lines all appear together, the lead time before the next line. The lead time is currently 2 seconds, and is kept as a constant in one place so it is easy to change. While the current line has text, the preview lines stay visible, even before a long gap, so lyrics don't vanish during long notes. Untimed lyrics (`.txt`) always show their preview lines.
+- LYR-14. While the preview lines are hidden (LYR-13), "next line" shows them instead of moving forward. The next "next line" moves forward as usual (LYR-7). This lets the user bring the lyrics in early, e.g. for live musicians.
 
 # Playback (PLY)
 
@@ -80,5 +82,5 @@ A bug is a deviation from a requirement. Fixing a bug covered by an existing req
 - SCR-4. The browser must support the File System Access API (`showOpenFilePicker`). Otherwise the user sees an "unsupported browser" page.
 - SCR-5. ⚠ The home screen scrolls incorrectly (TODO: possibly make it a modal).
 - SCR-6. The video fills the lyrics area behind the text, shown with `contain`: the whole frame is visible, with bars where its shape doesn't match the area. It is clipped to the resizable area and resizes with it (SCR-1).
-- SCR-7. A translucent filter sits over the video and under the text. The lyrics text is white and thick, with a dark grey outline, in a bold display font. ❓ The exact font, outline width and filter strength are to be chosen by testing options visually and getting user feedback, ideally on a projector. They are kept as constants in one place, so options are easy to change. The font must be bundled with the app, not loaded from an online font service, so the app works offline.
+- SCR-7. A translucent filter sits over the video and under the text. The lyrics text is white and thick, with a dark grey outline, in a bold display font. Preview lines (LYR-5) are fully opaque, so the video does not show through them, and use a very pale grey instead of white. They must stay easy to read, and look different from the current line so it is clear they are not being sung yet. ❓ The exact font, outline width and filter strength are to be chosen by testing options visually and getting user feedback, ideally on a projector. They are kept as constants in one place, so options are easy to change. The font must be bundled with the app, not loaded from an online font service, so the app works offline.
 - SCR-8. Audio-only tracks use a dark background, so the lyrics style in SCR-7 applies to every track.

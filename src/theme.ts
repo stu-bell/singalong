@@ -5,6 +5,8 @@ export const theme = {
   fontFamily: 'Impact, "Arial Black", Arial, sans-serif',
   fontWeight: 900,
   textColor: "#ffffff",
+  // preview (upcoming) lines are opaque, in a very pale grey, so they read clearly over video but look not yet active
+  previewTextColor: "#d9d9d9",
   outlineColor: "#3a3a3a",
   // outline width as a fraction of the font size. The outline is centred on the glyph edge, so about half of it shows outside the letter.
   outlineRatio: 0.12,

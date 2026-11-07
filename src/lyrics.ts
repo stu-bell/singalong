@@ -15,7 +15,8 @@ let state: {
   lines: [],
   filesList: [],
   fileType: "txt",
-  numberOfLines: 4,
+  // visible line count: the current line plus the preview lines (LYR-5)
+  numberOfLines: 3,
   currentLineIndex: 0,
   currentFileIndex: 0,
 };
@@ -81,7 +82,57 @@ let scrollRemainingMs: number | null = null; // time left on the timer, while pa
 function autoScroll() {
   // register time we last auto-scrolled
   lastAutoScrollTime = Date.now();
-  scrollNextLine();
+  advanceLine();
+}
+
+// LYR-13: during a blank line, preview lines stay hidden until this many seconds before the next line
+const PREVIEW_LEAD_SECONDS = 2;
+// class on the lyrics list that hides the preview lines (styled in resizing.ts)
+const PREVIEW_HIDDEN_CLASS = "preview-hidden";
+let previewHidden = false;
+// timer that reveals hidden preview lines. Pauses with the scroll timer (PLY-8)
+let revealTimer: number | null = null;
+let revealTimerDueAt = 0; // Date.now() at which the reveal timer fires
+let revealRemainingMs: number | null = null; // time left on the reveal timer, while paused
+
+function clearRevealTimer() {
+  if (revealTimer) {
+    clearTimeout(revealTimer);
+    revealTimer = null;
+  }
+  revealRemainingMs = null;
+}
+
+function scheduleReveal(delayMs: number) {
+  if (lyricsPaused) {
+    // don't start the timer until resumed
+    revealRemainingMs = delayMs;
+  } else {
+    revealTimerDueAt = Date.now() + delayMs;
+    revealTimer = setTimeout(showPreviewLines, delayMs);
+  }
+}
+
+// showPreviewLines shows all preview lines together (LYR-13)
+function showPreviewLines() {
+  clearRevealTimer();
+  previewHidden = false;
+  lyricsListElem?.classList.remove(PREVIEW_HIDDEN_CLASS);
+}
+
+// updatePreviewVisibility hides the preview lines while the current line is blank and the next line is more than
+// the lead time away, and schedules their reveal (LYR-13). secondsToNextLine is null when there is no timed next line.
+function updatePreviewVisibility(secondsToNextLine: number | null) {
+  clearRevealTimer();
+  const currentLine = state.lines[state.currentLineIndex];
+  const currentIsBlank = !!currentLine && currentLine.text.trim() === "";
+  if (currentIsBlank && secondsToNextLine !== null && secondsToNextLine > PREVIEW_LEAD_SECONDS) {
+    previewHidden = true;
+    lyricsListElem.classList.add(PREVIEW_HIDDEN_CLASS);
+    scheduleReveal((secondsToNextLine - PREVIEW_LEAD_SECONDS) * 1000);
+  } else {
+    showPreviewLines();
+  }
 }
 
 function clearScrollTimer() {
@@ -110,6 +161,11 @@ function pauseLyrics() {
     clearTimeout(scrollTimer);
     scrollTimer = null;
   }
+  if (revealTimer) {
+    revealRemainingMs = Math.max(0, revealTimerDueAt - Date.now());
+    clearTimeout(revealTimer);
+    revealTimer = null;
+  }
 }
 
 function resumeLyrics() {
@@ -120,12 +176,19 @@ function resumeLyrics() {
     scrollRemainingMs = null;
     scheduleScroll(remaining);
   }
+  if (revealRemainingMs !== null) {
+    const remaining = revealRemainingMs;
+    revealRemainingMs = null;
+    scheduleReveal(remaining);
+  }
 }
 
 function setTimeoutNextScroll(from?:number) {
   // setTimeoutNextScroll sets an auto scroll for the next line, based on timestamps
   // cancel inflight timer, since we might have skipped
   clearScrollTimer();
+  // seconds from now to the next timed line, used to hide preview lines during gaps (LYR-13)
+  let secondsToNextLine: number | null = null;
   if (
     state.lines[state.currentLineIndex + 1] &&
     state.lines[state.currentLineIndex + 1].hasOwnProperty('timestamp') && 
@@ -138,9 +201,11 @@ function setTimeoutNextScroll(from?:number) {
     const delay = nextLineTime - currentLineTime;
     if (delay >= 0) {
       scheduleScroll(delay * 1000);
+      secondsToNextLine = delay;
     }
     // if the timestamps on current and nextlines are the same, do we just want to skip now?
   }
+  updatePreviewVisibility(secondsToNextLine);
 }
 
 // weJustAutoScrolled returns true if there is a short duration between the now and the last auto scroll event
@@ -198,7 +263,18 @@ function renderLyrics(lines: LyricLines, htmlElement: HTMLElement, offsetSeconds
   setTimeoutNextScroll(offsetSeconds);
 }
 
+// scrollNextLine handles the user's "next line" input (LYR-7). While the preview lines are hidden it shows them
+// instead of moving forward (LYR-14); the scroll timer keeps running, so the next line still arrives on time.
 function scrollNextLine() {
+  if (previewHidden) {
+    showPreviewLines();
+    return;
+  }
+  advanceLine();
+}
+
+// advanceLine moves to the next line, used by the auto scroll timer and by "next line"
+function advanceLine() {
   state.currentLineIndex++;
   if (state.currentLineIndex >= state.lines.length) {
     nextSong();

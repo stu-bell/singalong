@@ -24,18 +24,24 @@ export function updateFontSizes() {
         #lyricsContainer li {
             font-family: ${theme.fontFamily};
             font-weight: ${theme.fontWeight};
-            color: ${theme.textColor};
+            color: ${theme.previewTextColor};
             paint-order: stroke fill;
             -webkit-text-stroke: ${0.5 * textSize * theme.outlineRatio}px ${theme.outlineColor};
             font-size: ${0.5 * textSize}px !important;
             width: 50% !important;
-            opacity: 0.6;
+            opacity: 1;
         }
         #lyricsContainer li.large {
+            color: ${theme.textColor};
             font-size: ${textSize}px !important;
             -webkit-text-stroke-width: ${textSize * theme.outlineRatio}px;
             width: 100% !important;
             opacity: 1;
+        }
+        /* preview lines hidden during intros and instrumentals (LYR-13). They keep their space, so nothing jumps
+           when they fade in. The line on its way out (.zero) is left to shrink away as normal. */
+        #lyricsContainer.preview-hidden li:not(.large):not(.zero) {
+            opacity: 0;
         }
         #lyricsContainer li.zero {
           font-size: 0px !important;
