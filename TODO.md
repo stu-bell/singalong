@@ -13,7 +13,6 @@
 - home scroll broken (make modal)?
 - media controls play/resume broken (PLY-8). Pause now freezes the audio, video and timers; check OS play/resume with real media keys
 - svg arrows for resize
-- .txt files not rendering? do they require audio?
 - bug when scroll backwards, list items disappear from the bottom. lyrics.ts forwards/backwards?
 - empty lines at the top of the screen should be large height - what about replacing with a space?
 - playlist validation errors (missing/duplicate/unsupported files, see MED-1, MED-6) only go to the console. Implement an on-screen message toast. Be careful not to disrupt the show: show messages before play starts, or discreetly on screen during play (no alerts/modals mid-show)

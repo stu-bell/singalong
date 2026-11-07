@@ -150,9 +150,13 @@ const weJustAutoScrolled = (milliseconds = 500) =>
 function seekLyrics(lines:LyricLines, offsetSeconds: number = 0): number {
   // seekLyrics looks through timestamps to find the line the corresponds to the offset
   // ie the line before the first line that has a timestamp greater than the offset
+  if (!lines.some(l => l.timestamp)) {
+    // untimed lyrics (.txt files) start at the beginning (LYR-3, LYR-10)
+    return 0;
+  }
   const firstIndex = lines.findIndex(l => (l.timestamp || 0) > offsetSeconds);
-  // no lines come after offsetSeconds
-  const index = (firstIndex === -1) ? lines.length : firstIndex - 1;
+  // no lines come after offsetSeconds: show the last line, rather than an index past the end (which renders nothing)
+  const index = (firstIndex === -1) ? lines.length - 1 : firstIndex - 1;
   return index
 }
 
@@ -184,9 +188,11 @@ function renderLyrics(lines: LyricLines, htmlElement: HTMLElement, offsetSeconds
     lyricsListElem.appendChild(el);
   }
   // big up the first line
-  const first = lyricsListElem.firstElementChild as HTMLElement;
-  void first.offsetWidth; // reset transition
-  first.classList.add('large');
+  const first = lyricsListElem.firstElementChild as HTMLElement | null;
+  if (first) {
+    void first.offsetWidth; // reset transition
+    first.classList.add('large');
+  }
 
   // start the timer for auto scroll
   setTimeoutNextScroll(offsetSeconds);

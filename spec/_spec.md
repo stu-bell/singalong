@@ -47,7 +47,7 @@ A bug is a deviation from a requirement. Fixing a bug covered by an existing req
 - LYR-7. "Next line" moves forward immediately. The following automatic advance is rescheduled relative to the line the user moved to. This is how the user nudges timing to follow live musicians.
 - LYR-8. "Previous line" restarts the current line's timer. Two presses within 0.8s move back one line. Stepping back brings the previous line in at the top as the current line, and the bottom line leaves, so the visible line count stays the same (see LYR-5).
 - LYR-9. A "next" input within 0.5s of an automatic advance is ignored, to avoid double-advancing.
-- LYR-10. ⚠ `.txt` files must render, with or without audio. The TODO suspects they currently require audio.
+- LYR-10. `.txt` files must render, with or without audio, starting at their first line.
 - LYR-11. ⚠ Empty lines at the top of the screen must not take up large vertical space.
 - LYR-12. When a track has `start`/`end`, lyrics begin at the line matching `start`, and lines after `end` are dropped.
 
