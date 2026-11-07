@@ -1,4 +1,4 @@
-Sing-along/karaoke app for playing local mp3 files and displaying lyrics from local .txt or .lrc files
+Sing-along/karaoke app for playing local audio (mp3, m4a) or video (mp4) files and displaying lyrics from local .txt or .lrc files
 
 Specification: ./spec/_spec.md
 

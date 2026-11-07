@@ -229,8 +229,11 @@ async function downloadExamplePlaylistFile(files: File[] | any[]) {
     files
       .filter((file) => mediaExtensions.includes(getFileExtension(file.name)))
       .map(async (f) => {
-        // add media file duration
-        f.duration = await mediaFileDuration(f);
+        // add media file duration. If it can't be read, leave it blank (play the whole file)
+        f.duration = await mediaFileDuration(f).catch((e) => {
+          console.error(`Couldn't read the duration of ${f.name}:`, e);
+          return "";
+        });
         return f;
       })
   );
