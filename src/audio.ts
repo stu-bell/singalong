@@ -162,6 +162,7 @@ async function mediaFileDuration(file: File): Promise<string> {
 // }
 //
 export {
+  getAudioContext,
   fadeIn,
   fadeOut,
   loadAudioFromFile,

@@ -76,6 +76,11 @@ function playlistNext() {
   return curr;
 }
 
+// playlistPeekNext returns the upcoming track without moving the playlist position
+function playlistPeekNext() {
+  return next;
+}
+
 function playlistPrev() {
   if (prev) {
     // bump back if there is a previous track to bump back to
@@ -275,6 +280,7 @@ export {
   loadPlaylist,
   playlistPrev,
   playlistNext,
+  playlistPeekNext,
   downloadExamplePlaylistFile,
 };
 export type { Track };

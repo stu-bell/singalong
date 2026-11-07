@@ -1,6 +1,7 @@
 import { parseLyricsFile } from "./lrcFile";
 import { renderLyrics, pauseLyrics, resumeLyrics } from "./lyrics";
-import { loadPlaylist, playlistNext, playlistPrev, Track } from "./playlist";
+import { loadPlaylist, playlistNext, playlistPrev, playlistPeekNext, Track } from "./playlist";
+import { prepareVideo, startVideo, stopVideo, disposeVideo, pauseVideos, resumeVideos, VideoHandle } from "./video";
 import { connectAudioGraph, crossFade, getCurrentlyPlaying, pauseAudioContext, resumeAudioContext } from "./audio";
 import { initMediaSession, updateMediaSession, setMediaSessionPlaying, playSilentAudio, pauseSilentAudio } from "./mediaSession";
 
@@ -42,18 +43,69 @@ function scheduleNextSong(delayMs: number) {
   }
 }
 
+// the video of the playing track, if it has one
+let currentVideo: VideoHandle | null = null;
+// video prepared ahead for the upcoming track, so that it can start instantly
+let prepared: { track: Track; video: Promise<VideoHandle | null> } | null = null;
+// identifies the latest playSong call, so a call that has been skipped past can bail out
+let playToken = 0;
+
+function discardPreparedVideo() {
+  if (prepared) {
+    prepared.video.then(disposeVideo);
+    prepared = null;
+  }
+}
+
+function prepareUpcomingVideo(track: Track | null) {
+  if (prepared && prepared.track === track) return;
+  discardPreparedVideo();
+  if (track) {
+    prepared = { track, video: prepareVideo(track.audio.file, track.audio.offset) };
+  }
+}
+
+function takeVideo(track: Track): Promise<VideoHandle | null> {
+  if (prepared && prepared.track === track) {
+    const video = prepared.video;
+    prepared = null;
+    return video;
+  }
+  discardPreparedVideo();
+  return prepareVideo(track.audio.file, track.audio.offset);
+}
+
 async function playSong(track:Track|null) {
   if (track) {
+    const token = ++playToken;
     updateMediaSession();
     playSilentAudio();
 
-    const buffer = await track.audio.buffer
+    const videoPromise = takeVideo(track);
+    // a media file whose audio can't be decoded plays without sound
+    const buffer = await track.audio.buffer?.catch((e) => {
+      console.error(`Can't decode the audio in ${track.audio.file?.name}, playing without sound:`, e);
+      return null;
+    });
     const lines = parseLyricsFile(await track.lyrics.text, track.lyrics.file);
+    const video = await videoPromise;
+    if (token !== playToken) {
+      // the user skipped to another song while this one was loading
+      disposeVideo(video);
+      return;
+    }
 
     const newAudio = buffer ? connectAudioGraph(buffer) : null;
     // use the audio fade duration on the same playlist line as the currently playing track
     const fadeDuration = currentTrack ? currentTrack.audio.fade : 0
     crossFade(getCurrentlyPlaying(), newAudio, fadeDuration, track.audio.offset);
+    // the video crossfades over the same duration as the audio
+    stopVideo(currentVideo, fadeDuration);
+    if (video) {
+      startVideo(video, fadeDuration);
+      if (paused) pauseVideos();
+    }
+    currentVideo = video;
     currentTrack = track;
 
     // wait until finished fading before rendering the new lyrics
@@ -61,11 +113,15 @@ async function playSong(track:Track|null) {
     const lyricsTransitionDelay = fadeDuration * 2/3;
     setTimeout(() => renderLyrics(lines, lyricsListElem, track.audio.offset + lyricsTransitionDelay, track.audio.end), lyricsTransitionDelay * 1000 );
 
-    const endpoint = (track.audio.end) ? track.audio.end : buffer?.duration
+    const videoDuration = video && Number.isFinite(video.element.duration) ? video.element.duration : undefined;
+    const endpoint = (track.audio.end) ? track.audio.end : (buffer?.duration ?? videoDuration)
     if (endpoint){
       // play the next song after this one finishes
       scheduleNextSong((endpoint - track.audio.offset - track.audio.fade) * 1000);
     }
+
+    // get the next track's video ready while this one plays
+    prepareUpcomingVideo(playlistPeekNext());
   } else {
     // TODO handle no track (when navigating off start or end of playlist)
   }
@@ -85,6 +141,7 @@ function pauseSong() {
   pauseAudioContext();
   pauseSilentAudio();
   pauseLyrics();
+  pauseVideos();
   if (nextSongTimeout) {
     nextSongRemainingMs = Math.max(0, nextSongDueAt - Date.now());
     clearTimeout(nextSongTimeout);
@@ -99,6 +156,7 @@ function resumeSong() {
   resumeAudioContext();
   playSilentAudio();
   resumeLyrics();
+  resumeVideos();
   if (nextSongRemainingMs !== null) {
     scheduleNextSong(nextSongRemainingMs);
   }
