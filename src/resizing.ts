@@ -26,9 +26,9 @@ export function updateFontSizes() {
             font-weight: ${theme.fontWeight};
             color: ${theme.previewTextColor};
             paint-order: stroke fill;
-            -webkit-text-stroke: ${0.5 * textSize * theme.outlineRatio}px ${theme.outlineColor};
-            font-size: ${0.5 * textSize}px !important;
-            width: 50% !important;
+            -webkit-text-stroke: ${theme.previewScale * textSize * theme.outlineRatio}px ${theme.outlineColor};
+            font-size: ${theme.previewScale * textSize}px !important;
+            width: ${theme.previewScale * 100}% !important;
             opacity: 1;
         }
         #lyricsContainer li.large {
