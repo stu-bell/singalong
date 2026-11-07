@@ -38,9 +38,9 @@ export function updateFontSizes() {
             width: 100% !important;
             opacity: 1;
         }
-        /* preview lines hidden during intros and instrumentals (LYR-13). They keep their space, so nothing jumps
-           when they fade in. The line on its way out (.zero) is left to shrink away as normal. */
-        #lyricsContainer.preview-hidden li:not(.large):not(.zero) {
+        /* lines after a break, hidden during intros and instrumentals (LYR-13). They keep their space, so nothing
+           jumps when they fade in. */
+        #lyricsContainer li.preview-hidden {
             opacity: 0;
         }
         #lyricsContainer li.zero {
