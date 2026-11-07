@@ -54,4 +54,11 @@ export function updateMediaSession() {
     };
 
     navigator.mediaSession.metadata = new MediaMetadata(metadata);
+    navigator.mediaSession.playbackState = 'playing';
+}
+
+// tell the OS whether we are playing or paused, so its play/pause controls show the right state
+export function setMediaSessionPlaying(playing: boolean) {
+    if (!navigator.mediaSession) return;
+    navigator.mediaSession.playbackState = playing ? 'playing' : 'paused';
 }

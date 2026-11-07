@@ -73,12 +73,59 @@ function forwards(list: HTMLElement, text: string = "") {
 // setTimeout allowing us to adjust the timer
 let scrollTimer: number | null = null;
 let lastAutoScrollTime: number;
+// pause support: while paused no timer runs, and the time left is kept for resume
+let lyricsPaused = false;
+let scrollTimerDueAt = 0; // Date.now() at which the running timer fires
+let scrollRemainingMs: number | null = null; // time left on the timer, while paused
+
+function autoScroll() {
+  // register time we last auto-scrolled
+  lastAutoScrollTime = Date.now();
+  scrollNextLine();
+}
+
+function clearScrollTimer() {
+  if (scrollTimer) {
+    clearTimeout(scrollTimer);
+    scrollTimer = null;
+  }
+  scrollRemainingMs = null;
+}
+
+function scheduleScroll(delayMs: number) {
+  if (lyricsPaused) {
+    // don't start the timer until resumed
+    scrollRemainingMs = delayMs;
+  } else {
+    scrollTimerDueAt = Date.now() + delayMs;
+    scrollTimer = setTimeout(autoScroll, delayMs);
+  }
+}
+
+function pauseLyrics() {
+  if (lyricsPaused) return;
+  lyricsPaused = true;
+  if (scrollTimer) {
+    scrollRemainingMs = Math.max(0, scrollTimerDueAt - Date.now());
+    clearTimeout(scrollTimer);
+    scrollTimer = null;
+  }
+}
+
+function resumeLyrics() {
+  if (!lyricsPaused) return;
+  lyricsPaused = false;
+  if (scrollRemainingMs !== null) {
+    const remaining = scrollRemainingMs;
+    scrollRemainingMs = null;
+    scheduleScroll(remaining);
+  }
+}
+
 function setTimeoutNextScroll(from?:number) {
   // setTimeoutNextScroll sets an auto scroll for the next line, based on timestamps
-  if (scrollTimer) {
-    // cancel inflight timer, since we might have skipped
-    clearTimeout(scrollTimer);
-  }
+  // cancel inflight timer, since we might have skipped
+  clearScrollTimer();
   if (
     state.lines[state.currentLineIndex + 1] &&
     state.lines[state.currentLineIndex + 1].hasOwnProperty('timestamp') && 
@@ -90,11 +137,7 @@ function setTimeoutNextScroll(from?:number) {
     const nextLineTime = state.lines[state.currentLineIndex + 1].timestamp || 0;
     const delay = nextLineTime - currentLineTime;
     if (delay >= 0) {
-      scrollTimer = setTimeout(() => {
-        // register time we last auto-scrolled
-        lastAutoScrollTime = Date.now();
-        scrollNextLine();
-      }, delay * 1000);
+      scheduleScroll(delay * 1000);
     }
     // if the timestamps on current and nextlines are the same, do we just want to skip now?
   }
@@ -184,6 +227,8 @@ export {
   scrollNextLine,
   scrollPreviousLine,
   weJustAutoScrolled,
+  pauseLyrics,
+  resumeLyrics,
   setTimeoutNextScroll,
   renderLyrics,
 };
