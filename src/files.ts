@@ -67,4 +67,7 @@ function downloadFile(content:string, fileName:string) {
     document.body.removeChild(link);
 }
 
-export { downloadFile, removeFileExtension, getFileExtension, readFileToString, parseTsv };
+// isVideoFile is true for media files whose picture is shown behind the lyrics
+const isVideoFile = (filename: string) => getFileExtension(filename) === "mp4";
+
+export { isVideoFile, downloadFile, removeFileExtension, getFileExtension, readFileToString, parseTsv };

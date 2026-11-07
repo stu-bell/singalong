@@ -1,4 +1,5 @@
 import { assertElementById } from './util';
+import { theme } from './theme';
 
 const NORMAL_SCALE_FACTOR = 0.05;
 
@@ -16,21 +17,36 @@ export function updateFontSizes() {
     /*important for animation for font size and width to stay in proportion*/
     /* slow down the transition duration to troubleshoot */
     style.innerHTML = `
-        li {
+        #lyricsContainer li {
           transition: 0.2s linear all;
           margin: 0 10px;
         }
-        li {
-            font-size: ${0.5 * textSize}px !important;
-            width: 50% !important;
-            opacity: 0.6;
+        #lyricsContainer li,
+        #setupSample {
+            font-family: ${theme.fontFamily};
+            font-weight: ${theme.fontWeight};
+            color: ${theme.previewTextColor};
+            paint-order: stroke fill;
+            -webkit-text-stroke: ${theme.previewScale * textSize * theme.outlineRatio}px ${theme.outlineColor};
+            font-size: ${theme.previewScale * textSize}px !important;
+            width: ${theme.previewScale * 100}% !important;
+            opacity: 1;
         }
-        li.large {
+        /* the screen setup sample (SCR-13) looks like the current line */
+        #lyricsContainer li.large,
+        #setupSample {
+            color: ${theme.textColor};
             font-size: ${textSize}px !important;
+            -webkit-text-stroke-width: ${textSize * theme.outlineRatio}px;
             width: 100% !important;
             opacity: 1;
         }
-        li.zero {
+        /* lines after a break, hidden during intros and instrumentals (LYR-13). They keep their space, so nothing
+           jumps when they fade in. */
+        #lyricsContainer li.preview-hidden {
+            opacity: 0;
+        }
+        #lyricsContainer li.zero {
           font-size: 0px !important;
           width: 0% !important;
         }

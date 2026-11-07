@@ -10,11 +10,12 @@ const alltimestamppattern = /\[\d?\d?:?\d?\d\.?\d?\d?\d?\]/g;
 function parseLrcLines(lrcFile: string) {
   // some lrc files have repeated lyrics on one line with multiple timetamps. This splits into multiple lines and sorts the result lines
   // split file by newline 
-  const lines = lrcFile.replace('\r\n', '\n').replace('\r', '\n')
-    .split('\n')
-    .filter((line: string) => line.trim() !== "") 
-    // filter out lines which just have a tag?? This is filtering out blank lines but also filters out info tags
-    .filter((line) => !(line.startsWith("[") && line.endsWith("]")));
+  // split on every line ending (Windows \r\n, old Mac \r, Unix \n), so blank lines behave the same whatever saved the file (LYR-2)
+  const lines = lrcFile
+    .split(/\r\n?|\n/)
+    .filter((line: string) => line.trim() !== "");
+  // only lines with a timestamp are kept below. Metadata tags such as [ar:…] never match the timestamp pattern,
+  // so they are ignored, while a bare timestamp such as [00:05.00] becomes a blank line (LYR-2)
   // initialise with empty line
   let result: LyricLine[] = [{ timestamp: 0, text: "" }];
   lines.forEach((line: string) => {
