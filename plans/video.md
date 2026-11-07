@@ -34,7 +34,8 @@ Files: `playlist.ts`, `files.ts`, `audio.ts`
 - Accept a `media` column, with `audio` as an alias. If both exist, `media` wins.
 - Accept `.mp4`. Report an unsupported media extension as an error.
 - The starter-playlist generator writes the `media` header, includes `.mp4`, and pairs any media file with a lyrics file.
-- Read the duration of a video file from its metadata (`loadedmetadata`) instead of decoding it.
+- Read the duration of every media file (audio and video) from its metadata, using an `<audio>` or `<video>` element and its `loadedmetadata` event, instead of decoding the whole file. Replace `audioFileDuration` in `audio.ts`. Files can be read one after another or in parallel; either is far cheaper than decoding.
+- Fallback: if the metadata duration is missing or `Infinity` (can happen with some variable-bitrate mp3s without a length header), fall back to decoding that one file.
 
 ### 2. Layout and theme (SCR-6, SCR-7, SCR-8)
 
