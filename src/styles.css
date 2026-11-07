@@ -30,7 +30,13 @@ li {
 
 /* lyrics area: dark background, optional video behind the text (see theme.ts) */
 .dragcontainer {
-  background-color: var(--theme-background, #111111);
+  background-color: var(--theme-background, #000000);
+}
+
+/* page around the lyrics area is black whenever the area is shown (show and screen setup), so no white border
+   lights up on the projector (SCR-9). The home screen keeps its normal background. */
+body:has(#dragcontainer:not(.hidden)) {
+  background-color: var(--theme-page, #000000);
 }
 
 .video-layer,
