@@ -11,6 +11,14 @@ export type VideoHandle = {
   disposeTimer: number | null;
 };
 
+// MAX_LOAD_WAIT_MS caps how long prepareVideo waits for each loading step: the file's metadata, then the first frame
+// (or the seek to the track's start). Some files never raise these events, for example a broken file or an unsupported
+// codec that gives no error, and without a cap the track would never start.
+// If a step takes longer, prepareVideo gives up: the error goes to the console, the element is released, and it resolves
+// null. The player then decodes the file's audio instead, so the track plays audio only, with no picture (PLY-11).
+// Because the player waits for the video before starting a track, a slow video delays that track's start by up to this
+// long per step (so up to twice this in total), plus the time to decode the audio. A video prepared ahead for the
+// upcoming track times out in the background, so its track falls back to audio only when it starts.
 const MAX_LOAD_WAIT_MS = 10000;
 
 // videos currently showing (not fading out)
