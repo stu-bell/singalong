@@ -73,12 +73,59 @@ function forwards(list: HTMLElement, text: string = "") {
 // setTimeout allowing us to adjust the timer
 let scrollTimer: number | null = null;
 let lastAutoScrollTime: number;
+// pause support: while paused no timer runs, and the time left is kept for resume
+let lyricsPaused = false;
+let scrollTimerDueAt = 0; // Date.now() at which the running timer fires
+let scrollRemainingMs: number | null = null; // time left on the timer, while paused
+
+function autoScroll() {
+  // register time we last auto-scrolled
+  lastAutoScrollTime = Date.now();
+  scrollNextLine();
+}
+
+function clearScrollTimer() {
+  if (scrollTimer) {
+    clearTimeout(scrollTimer);
+    scrollTimer = null;
+  }
+  scrollRemainingMs = null;
+}
+
+function scheduleScroll(delayMs: number) {
+  if (lyricsPaused) {
+    // don't start the timer until resumed
+    scrollRemainingMs = delayMs;
+  } else {
+    scrollTimerDueAt = Date.now() + delayMs;
+    scrollTimer = setTimeout(autoScroll, delayMs);
+  }
+}
+
+function pauseLyrics() {
+  if (lyricsPaused) return;
+  lyricsPaused = true;
+  if (scrollTimer) {
+    scrollRemainingMs = Math.max(0, scrollTimerDueAt - Date.now());
+    clearTimeout(scrollTimer);
+    scrollTimer = null;
+  }
+}
+
+function resumeLyrics() {
+  if (!lyricsPaused) return;
+  lyricsPaused = false;
+  if (scrollRemainingMs !== null) {
+    const remaining = scrollRemainingMs;
+    scrollRemainingMs = null;
+    scheduleScroll(remaining);
+  }
+}
+
 function setTimeoutNextScroll(from?:number) {
   // setTimeoutNextScroll sets an auto scroll for the next line, based on timestamps
-  if (scrollTimer) {
-    // cancel inflight timer, since we might have skipped
-    clearTimeout(scrollTimer);
-  }
+  // cancel inflight timer, since we might have skipped
+  clearScrollTimer();
   if (
     state.lines[state.currentLineIndex + 1] &&
     state.lines[state.currentLineIndex + 1].hasOwnProperty('timestamp') && 
@@ -90,11 +137,7 @@ function setTimeoutNextScroll(from?:number) {
     const nextLineTime = state.lines[state.currentLineIndex + 1].timestamp || 0;
     const delay = nextLineTime - currentLineTime;
     if (delay >= 0) {
-      scrollTimer = setTimeout(() => {
-        // register time we last auto-scrolled
-        lastAutoScrollTime = Date.now();
-        scrollNextLine();
-      }, delay * 1000);
+      scheduleScroll(delay * 1000);
     }
     // if the timestamps on current and nextlines are the same, do we just want to skip now?
   }
@@ -107,9 +150,13 @@ const weJustAutoScrolled = (milliseconds = 500) =>
 function seekLyrics(lines:LyricLines, offsetSeconds: number = 0): number {
   // seekLyrics looks through timestamps to find the line the corresponds to the offset
   // ie the line before the first line that has a timestamp greater than the offset
+  if (!lines.some(l => l.timestamp)) {
+    // untimed lyrics (.txt files) start at the beginning (LYR-3, LYR-10)
+    return 0;
+  }
   const firstIndex = lines.findIndex(l => (l.timestamp || 0) > offsetSeconds);
-  // no lines come after offsetSeconds
-  const index = (firstIndex === -1) ? lines.length : firstIndex - 1;
+  // no lines come after offsetSeconds: show the last line, rather than an index past the end (which renders nothing)
+  const index = (firstIndex === -1) ? lines.length - 1 : firstIndex - 1;
   return index
 }
 
@@ -141,9 +188,11 @@ function renderLyrics(lines: LyricLines, htmlElement: HTMLElement, offsetSeconds
     lyricsListElem.appendChild(el);
   }
   // big up the first line
-  const first = lyricsListElem.firstElementChild as HTMLElement;
-  void first.offsetWidth; // reset transition
-  first.classList.add('large');
+  const first = lyricsListElem.firstElementChild as HTMLElement | null;
+  if (first) {
+    void first.offsetWidth; // reset transition
+    first.classList.add('large');
+  }
 
   // start the timer for auto scroll
   setTimeoutNextScroll(offsetSeconds);
@@ -184,6 +233,8 @@ export {
   scrollNextLine,
   scrollPreviousLine,
   weJustAutoScrolled,
+  pauseLyrics,
+  resumeLyrics,
   setTimeoutNextScroll,
   renderLyrics,
 };

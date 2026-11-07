@@ -2,9 +2,8 @@
 # TODO
 
 ## Next
-1. video support
-2. resize screen - all four corners of the resize area should be draggable, so that as well as resizing, we can use with a projector, we can project at a non-perpendicular angle if necessary.
-3. don't show text on screen until next timestamp is only a 2 seconds away (so no text shown during instrumentals). Blank lines already move highlight off the current line. Multiple consecutive timestamps with blank lines display the next line, but also control when preview lines come on screen.  
+1. resize screen - all four corners of the resize area should be draggable, so that as well as resizing, we can use with a projector, we can project at a non-perpendicular angle if necessary.
+2. don't show text on screen until next timestamp is only a 2 seconds away (so no text shown during instrumentals). Blank lines already move highlight off the current line. Multiple consecutive timestamps with blank lines display the next line, but also control when preview lines come on screen.  
   - This is confusing - preview lines should be shown all together, or none at all? Test by playing with timestamps with no lyrics in an lrc file. 5x lines with no text but the same timestamp can give you the desired result. How does the user choose how far in advance preview lines should be shown if there's a long instrumental gap, if you bake this functionality in? Could build it so that user press next line to display the preview lines, if none are visible?
   - to achieve this you'd need to calculate the time to the next line to add to the preview, and if greater than a threshold, set a timeout for when it should be added to preview
   - if user presses next and no preview lines are visible, cancel the timeout and display the preview line
@@ -12,9 +11,8 @@
 
 ## bugs
 - home scroll broken (make modal)?
-- media controls play/resume broken
+- media controls play/resume broken (PLY-8). Pause now freezes the audio, video and timers; check OS play/resume with real media keys
 - svg arrows for resize
-- .txt files not rendering? do they require audio?
 - bug when scroll backwards, list items disappear from the bottom. lyrics.ts forwards/backwards?
 - empty lines at the top of the screen should be large height - what about replacing with a space?
 - playlist validation errors (missing/duplicate/unsupported files, see MED-1, MED-6) only go to the console. Implement an on-screen message toast. Be careful not to disrupt the show: show messages before play starts, or discreetly on screen during play (no alerts/modals mid-show)

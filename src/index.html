@@ -18,7 +18,10 @@
     <p>If using a mobile browser, try Chrome version >132</p>
   </div>
 
-  <div id="dragcontainer" class="dragcontainer bg-white hidden overflow-hidden">
+  <div id="dragcontainer" class="dragcontainer hidden overflow-hidden">
+    <!-- video plays behind the lyrics, with a translucent filter between the video and the text -->
+    <div id="videoLayer" class="video-layer"></div>
+    <div id="videoFilter" class="video-filter"></div>
     <!-- main container for song lyrics -->
     <ul id="lyricsContainer" class="flex flex-col items-center list-none text-center mt-vh user-select-none">
       <li></li>
@@ -82,7 +85,7 @@
     </table>
 
     <p>
-      Choose a folder containing .mp3, .m4a files, and .lrc or .txt files for lyrics.
+      Choose a folder containing .mp3, .m4a or .mp4 (video) files, and .lrc or .txt files for lyrics.
       <br /><br />.lrc files with timestamps will play automatically, for .txt files use the arrow keys or a USB
       presentation remote.
       <br /><br />Choose Folder above to download your playlist file</a> and save it in the same folder named <code
@@ -91,14 +94,14 @@
       to play the tracks, and which lyrics go with each audio file. Open the playlist file in a spreadsheet editor and
       match the lyrics and audio files. The playlist should contain one row per song, in the sequence you want them to
       be played. On each row you'll need to provide the exact file names for each lyric file (.txt or .lrc) and,
-      optionally the matching .mp3 file. Watch out for typos in the playlist file! If you get any errors, edit and save
+      optionally the matching media file (.mp3, .m4a or .mp4) in the 'media' column. An .mp4 plays its sound and shows its video behind the lyrics. Watch out for typos in the playlist file! If you get any errors, edit and save
       your playlist file, refresh the page, and try again.
       <br /><br />If there is no _playlist.tsv file in the folder you select, the app will make one based on the files
       in that folder and download it for you. Save this file in the same folder as your lyrics and audio files.
       <br /><br />Once you've got all your audio and lyrics files in a folder, and added your playlist file, hit the
       `Choose Folder` button.
       <br /><br /> You can include optional columns called 'start', 'end' and 'fade', which should show the times in
-      seconds the current audio track should start and finish. But if you just want to play the full songs, you can
+      seconds the current track should start and finish. But if you just want to play the full songs, you can
       leave these columns blank. Fade is the number of seconds overlap between two tracks. If fade = 0, the current song
       will finish before the next song starts.
       <br /><br />The last song currently loops. If you'd like to prevent this, add a blank or thankyou .txt file as the

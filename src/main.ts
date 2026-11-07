@@ -7,6 +7,7 @@ import {
   weJustAutoScrolled,
 } from "./lyrics";
 import { requestFullscreen } from "./screen";
+import { applyTheme } from "./theme";
 import { initResizing, startObservingResizing, stopObservingResizing, updateFontSizes } from "./resizing";
 
 // resize the lyrics container 
@@ -143,4 +144,5 @@ document.addEventListener("keydown", function (event) {
 });
 
 
+applyTheme();
 initResizing();
