@@ -1,4 +1,5 @@
 import { formatSecondsToTimestamp } from "./lrcFile";
+import { getFileExtension } from "./files";
 
 let acx: AudioContext;
 let currentlyPlaying: Graph;
@@ -103,12 +104,38 @@ function crossFade(
   }
 }
 
-async function audioFileDuration(file: File): Promise<string> {
-  if (file) {
-    return formatSecondsToTimestamp((await loadAudioFromFile(file)).duration)
-  } else {
+// readDurationFromMetadata reads a media file's duration from its metadata, without decoding the whole file.
+// Resolves NaN if the duration can't be read.
+function readDurationFromMetadata(file: File): Promise<number> {
+  return new Promise<number>((resolve) => {
+    const el = document.createElement(
+      getFileExtension(file.name) === "mp4" ? "video" : "audio"
+    );
+    const url = URL.createObjectURL(file);
+    const done = (duration: number) => {
+      el.removeAttribute("src");
+      el.load();
+      URL.revokeObjectURL(url);
+      resolve(duration);
+    };
+    el.preload = "metadata";
+    el.onloadedmetadata = () => done(el.duration);
+    el.onerror = () => done(NaN);
+    el.src = url;
+  });
+}
+
+// mediaFileDuration returns the duration of an audio or video file as a timestamp string.
+async function mediaFileDuration(file: File): Promise<string> {
+  if (!file) {
     throw new Error('file not provided')
   }
+  let seconds = await readDurationFromMetadata(file);
+  if (!Number.isFinite(seconds) || seconds <= 0) {
+    // some files (eg variable bitrate mp3s without a length header) have no usable metadata duration
+    seconds = (await loadAudioFromFile(file)).duration;
+  }
+  return formatSecondsToTimestamp(seconds);
 }
 
 // function playNext() {
@@ -141,7 +168,7 @@ export {
   crossFade,
   connectAudioGraph,
   getCurrentlyPlaying,
-  audioFileDuration,
+  mediaFileDuration,
   pauseAudioContext,
   resumeAudioContext,
 };

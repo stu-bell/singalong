@@ -9,7 +9,7 @@ import {
   parseTsv,
   downloadFile,
 } from "./files";
-import { loadAudioFromFile, audioFileDuration } from "./audio";
+import { loadAudioFromFile, mediaFileDuration } from "./audio";
 import { parseTimestampToSeconds } from "./lrcFile";
 import { ratio } from "fuzzball";
 
@@ -19,11 +19,15 @@ let next: Track | null;
 let playlistIndex: number;
 let playlist: Playlist;
 const playlistFileName = "_playlist.tsv";
+const lyricsExtensions = ["lrc", "txt"];
+const audioExtensions = ["mp3", "m4a"];
+const videoExtensions = ["mp4"];
+const mediaExtensions = [...audioExtensions, ...videoExtensions];
 
 type Playlist = PlaylistItem[];
 type PlaylistItem = {
-  audio: string; // audio file name, from playlist file
-  audioFile: File | null; // audio File handle, added during parsing
+  media: string; // audio or video file name, from playlist file (column "media", or legacy "audio")
+  mediaFile: File | null; // media File handle, added during parsing
   start: string | null; // start timestamp, from playlist file
   end: string | null; // end timestamp, from playlist file
   fade: string | null; // fade duration between two tracks, ie duration of overlap while fading from one to the next
@@ -94,8 +98,8 @@ function loadTrack(item: PlaylistItem): Track {
       text: readFileToString(item.lyricsFile),
     },
     audio: {
-      file: item.audioFile,
-      buffer: item.audioFile ? loadAudioFromFile(item.audioFile) : null,
+      file: item.mediaFile,
+      buffer: item.mediaFile ? loadAudioFromFile(item.mediaFile) : null,
       offset: item.start ? parseTimestampToSeconds(item.start) : 0,
       end: item.end ? parseTimestampToSeconds(item.end) : undefined,
       fade: item.fade ? parseTimestampToSeconds(item.fade) : 0,
@@ -123,14 +127,21 @@ async function parsePlaylistFile(folderfiles: File[]) {
     // refresh the page so we don't navigate
     location.reload();
   }
-  const playlistFileContents = parseTsv(
-    await readFileToString(playlistFile!)
-  ) as Playlist;
+  const playlistFileContents = (
+    parseTsv(await readFileToString(playlistFile!)) as any[]
+  ).map(normaliseMediaColumn) as Playlist;
   const playlist = loadPlaylistFileHandles(playlistFileContents, folderfiles);
   if (!playlist.length) {
     console.error(`Error: ${playlistFileName} empty`);
   }
   return playlist;
+}
+
+// normaliseMediaColumn accepts the legacy "audio" column as an alias for "media". "media" wins if both are present
+function normaliseMediaColumn(row: any) {
+  row.media = row.media || row.audio || "";
+  delete row.audio;
+  return row;
 }
 
 // loadPlaylistFileHandles attaches File handles to each playlist item. warns of missing files
@@ -143,7 +154,7 @@ function loadPlaylistFileHandles(playlist: Playlist, folderfiles: File[]) {
     if (!item.lyrics) {
       errors.push(
         `Each playlist row must contain a lyrics file. ${
-          item.audio ? item.audio : ""
+          item.media ? item.media : ""
         }`
       );
       // remove this entry from the playlist
@@ -157,7 +168,7 @@ function loadPlaylistFileHandles(playlist: Playlist, folderfiles: File[]) {
         );
         // remove this entry from the playlist
         return null;
-      } else if (!(ext === "lrc" || ext === "txt")) {
+      } else if (!lyricsExtensions.includes(ext)) {
         errors.push(
           `Only .lrc or .txt files supported, but found ${item.lyrics}`
         );
@@ -165,15 +176,22 @@ function loadPlaylistFileHandles(playlist: Playlist, folderfiles: File[]) {
         return null;
       }
     }
-    if (!item.audio) {
-      // log the name of the lyrics file without the audio
+    if (!item.media) {
+      // log the name of the lyrics file without the media
       missingAudioWarning.push(item.lyrics);
+      item.mediaFile = null;
     } else {
-      item.audioFile = findFile(item.audio)!;
-      if (!item.audioFile) {
+      item.mediaFile = findFile(item.media) || null;
+      if (!item.mediaFile) {
         errors.push(
-          `Playlist includes ${item.audio} but we couldn't find that in the folder.`
+          `Playlist includes ${item.media} but we couldn't find that in the folder.`
         );
+      } else if (!mediaExtensions.includes(getFileExtension(item.media))) {
+        errors.push(
+          `Only ${mediaExtensions.map((e) => "." + e).join(", ")} media files supported, but found ${item.media}`
+        );
+        // keep the row, without media
+        item.mediaFile = null;
       }
     }
     return item;
@@ -204,19 +222,15 @@ async function downloadExamplePlaylistFile(files: File[] | any[]) {
   // grab relevant files
   const audioFiles = await Promise.all(
     files
-      .filter((file) => {
-        const ext = getFileExtension(file.name);
-        return ext === "mp3" || ext === "m4a";
-      })
+      .filter((file) => mediaExtensions.includes(getFileExtension(file.name)))
       .map(async (f) => {
-        // add audio file duration
-        f.duration = await audioFileDuration(f);
+        // add media file duration
+        f.duration = await mediaFileDuration(f);
         return f;
       })
   );
   const lyricsFiles = files.filter((file) => {
-    const ext = getFileExtension(file.name);
-    return ext === "lrc" || ext === "txt";
+    return lyricsExtensions.includes(getFileExtension(file.name));
   });
 
   let res = [];
@@ -253,7 +267,7 @@ async function downloadExamplePlaylistFile(files: File[] | any[]) {
   }
   const exampleContent =
     // header row, plus data
-    `lyrics	audio	start	end	fade\r\n` + res.join("\r\n");
+    `lyrics	media	start	end	fade\r\n` + res.join("\r\n");
   downloadFile(exampleContent, "_playlist.tsv");
 }
 
