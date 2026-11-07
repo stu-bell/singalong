@@ -1,5 +1,5 @@
-// lyrics font, bundled with the app so it works offline (SCR-7). Only the SemiBold (600) weight is included.
-import "@fontsource/fredoka/600.css";
+// lyrics font, bundled with the app so it works offline (SCR-7). Only the Bold (700) weight is included.
+import "@fontsource/rubik/700.css";
 import { makeDragable } from "./drag";
 import { assertElementById } from "./util";
 import { prevSong, nextSong, handleFileInputChange, HTMLFileInputElement } from "./player";

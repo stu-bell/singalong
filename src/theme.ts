@@ -1,11 +1,11 @@
 // theme.ts holds the look of the lyrics screen in one place, so options can be tried out easily (SCR-7).
 // Colours are CSS colours. Ratios are fractions of the lyric font size, which itself scales with the lyrics area (see resizing.ts).
 export const theme = {
-  // Fredoka SemiBold is bundled with the app (imported in main.ts). The brush cursive fallback is only used if the font
-  // fails to load, or for characters Fredoka lacks (it covers Latin and Hebrew). Brush Script MT ships with Windows and
-  // macOS; other systems use their default cursive font. It has no bold, so the browser thickens it (SCR-7).
-  fontFamily: '"Fredoka", "Brush Script MT", cursive',
-  fontWeight: 600,
+  // Rubik Bold is bundled with the app (imported in main.ts). The brush cursive fallback is only used if the font fails
+  // to load, or for characters Rubik lacks (it covers Latin, Cyrillic, Hebrew and Arabic). Brush Script MT ships with
+  // Windows and macOS; other systems use their default cursive font. It has no bold, so the browser thickens it (SCR-7).
+  fontFamily: '"Rubik", "Brush Script MT", cursive',
+  fontWeight: 700,
   // preview line size, as a fraction of the current line (LYR-5)
   previewScale: 2 / 3,
   textColor: "#ffffff",
